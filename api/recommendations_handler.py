@@ -85,16 +85,18 @@ class RecommendationsHandler:
         try:
             self.logger.info(f"🌱 [RECOMMENDATIONS-HANDLER] Processing fertilizer recommendations for field: {field_id}")
             
-            # Create mock field metrics and weather data for fertilizer-only analysis
+            # Use provided data or return error if missing
+            if not npk_data or not indices:
+                self.logger.error(f"NPK data and indices required for fertilizer recommendations: {field_id}")
+                return {"error": "NPK data and indices required", "fieldId": field_id}
+            
             field_metrics = {
                 "npk": npk_data,
                 "indices": indices
             }
             
-            weather_data = {
-                "current": {"temp_c": 25, "humidity": 50, "precip_mm": 0},
-                "forecast": []
-            }
+            # Weather data not required for fertilizer recommendations
+            weather_data = None
             
             # Get full recommendations and extract fertilizer part
             full_recommendations = await self.service.get_field_recommendations(
@@ -143,9 +145,12 @@ class RecommendationsHandler:
         try:
             self.logger.info(f"🌱 [RECOMMENDATIONS-HANDLER] Processing irrigation recommendations for field: {field_id}")
             
-            # Create mock field metrics for irrigation-only analysis
+            # Use provided data or return error if missing
+            if not indices:
+                self.logger.error(f"Indices data required for irrigation recommendations: {field_id}")
+                return {"error": "Indices data required", "fieldId": field_id}
+            
             field_metrics = {
-                "npk": {"Nitrogen": "medium", "Phosphorus": "medium", "Potassium": "medium", "SOC": "medium"},
                 "indices": indices
             }
             
@@ -196,9 +201,12 @@ class RecommendationsHandler:
         try:
             self.logger.info(f"🌱 [RECOMMENDATIONS-HANDLER] Processing crop health recommendations for field: {field_id}")
             
-            # Create mock field metrics for crop health-only analysis
+            # Use provided data or return error if missing
+            if not indices:
+                self.logger.error(f"Indices data required for crop health recommendations: {field_id}")
+                return {"error": "Indices data required", "fieldId": field_id}
+            
             field_metrics = {
-                "npk": {"Nitrogen": "medium", "Phosphorus": "medium", "Potassium": "medium", "SOC": "medium"},
                 "indices": indices
             }
             
@@ -249,9 +257,12 @@ class RecommendationsHandler:
         try:
             self.logger.info(f"🌱 [RECOMMENDATIONS-HANDLER] Processing risk alerts for field: {field_id}")
             
-            # Create mock field metrics for risk analysis
+            # Use provided data or return error if missing
+            if not indices:
+                self.logger.error(f"Indices data required for risk analysis: {field_id}")
+                return {"error": "Indices data required", "fieldId": field_id}
+            
             field_metrics = {
-                "npk": {"Nitrogen": "medium", "Phosphorus": "medium", "Potassium": "medium", "SOC": "medium"},
                 "indices": indices
             }
             
