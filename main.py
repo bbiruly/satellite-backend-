@@ -29,6 +29,7 @@ def load_handler(module_name, file_path):
 # Load only working handlers
 b2b_npk_handler = load_handler("b2b_npk_analysis", "api/b2b_npk_analysis.py")
 weather_handler = load_handler("weather_handler", "api/weather_handler.py")
+recommendations_handler = load_handler("recommendations_handler", "api/recommendations_handler.py")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -61,6 +62,12 @@ class WeatherRequest(BaseModel):
     coordinates: List[float]  # [lat, lon]
     days: int = 7
 
+class RecommendationsRequest(BaseModel):
+    fieldId: str
+    coordinates: List[float]  # [lat, lon]
+    fieldMetrics: Optional[Dict[str, Any]] = None
+    weatherData: Optional[Dict[str, Any]] = None
+
 # Mock request class for compatibility
 class MockRequest:
     def __init__(self, method: str, json_data: Dict[str, Any]):
@@ -82,13 +89,22 @@ async def root():
                 "/api/field-metrics",
                 "/api/weather",
                 "/api/weather/alerts",
-                "/api/weather/historical"
+                "/api/weather/historical",
+                "/api/recommendations",
+                "/api/recommendations/fertilizer",
+                "/api/recommendations/irrigation",
+                "/api/recommendations/crop-health",
+                "/api/recommendations/risk-alerts"
             ],
         "description": "Clean, minimal API for agricultural intelligence",
         "features": [
             "Complete Field Metrics Analysis",
             "NPK + SOC + Health + Indices",
             "Complete Weather Integration",
+            "Actionable Recommendations",
+            "Fertilizer & Irrigation Advice",
+            "Crop Health Monitoring",
+            "Risk Alerts & Warnings",
             "Real-time Processing",
             "Intelligent Caching"
         ]
@@ -184,6 +200,221 @@ async def historical_weather(request: WeatherRequest, date: str):
         
     except Exception as e:
         logger.error(f"🌤️ [FASTAPI] Historical Weather Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Recommendations API - Complete Implementation
+@app.post("/api/recommendations")
+async def field_recommendations(request: RecommendationsRequest):
+    """Complete Field Recommendations - Fertilizer, Irrigation, Crop Health, Timing, and Risk Alerts"""
+    try:
+        logger.info(f"🌱 [FASTAPI] Recommendations Request - Field: {request.fieldId}")
+        logger.info(f"🌱 [FASTAPI] Coordinates: {request.coordinates}")
+        
+        # If field metrics and weather data not provided, fetch them
+        field_metrics = request.fieldMetrics
+        weather_data = request.weatherData
+        
+        if not field_metrics:
+            # Fetch field metrics
+            mock_request = MockRequest("POST", {
+                "fieldId": request.fieldId,
+                "coordinates": [request.coordinates[1], request.coordinates[0]],  # Convert [lat,lon] to [lon,lat]
+                "metric": "npk"
+            })
+            field_response = b2b_npk_handler(mock_request)
+            if field_response["statusCode"] == 200:
+                field_metrics = field_response["body"]
+            else:
+                field_metrics = {"npk": {}, "indices": {}}
+        
+        if not weather_data:
+            # Fetch weather data
+            weather_data = await weather_handler.get_field_weather(
+                request.fieldId, 
+                request.coordinates, 
+                7
+            )
+        
+        response = await recommendations_handler.get_field_recommendations(
+            request.fieldId,
+            field_metrics,
+            weather_data,
+            request.coordinates
+        )
+        
+        logger.info(f"🌱 [FASTAPI] Recommendations Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"🌱 [FASTAPI] Recommendations Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/recommendations/fertilizer")
+async def fertilizer_recommendations(request: RecommendationsRequest):
+    """Fertilizer-specific Recommendations based on NPK analysis"""
+    try:
+        logger.info(f"🌱 [FASTAPI] Fertilizer Recommendations Request - Field: {request.fieldId}")
+        
+        # Get field metrics if not provided
+        field_metrics = request.fieldMetrics
+        if not field_metrics:
+            mock_request = MockRequest("POST", {
+                "fieldId": request.fieldId,
+                "coordinates": [request.coordinates[1], request.coordinates[0]],
+                "metric": "npk"
+            })
+            field_response = b2b_npk_handler(mock_request)
+            if field_response["statusCode"] == 200:
+                field_metrics = field_response["body"]
+            else:
+                field_metrics = {"npk": {}, "indices": {}}
+        
+        npk_data = field_metrics.get("npk", {})
+        indices = field_metrics.get("indices", {})
+        
+        response = await recommendations_handler.get_fertilizer_recommendations(
+            request.fieldId,
+            npk_data,
+            indices
+        )
+        
+        logger.info(f"🌱 [FASTAPI] Fertilizer Recommendations Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"🌱 [FASTAPI] Fertilizer Recommendations Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/recommendations/irrigation")
+async def irrigation_recommendations(request: RecommendationsRequest):
+    """Irrigation-specific Recommendations based on weather and soil moisture"""
+    try:
+        logger.info(f"🌱 [FASTAPI] Irrigation Recommendations Request - Field: {request.fieldId}")
+        
+        # Get weather data if not provided
+        weather_data = request.weatherData
+        if not weather_data:
+            weather_data = await weather_handler.get_field_weather(
+                request.fieldId, 
+                request.coordinates, 
+                7
+            )
+        
+        # Get field metrics for indices
+        field_metrics = request.fieldMetrics
+        if not field_metrics:
+            mock_request = MockRequest("POST", {
+                "fieldId": request.fieldId,
+                "coordinates": [request.coordinates[1], request.coordinates[0]],
+                "metric": "npk"
+            })
+            field_response = b2b_npk_handler(mock_request)
+            if field_response["statusCode"] == 200:
+                field_metrics = field_response["body"]
+            else:
+                field_metrics = {"indices": {}}
+        
+        indices = field_metrics.get("indices", {})
+        
+        response = await recommendations_handler.get_irrigation_recommendations(
+            request.fieldId,
+            weather_data,
+            indices
+        )
+        
+        logger.info(f"🌱 [FASTAPI] Irrigation Recommendations Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"🌱 [FASTAPI] Irrigation Recommendations Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/recommendations/crop-health")
+async def crop_health_recommendations(request: RecommendationsRequest):
+    """Crop Health Recommendations based on vegetation indices and weather"""
+    try:
+        logger.info(f"🌱 [FASTAPI] Crop Health Recommendations Request - Field: {request.fieldId}")
+        
+        # Get weather data if not provided
+        weather_data = request.weatherData
+        if not weather_data:
+            weather_data = await weather_handler.get_field_weather(
+                request.fieldId, 
+                request.coordinates, 
+                7
+            )
+        
+        # Get field metrics for indices
+        field_metrics = request.fieldMetrics
+        if not field_metrics:
+            mock_request = MockRequest("POST", {
+                "fieldId": request.fieldId,
+                "coordinates": [request.coordinates[1], request.coordinates[0]],
+                "metric": "npk"
+            })
+            field_response = b2b_npk_handler(mock_request)
+            if field_response["statusCode"] == 200:
+                field_metrics = field_response["body"]
+            else:
+                field_metrics = {"indices": {}}
+        
+        indices = field_metrics.get("indices", {})
+        
+        response = await recommendations_handler.get_crop_health_recommendations(
+            request.fieldId,
+            indices,
+            weather_data
+        )
+        
+        logger.info(f"🌱 [FASTAPI] Crop Health Recommendations Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"🌱 [FASTAPI] Crop Health Recommendations Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/recommendations/risk-alerts")
+async def risk_alerts(request: RecommendationsRequest):
+    """Risk Alerts and Warnings for Field"""
+    try:
+        logger.info(f"🌱 [FASTAPI] Risk Alerts Request - Field: {request.fieldId}")
+        
+        # Get weather data if not provided
+        weather_data = request.weatherData
+        if not weather_data:
+            weather_data = await weather_handler.get_field_weather(
+                request.fieldId, 
+                request.coordinates, 
+                7
+            )
+        
+        # Get field metrics for indices
+        field_metrics = request.fieldMetrics
+        if not field_metrics:
+            mock_request = MockRequest("POST", {
+                "fieldId": request.fieldId,
+                "coordinates": [request.coordinates[1], request.coordinates[0]],
+                "metric": "npk"
+            })
+            field_response = b2b_npk_handler(mock_request)
+            if field_response["statusCode"] == 200:
+                field_metrics = field_response["body"]
+            else:
+                field_metrics = {"indices": {}}
+        
+        indices = field_metrics.get("indices", {})
+        
+        response = await recommendations_handler.get_risk_alerts(
+            request.fieldId,
+            weather_data,
+            indices
+        )
+        
+        logger.info(f"🌱 [FASTAPI] Risk Alerts Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"🌱 [FASTAPI] Risk Alerts Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
