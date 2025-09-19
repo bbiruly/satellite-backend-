@@ -259,13 +259,13 @@ class B2BNPKAnalyzer:
         # Generate field hash for caching
         field_hash = self.generate_field_hash(coordinates, field_id)
         
-        # Check cache first
-        cached_result = self.get_cached_result(field_hash)
-        if cached_result:
-            logger.info(f"🚀 [B2B-CACHE] Using cached result for field: {field_id}")
-            cached_result['metadata']['cached'] = True
-            cached_result['metadata']['processing_time'] = f"{(datetime.utcnow() - start_time).total_seconds():.2f}s"
-            return cached_result
+        # Check cache first - DISABLED FOR DEBUGGING
+        # cached_result = self.get_cached_result(field_hash)
+        # if cached_result:
+        #     logger.info(f"🚀 [B2B-CACHE] Using cached result for field: {field_id}")
+        #     cached_result['metadata']['cached'] = True
+        #     cached_result['metadata']['processing_time'] = f"{(datetime.utcnow() - start_time).total_seconds():.2f}s"
+        #     return cached_result
         
         logger.info(f"🌱 [B2B-ANALYSIS] Processing new analysis for field: {field_id}")
         
@@ -274,11 +274,12 @@ class B2BNPKAnalyzer:
             area_acres = self.calculate_field_area(coordinates)
             
             # Perform satellite analysis
+            # Fix coordinate swapping: coordinates[0] = longitude, coordinates[1] = latitude
             bbox = {
-                'minLon': coordinates[1] - 0.001,  # Small buffer around point
-                'maxLon': coordinates[1] + 0.001,
-                'minLat': coordinates[0] - 0.001,
-                'maxLat': coordinates[0] + 0.001
+                'minLon': coordinates[0] - 0.001,  # longitude
+                'maxLon': coordinates[0] + 0.001,  # longitude
+                'minLat': coordinates[1] - 0.001,  # latitude
+                'maxLat': coordinates[1] + 0.001   # latitude
             }
             
             # Get satellite data and indices
@@ -429,8 +430,8 @@ class B2BNPKAnalyzer:
                 }
             }
             
-            # Store in cache
-            self.store_result(field_hash, field_id, coordinates, raw_data, b2b_response, area_acres)
+            # Store in cache - DISABLED FOR DEBUGGING
+            # self.store_result(field_hash, field_id, coordinates, raw_data, b2b_response, area_acres)
             
             logger.info(f"✅ [B2B-ANALYSIS] Analysis completed for field: {field_id}")
             return b2b_response

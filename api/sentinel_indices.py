@@ -205,16 +205,20 @@ def compute_indices_from_arrays(red_arr: np.ndarray, nir_arr: np.ndarray, swir1_
 
         # NDVI
         if red.size and nir.size:
+            logger.info(f"🔍 DEBUG: Red array shape: {red.shape}, NIR array shape: {nir.shape}")
+            logger.info(f"🔍 DEBUG: Red min/max: {np.nanmin(red)}/{np.nanmax(red)}, NIR min/max: {np.nanmin(nir)}/{np.nanmax(nir)}")
             denom = nir + red
             valid = denom != 0
             ndvi = np.zeros_like(denom, dtype=np.float64)
             ndvi[valid] = (nir[valid] - red[valid]) / denom[valid]
+            logger.info(f"🔍 DEBUG: NDVI min/max: {np.nanmin(ndvi)}/{np.nanmax(ndvi)}, valid pixels: {np.sum(valid)}")
             out['NDVI'] = {
                 'mean': float(np.nanmean(ndvi)),
                 'median': float(np.nanmedian(ndvi)),
                 'count': int(np.sum(valid))
             }
         else:
+            logger.warning(f"🔍 DEBUG: Red or NIR array is empty - Red: {red.size if red is not None else 'None'}, NIR: {nir.size if nir is not None else 'None'}")
             out['NDVI'] = {'mean': None, 'median': None, 'count': 0}
 
         # NDMI
@@ -400,6 +404,13 @@ def compute_indices_and_npk_for_bbox(bbox: Dict[str, float],
         nir_np = _to_np(nir_da)
         swir1_np = _to_np(swir1_da)
         green_np = _to_np(green_da)
+        
+        # Debug: Check if arrays have valid data
+        logger.info(f"🔍 DEBUG: Array shapes - Red: {red_np.shape if red_np is not None else None}, NIR: {nir_np.shape if nir_np is not None else None}")
+        if red_np is not None:
+            logger.info(f"🔍 DEBUG: Red array - min: {np.nanmin(red_np)}, max: {np.nanmax(red_np)}, mean: {np.nanmean(red_np)}")
+        if nir_np is not None:
+            logger.info(f"🔍 DEBUG: NIR array - min: {np.nanmin(nir_np)}, max: {np.nanmax(nir_np)}, mean: {np.nanmean(nir_np)}")
 
         # Find the target shape (use the smallest common shape)
         shapes = []
