@@ -30,6 +30,7 @@ def load_handler(module_name, file_path):
 b2b_npk_handler = load_handler("b2b_npk_analysis", "api/b2b_npk_analysis.py")
 weather_handler = load_handler("weather_handler", "api/weather_handler.py")
 recommendations_handler = load_handler("recommendations_handler", "api/recommendations_handler.py")
+trends_handler = load_handler("trends_handler", "api/trends_handler.py")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -68,6 +69,12 @@ class RecommendationsRequest(BaseModel):
     fieldMetrics: Optional[Dict[str, Any]] = None
     weatherData: Optional[Dict[str, Any]] = None
 
+class TrendsRequest(BaseModel):
+    fieldId: str
+    coordinates: List[float]  # [lat, lon]
+    timePeriod: str = "30d"  # "7d", "30d", "90d", "1y"
+    analysisType: str = "comprehensive"  # "comprehensive", "vegetation", "weather", "yield"
+
 # Mock request class for compatibility
 class MockRequest:
     def __init__(self, method: str, json_data: Dict[str, Any]):
@@ -94,7 +101,13 @@ async def root():
                 "/api/recommendations/fertilizer",
                 "/api/recommendations/irrigation",
                 "/api/recommendations/crop-health",
-                "/api/recommendations/risk-alerts"
+                "/api/recommendations/risk-alerts",
+                "/api/trends",
+                "/api/trends/vegetation",
+                "/api/trends/weather",
+                "/api/trends/performance",
+                "/api/trends/seasonal",
+                "/api/trends/anomalies"
             ],
         "description": "Clean, minimal API for agricultural intelligence",
         "features": [
@@ -105,6 +118,10 @@ async def root():
             "Fertilizer & Irrigation Advice",
             "Crop Health Monitoring",
             "Risk Alerts & Warnings",
+            "Historical Trends Analysis",
+            "Seasonal Pattern Recognition",
+            "Anomaly Detection",
+            "Performance Tracking",
             "Real-time Processing",
             "Intelligent Caching"
         ]
@@ -415,6 +432,123 @@ async def risk_alerts(request: RecommendationsRequest):
         
     except Exception as e:
         logger.error(f"🌱 [FASTAPI] Risk Alerts Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Trends API - Complete Implementation
+@app.post("/api/trends")
+async def field_trends(request: TrendsRequest):
+    """Complete Field Trends Analysis - Historical data, patterns, and predictive insights"""
+    try:
+        logger.info(f"📈 [FASTAPI] Trends Request - Field: {request.fieldId}")
+        logger.info(f"📈 [FASTAPI] Period: {request.timePeriod}, Type: {request.analysisType}")
+        
+        response = await trends_handler.get_field_trends(
+            request.fieldId,
+            request.coordinates,
+            request.timePeriod,
+            request.analysisType
+        )
+        
+        logger.info(f"📈 [FASTAPI] Trends Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"📈 [FASTAPI] Trends Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/trends/vegetation")
+async def vegetation_trends(request: TrendsRequest):
+    """Vegetation-specific Trends Analysis - NDVI, NDMI, SAVI, NDWI over time"""
+    try:
+        logger.info(f"📈 [FASTAPI] Vegetation Trends Request - Field: {request.fieldId}")
+        
+        response = await trends_handler.get_vegetation_trends(
+            request.fieldId,
+            request.coordinates,
+            request.timePeriod
+        )
+        
+        logger.info(f"📈 [FASTAPI] Vegetation Trends Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"📈 [FASTAPI] Vegetation Trends Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/trends/weather")
+async def weather_trends(request: TrendsRequest):
+    """Weather-specific Trends Analysis - Temperature, humidity, precipitation patterns"""
+    try:
+        logger.info(f"📈 [FASTAPI] Weather Trends Request - Field: {request.fieldId}")
+        
+        response = await trends_handler.get_weather_trends(
+            request.fieldId,
+            request.coordinates,
+            request.timePeriod
+        )
+        
+        logger.info(f"📈 [FASTAPI] Weather Trends Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"📈 [FASTAPI] Weather Trends Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/trends/performance")
+async def performance_trends(request: TrendsRequest):
+    """Performance-specific Trends Analysis - Yield, health, efficiency over time"""
+    try:
+        logger.info(f"📈 [FASTAPI] Performance Trends Request - Field: {request.fieldId}")
+        
+        response = await trends_handler.get_performance_trends(
+            request.fieldId,
+            request.coordinates,
+            request.timePeriod
+        )
+        
+        logger.info(f"📈 [FASTAPI] Performance Trends Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"📈 [FASTAPI] Performance Trends Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/trends/seasonal")
+async def seasonal_analysis(request: TrendsRequest):
+    """Seasonal Analysis - Compare current season with historical patterns"""
+    try:
+        logger.info(f"📈 [FASTAPI] Seasonal Analysis Request - Field: {request.fieldId}")
+        
+        response = await trends_handler.get_seasonal_analysis(
+            request.fieldId,
+            request.coordinates,
+            request.timePeriod
+        )
+        
+        logger.info(f"📈 [FASTAPI] Seasonal Analysis Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"📈 [FASTAPI] Seasonal Analysis Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/trends/anomalies")
+async def anomaly_detection(request: TrendsRequest):
+    """Anomaly Detection - Identify unusual patterns and outliers in field data"""
+    try:
+        logger.info(f"📈 [FASTAPI] Anomaly Detection Request - Field: {request.fieldId}")
+        
+        response = await trends_handler.get_anomaly_detection(
+            request.fieldId,
+            request.coordinates,
+            request.timePeriod
+        )
+        
+        logger.info(f"📈 [FASTAPI] Anomaly Detection Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"📈 [FASTAPI] Anomaly Detection Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
