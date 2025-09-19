@@ -297,6 +297,9 @@ class B2BNPKAnalyzer:
             indices = data.get('indices', {})
             npk_data = data.get('npk', {})
             
+            logger.info(f"🔍 DEBUG: Raw indices from satellite: {indices}")
+            logger.info(f"🔍 DEBUG: Raw NPK data: {npk_data}")
+            
             # Create raw data structure for storage
             raw_data = {
                 'field_id': field_id,
