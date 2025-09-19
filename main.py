@@ -28,6 +28,7 @@ def load_handler(module_name, file_path):
 
 # Load only working handlers
 b2b_npk_handler = load_handler("b2b_npk_analysis", "api/b2b_npk_analysis.py")
+weather_handler = load_handler("weather_handler", "api/weather_handler.py")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -55,6 +56,11 @@ class NPKAnalysisRequest(BaseModel):
     coordinates: List[List[float]]  # Simplified: [[lon, lat], [lon, lat], ...]
     metric: str = "npk"
 
+class WeatherRequest(BaseModel):
+    fieldId: str
+    coordinates: List[float]  # [lat, lon]
+    days: int = 7
+
 # Mock request class for compatibility
 class MockRequest:
     def __init__(self, method: str, json_data: Dict[str, Any]):
@@ -74,13 +80,15 @@ async def root():
         "status": "running",
             "endpoints": [
                 "/api/field-metrics",
-                "/api/weather/{fieldId}"
+                "/api/weather",
+                "/api/weather/alerts",
+                "/api/weather/historical"
             ],
         "description": "Clean, minimal API for agricultural intelligence",
         "features": [
             "Complete Field Metrics Analysis",
             "NPK + SOC + Health + Indices",
-            "Weather Integration (coming soon)",
+            "Complete Weather Integration",
             "Real-time Processing",
             "Intelligent Caching"
         ]
@@ -120,22 +128,64 @@ async def field_metrics(request: NPKAnalysisRequest):
         logger.error(f"🚀 [FASTAPI] Field Metrics Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# Weather API (placeholder for future implementation)
-@app.get("/api/weather/{fieldId}")
-async def weather_data(fieldId: str, coordinates: str = ""):
-    """Weather data for field - Coming Soon"""
-    return {
-        "message": "Weather API coming soon",
-        "fieldId": fieldId,
-        "status": "development",
-        "features": [
-            "Current weather conditions",
-            "7-day forecast",
-            "Historical weather data",
-            "Weather impact on crops"
-        ]
-    }
+# Weather API - Complete Implementation
+@app.post("/api/weather")
+async def weather_data(request: WeatherRequest):
+    """Complete Weather Data - Current conditions, forecast, and agricultural insights"""
+    try:
+        logger.info(f"🌤️ [FASTAPI] Weather Request - Field: {request.fieldId}")
+        logger.info(f"🌤️ [FASTAPI] Coordinates: {request.coordinates}, Days: {request.days}")
+        
+        response = await weather_handler.get_field_weather(
+            request.fieldId, 
+            request.coordinates, 
+            request.days
+        )
+        
+        logger.info(f"🌤️ [FASTAPI] Weather Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"🌤️ [FASTAPI] Weather Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/weather/alerts")
+async def weather_alerts(request: WeatherRequest):
+    """Weather Alerts and Warnings for Field"""
+    try:
+        logger.info(f"🌤️ [FASTAPI] Weather Alerts Request - Field: {request.fieldId}")
+        
+        response = await weather_handler.get_weather_alerts(
+            request.fieldId, 
+            request.coordinates
+        )
+        
+        logger.info(f"🌤️ [FASTAPI] Weather Alerts Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"🌤️ [FASTAPI] Weather Alerts Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/weather/historical")
+async def historical_weather(request: WeatherRequest, date: str):
+    """Historical Weather Data for Field"""
+    try:
+        logger.info(f"🌤️ [FASTAPI] Historical Weather Request - Field: {request.fieldId}, Date: {date}")
+        
+        response = await weather_handler.get_historical_weather(
+            request.fieldId, 
+            request.coordinates, 
+            date
+        )
+        
+        logger.info(f"🌤️ [FASTAPI] Historical Weather Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"🌤️ [FASTAPI] Historical Weather Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     logger.info("🚀 Starting ZumAgro Python API...")
-    uvicorn.run(app, host="127.0.0.1", port=8001, reload=True)
+    uvicorn.run("main:app", host="127.0.0.1", port=8001, reload=True)
