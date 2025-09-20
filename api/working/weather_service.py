@@ -27,7 +27,7 @@ class WeatherService:
     def __init__(self):
         # Use API key from config file
         self.api_key = os.getenv("WEATHER_API_KEY", WEATHER_API_KEY)
-        self.base_url = "http://api.weatherapi.com/v1"
+        self.base_url = "https://api.weatherapi.com/v1"
         self.cache_ttl = 3600  # 1 hour cache
         self._cache = {}
         
@@ -53,14 +53,20 @@ class WeatherService:
             
             async with httpx.AsyncClient(timeout=30.0) as client:
                 response = await client.get(url, params=params)
-                response.raise_for_status()
-                data = response.json()
                 
-                # Process and format data
-                weather_data = self._process_current_weather(data)
-                
-                # Cache the result
-                self._cache[cache_key] = (weather_data, datetime.now())
+                if response.status_code == 200:
+                    data = response.json()
+                    # Process and format data
+                    weather_data = self._process_current_weather(data)
+                    # Cache the result
+                    self._cache[cache_key] = (weather_data, datetime.now())
+                    return weather_data
+                elif response.status_code == 400:
+                    # Try with nearest major city as fallback
+                    logger.warning(f"🌤️ [WEATHER] No data for {lat},{lon}, trying nearest city")
+                    return await self._get_nearest_city_weather(lat, lon)
+                else:
+                    response.raise_for_status()
                 
                 logger.info(f"🌤️ [WEATHER] Current weather fetched for {lat}, {lon}")
                 return weather_data
@@ -71,6 +77,66 @@ class WeatherService:
                 "success": False,
                 "error": f"Weather data unavailable for coordinates: {lat}, {lon}",
                 "message": str(e)
+            }
+    
+    async def _get_nearest_city_weather(self, lat: float, lon: float) -> Dict[str, Any]:
+        """Get weather data for nearest major city as fallback"""
+        try:
+            # Major Indian cities with good WeatherAPI coverage
+            indian_cities = [
+                ("Delhi", "28.6139,77.2090"),
+                ("Mumbai", "19.0760,72.8777"),
+                ("Bangalore", "12.9716,77.5946"),
+                ("Chennai", "13.0827,80.2707"),
+                ("Kolkata", "22.5726,88.3639"),
+                ("Hyderabad", "17.3850,78.4867"),
+                ("Pune", "18.5204,73.8567"),
+                ("Ahmedabad", "23.0225,72.5714"),
+                ("Jaipur", "26.9124,75.7873"),
+                ("Lucknow", "26.8467,80.9462")
+            ]
+            
+            # Find nearest city (simple distance calculation)
+            min_distance = float('inf')
+            nearest_city = None
+            
+            for city_name, city_coords in indian_cities:
+                city_lat, city_lon = map(float, city_coords.split(','))
+                distance = ((lat - city_lat) ** 2 + (lon - city_lon) ** 2) ** 0.5
+                if distance < min_distance:
+                    min_distance = distance
+                    nearest_city = city_name
+            
+            if nearest_city:
+                logger.info(f"🌤️ [WEATHER] Using nearest city: {nearest_city}")
+                url = f"{self.base_url}/current.json"
+                params = {
+                    "key": self.api_key,
+                    "q": nearest_city,
+                    "aqi": "yes"
+                }
+                
+                async with httpx.AsyncClient(timeout=30.0) as client:
+                    response = await client.get(url, params=params)
+                    if response.status_code == 200:
+                        data = response.json()
+                        weather_data = self._process_current_weather(data)
+                        weather_data["location_note"] = f"Data from nearest city: {nearest_city}"
+                        return weather_data
+            
+            # If all cities fail, return error
+            return {
+                "success": False,
+                "error": "Weather data unavailable",
+                "message": f"Weather data unavailable for coordinates: {lat}, {lon}"
+            }
+            
+        except Exception as e:
+            logger.error(f"🌤️ [WEATHER] Error in nearest city fallback: {str(e)}")
+            return {
+                "success": False,
+                "error": "Weather service error",
+                "message": f"Weather service error: {str(e)}"
             }
     
     async def get_forecast(self, lat: float, lon: float, days: int = 7) -> Dict[str, Any]:
