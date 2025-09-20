@@ -26,13 +26,14 @@ def load_handler(module_name, file_path):
     spec.loader.exec_module(module)
     return module.handler
 
-# Load only working handlers
-b2b_npk_handler = load_handler("b2b_npk_analysis", "api/b2b_npk_analysis.py")
+# Load optimized handlers
+optimized_field_metrics_handler = load_handler("optimized_field_metrics_handler", "api/optimized_field_metrics_handler.py")
 weather_handler = load_handler("weather_handler", "api/weather_handler.py")
 recommendations_handler = load_handler("recommendations_handler", "api/recommendations_handler.py")
-trends_handler = load_handler("trends_handler", "api/trends_handler.py")
+optimized_trends_handler = load_handler("optimized_trends_handler", "api/optimized_trends_handler.py")
 crop_health_handler = load_handler("crop_health_handler", "api/crop_health_handler.py")
-terrain_handler = load_handler("terrain_handler", "api/terrain_handler.py")
+optimized_terrain_handler = load_handler("optimized_terrain_handler", "api/optimized_terrain_handler.py")
+yield_prediction_handler = load_handler("yield_prediction_handler", "api/yield_prediction_handler.py")
 
 # Import simple validator
 from api.simple_validator import simple_validator
@@ -89,6 +90,12 @@ class TerrainRequest(BaseModel):
     fieldId: str
     coordinates: Union[List[float], str]  # [lat, lon] or "lat,lon"
 
+class YieldPredictionRequest(BaseModel):
+    fieldId: str
+    coordinates: Union[List[float], str]  # [lat, lon] or "lat,lon"
+    cropType: Optional[str] = "general"  # "rice", "wheat", "maize", "sugarcane", "cotton", "soybean", "general"
+    predictionPeriod: Optional[str] = "seasonal"  # "weekly", "monthly", "seasonal", "annual"
+
 # Mock request class for compatibility
 class MockRequest:
     def __init__(self, method: str, json_data: Dict[str, Any]):
@@ -128,7 +135,11 @@ async def root():
                 "/api/crop-health/quality",
                 "/api/terrain/elevation",
                 "/api/terrain/land-cover",
-                "/api/terrain/comprehensive"
+                "/api/terrain/comprehensive",
+                "/api/yield/prediction",
+                "/api/yield/confidence",
+                "/api/yield/factors",
+                "/api/yield/recommendations"
             ],
         "description": "Clean, minimal API for agricultural intelligence",
         "features": [
@@ -153,15 +164,20 @@ async def root():
             "Land Cover Classification",
             "Agricultural Suitability Assessment",
             "Drainage Analysis",
-            "Slope Analysis"
+            "Slope Analysis",
+            "Yield Prediction Analysis",
+            "Crop Yield Forecasting",
+            "Yield Confidence Scoring",
+            "Yield Factor Analysis",
+            "Yield Optimization Recommendations"
         ]
     }
 
 @app.post("/api/field-metrics")
 async def field_metrics(request: NPKAnalysisRequest):
-    """Complete Field Metrics Analysis - NPK + SOC + Health + Indices with satellite data"""
+    """Optimized Field Metrics Analysis - NPK + SOC + Health + Indices for B2B"""
     try:
-        logger.info(f"🚀 [FASTAPI] Field Metrics Request - Field: {request.fieldId}")
+        logger.info(f"🚀 [FASTAPI] Optimized Field Metrics Request - Field: {request.fieldId}")
         logger.info(f"🚀 [FASTAPI] Coordinates: {len(request.coordinates)} coordinate arrays")
         
         # Simple validation and cleaning
@@ -183,23 +199,17 @@ async def field_metrics(request: NPKAnalysisRequest):
             logger.error(f"🚀 [FASTAPI] Validation Error - Field: {request.fieldId}, Error: {str(e)}")
             raise HTTPException(status_code=400, detail=f"Input validation failed: {str(e)}")
         
-        mock_request = MockRequest("POST", {
-            "fieldId": request.fieldId,
-            "coordinates": coordinates,
-            "metric": request.metric
-        })
+        # Use optimized handler for better performance
+        response = await optimized_field_metrics_handler.get_field_metrics(
+            request.fieldId, 
+            coordinates
+        )
         
-        response = b2b_npk_handler(mock_request)
-        
-        if response["statusCode"] == 200:
-            logger.info(f"🚀 [FASTAPI] Field Metrics Success - Field: {request.fieldId}")
-            return response["body"]
-        else:
-            logger.error(f"🚀 [FASTAPI] Field Metrics Failed - Field: {request.fieldId}")
-            raise HTTPException(status_code=response["statusCode"], detail=response["body"])
+        logger.info(f"🚀 [FASTAPI] Optimized Field Metrics Success - Field: {request.fieldId}")
+        return response
             
     except Exception as e:
-        logger.error(f"🚀 [FASTAPI] Field Metrics Error: {str(e)}")
+        logger.error(f"🚀 [FASTAPI] Optimized Field Metrics Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # Weather API - Complete Implementation
@@ -253,15 +263,19 @@ async def weather_alerts(request: WeatherRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/weather/historical")
-async def historical_weather(request: WeatherRequest, date: str):
+async def historical_weather(request: WeatherRequest):
     """Historical Weather Data for Field"""
     try:
-        logger.info(f"🌤️ [FASTAPI] Historical Weather Request - Field: {request.fieldId}, Date: {date}")
+        logger.info(f"🌤️ [FASTAPI] Historical Weather Request - Field: {request.fieldId}")
+        
+        # Use yesterday's date as default
+        from datetime import datetime, timedelta
+        yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
         
         response = await weather_handler.get_historical_weather(
             request.fieldId, 
             request.coordinates, 
-            date
+            yesterday
         )
         
         logger.info(f"🌤️ [FASTAPI] Historical Weather Success - Field: {request.fieldId}")
@@ -269,6 +283,25 @@ async def historical_weather(request: WeatherRequest, date: str):
         
     except Exception as e:
         logger.error(f"🌤️ [FASTAPI] Historical Weather Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/weather/forecast")
+async def weather_forecast(request: WeatherRequest):
+    """Weather Forecast for Field"""
+    try:
+        logger.info(f"🌤️ [FASTAPI] Weather Forecast Request - Field: {request.fieldId}")
+        
+        response = await weather_handler.get_forecast(
+            request.fieldId, 
+            request.coordinates, 
+            request.days or 14
+        )
+        
+        logger.info(f"🌤️ [FASTAPI] Weather Forecast Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"🌤️ [FASTAPI] Weather Forecast Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # Recommendations API - Complete Implementation
@@ -489,23 +522,23 @@ async def risk_alerts(request: RecommendationsRequest):
 # Trends API - Complete Implementation
 @app.post("/api/trends")
 async def field_trends(request: TrendsRequest):
-    """Complete Field Trends Analysis - Historical data, patterns, and predictive insights"""
+    """Optimized Field Trends Analysis - Fast historical data analysis for B2B"""
     try:
-        logger.info(f"📈 [FASTAPI] Trends Request - Field: {request.fieldId}")
+        logger.info(f"📈 [FASTAPI] Optimized Trends Request - Field: {request.fieldId}")
         logger.info(f"📈 [FASTAPI] Period: {request.timePeriod}, Type: {request.analysisType}")
         
-        response = await trends_handler.get_field_trends(
+        response = await optimized_trends_handler.get_field_trends(
             request.fieldId,
             request.coordinates,
             request.timePeriod,
             request.analysisType
         )
         
-        logger.info(f"📈 [FASTAPI] Trends Success - Field: {request.fieldId}")
+        logger.info(f"📈 [FASTAPI] Optimized Trends Success - Field: {request.fieldId}")
         return response
             
     except Exception as e:
-        logger.error(f"📈 [FASTAPI] Trends Error: {str(e)}")
+        logger.error(f"📈 [FASTAPI] Optimized Trends Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/trends/vegetation")
@@ -685,8 +718,7 @@ async def elevation_analysis(request: TerrainRequest):
     try:
         logger.info(f"🏔️ [FASTAPI] Elevation Request - Field: {request.fieldId}")
         
-        response = await terrain_handler.get_elevation_analysis(
-            request.fieldId,
+        response = await optimized_terrain_handler.get_elevation_analysis(
             request.coordinates
         )
         
@@ -703,8 +735,7 @@ async def land_cover_analysis(request: TerrainRequest):
     try:
         logger.info(f"🌍 [FASTAPI] Land Cover Request - Field: {request.fieldId}")
         
-        response = await terrain_handler.get_land_cover_analysis(
-            request.fieldId,
+        response = await optimized_terrain_handler.get_land_cover_analysis(
             request.coordinates
         )
         
@@ -721,8 +752,7 @@ async def comprehensive_terrain_analysis(request: TerrainRequest):
     try:
         logger.info(f"🏔️🌍 [FASTAPI] Comprehensive Terrain Request - Field: {request.fieldId}")
         
-        response = await terrain_handler.get_comprehensive_terrain_analysis(
-            request.fieldId,
+        response = await optimized_terrain_handler.get_comprehensive_analysis(
             request.coordinates
         )
         
@@ -731,6 +761,148 @@ async def comprehensive_terrain_analysis(request: TerrainRequest):
             
     except Exception as e:
         logger.error(f"🏔️🌍 [FASTAPI] Comprehensive Terrain Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Yield Prediction API Endpoints
+@app.post("/api/yield/prediction")
+async def yield_prediction(request: YieldPredictionRequest):
+    """Yield Prediction - Comprehensive crop yield prediction using satellite and weather data"""
+    try:
+        logger.info(f"🌾 [FASTAPI] Yield Prediction Request - Field: {request.fieldId}")
+        logger.info(f"🌾 [FASTAPI] Coordinates: {request.coordinates}, Crop: {request.cropType}, Period: {request.predictionPeriod}")
+        
+        # Simple validation and cleaning
+        try:
+            cleaned_data = simple_validator.validate_request(
+                request.dict(), 
+                required_fields=['fieldId', 'coordinates']
+            )
+            
+            response = await yield_prediction_handler.get_yield_prediction(
+                cleaned_data['fieldId'], 
+                cleaned_data['coordinates'], 
+                cleaned_data.get('cropType', 'general'),
+                cleaned_data.get('predictionPeriod', 'seasonal')
+            )
+            
+        except ValueError as e:
+            logger.error(f"🌾 [FASTAPI] Validation Error - Field: {request.fieldId}, Error: {str(e)}")
+            raise HTTPException(status_code=400, detail=f"Input validation failed: {str(e)}")
+        
+        logger.info(f"🌾 [FASTAPI] Yield Prediction Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"🌾 [FASTAPI] Yield Prediction Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/yield/confidence")
+async def yield_confidence(request: YieldPredictionRequest):
+    """Yield Confidence - Get confidence score for yield prediction"""
+    try:
+        logger.info(f"🌾 [FASTAPI] Yield Confidence Request - Field: {request.fieldId}")
+        
+        # Simple validation and cleaning
+        try:
+            cleaned_data = simple_validator.validate_request(
+                request.dict(), 
+                required_fields=['fieldId', 'coordinates']
+            )
+            
+            response = await yield_prediction_handler.get_yield_confidence(
+                cleaned_data['fieldId'], 
+                cleaned_data['coordinates'], 
+                cleaned_data.get('cropType', 'general')
+            )
+            
+        except ValueError as e:
+            logger.error(f"🌾 [FASTAPI] Validation Error - Field: {request.fieldId}, Error: {str(e)}")
+            raise HTTPException(status_code=400, detail=f"Input validation failed: {str(e)}")
+        
+        logger.info(f"🌾 [FASTAPI] Yield Confidence Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"🌾 [FASTAPI] Yield Confidence Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/yield/factors")
+async def yield_factors(request: YieldPredictionRequest):
+    """Yield Factors - Identify key factors affecting yield"""
+    try:
+        logger.info(f"🌾 [FASTAPI] Yield Factors Request - Field: {request.fieldId}")
+        
+        # Simple validation and cleaning
+        try:
+            cleaned_data = simple_validator.validate_request(
+                request.dict(), 
+                required_fields=['fieldId', 'coordinates']
+            )
+            
+            response = await yield_prediction_handler.get_yield_factors(
+                cleaned_data['fieldId'], 
+                cleaned_data['coordinates'], 
+                cleaned_data.get('cropType', 'general')
+            )
+            
+        except ValueError as e:
+            logger.error(f"🌾 [FASTAPI] Validation Error - Field: {request.fieldId}, Error: {str(e)}")
+            raise HTTPException(status_code=400, detail=f"Input validation failed: {str(e)}")
+        
+        logger.info(f"🌾 [FASTAPI] Yield Factors Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"🌾 [FASTAPI] Yield Factors Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/yield/recommendations")
+async def yield_recommendations(request: YieldPredictionRequest):
+    """Yield Recommendations - Get yield optimization recommendations"""
+    try:
+        logger.info(f"🌾 [FASTAPI] Yield Recommendations Request - Field: {request.fieldId}")
+        
+        # Simple validation and cleaning
+        try:
+            cleaned_data = simple_validator.validate_request(
+                request.dict(), 
+                required_fields=['fieldId', 'coordinates']
+            )
+            
+            response = await yield_prediction_handler.get_yield_recommendations(
+                cleaned_data['fieldId'], 
+                cleaned_data['coordinates'], 
+                cleaned_data.get('cropType', 'general')
+            )
+            
+        except ValueError as e:
+            logger.error(f"🌾 [FASTAPI] Validation Error - Field: {request.fieldId}, Error: {str(e)}")
+            raise HTTPException(status_code=400, detail=f"Input validation failed: {str(e)}")
+        
+        logger.info(f"🌾 [FASTAPI] Yield Recommendations Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"🌾 [FASTAPI] Yield Recommendations Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/field-metrics/stats")
+async def get_field_metrics_stats():
+    """Get performance statistics for field metrics API"""
+    try:
+        from api.planetary_computer_retry import retry_manager
+        
+        stats = retry_manager.get_performance_stats()
+        
+        logger.info("📊 [FASTAPI] Performance Stats Retrieved")
+        return {
+            "success": True,
+            "stats": stats,
+            "timestamp": datetime.now().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"📊 [FASTAPI] Performance Stats Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":

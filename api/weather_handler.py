@@ -110,6 +110,35 @@ class WeatherHandler:
             logger.error(f"🌤️ [WEATHER-HANDLER] Error processing historical request: {str(e)}")
             return self._get_error_response(field_id, str(e))
     
+    async def get_forecast(self, field_id: str, coordinates: List[float], days: int = 14) -> Dict[str, Any]:
+        """Get weather forecast for a field"""
+        try:
+            logger.info(f"🌤️ [WEATHER-HANDLER] Weather forecast request for field: {field_id}, days: {days}")
+            
+            if not coordinates or len(coordinates) < 2:
+                raise ValueError("Invalid coordinates provided")
+            
+            lat, lon = coordinates[0], coordinates[1]
+            forecast = await self.service.get_forecast(lat, lon, days)
+            
+            forecast_data = {
+                "fieldId": field_id,
+                "timestamp": datetime.now().isoformat(),
+                "coordinates": {"lat": lat, "lon": lon},
+                "forecast_days": days,
+                "forecast": forecast.get("forecast", []),
+                "alerts": forecast.get("alerts", []),
+                "location": forecast.get("location", {}),
+                "agricultural_forecast": self._analyze_forecast_weather(forecast)
+            }
+            
+            logger.info(f"🌤️ [WEATHER-HANDLER] Weather forecast processed for field: {field_id}")
+            return forecast_data
+            
+        except Exception as e:
+            logger.error(f"🌤️ [WEATHER-HANDLER] Error processing forecast request: {str(e)}")
+            return self._get_error_response(field_id, str(e))
+    
     def _generate_agricultural_summary(self, current: Dict[str, Any], forecast: Dict[str, Any]) -> Dict[str, Any]:
         """Generate agricultural summary from weather data"""
         current_indicators = current.get("agricultural_indicators", {})
@@ -293,6 +322,35 @@ class WeatherHandler:
                 "disease_risk": indicators.get("disease_risk", "unknown")
             },
             "summary": "Historical weather analysis completed"
+        }
+    
+    def _analyze_forecast_weather(self, forecast: Dict[str, Any]) -> Dict[str, Any]:
+        """Analyze forecast weather data"""
+        forecast_days = forecast.get("forecast", [])
+        
+        if not forecast_days:
+            return {"message": "No forecast data available"}
+        
+        # Analyze first 7 days
+        week_forecast = forecast_days[:7]
+        
+        # Calculate averages
+        avg_temp = sum(day.get("day", {}).get("avgtemp_c", 0) for day in week_forecast) / len(week_forecast)
+        total_precip = sum(day.get("day", {}).get("totalprecip_mm", 0) for day in week_forecast)
+        avg_humidity = sum(day.get("day", {}).get("avghumidity", 0) for day in week_forecast) / len(week_forecast)
+        
+        return {
+            "week_summary": {
+                "average_temperature": round(avg_temp, 1),
+                "total_precipitation": round(total_precip, 1),
+                "average_humidity": round(avg_humidity, 1)
+            },
+            "agricultural_outlook": {
+                "irrigation_need": "high" if total_precip < 10 else "low",
+                "crop_stress": "high" if avg_temp > 35 else "medium" if avg_temp > 25 else "low",
+                "disease_risk": "high" if avg_humidity > 80 else "medium" if avg_humidity > 60 else "low"
+            },
+            "summary": "Weather forecast analysis completed"
         }
     
     def _get_error_response(self, field_id: str, error_message: str) -> Dict[str, Any]:
