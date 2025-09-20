@@ -31,6 +31,7 @@ b2b_npk_handler = load_handler("b2b_npk_analysis", "api/b2b_npk_analysis.py")
 weather_handler = load_handler("weather_handler", "api/weather_handler.py")
 recommendations_handler = load_handler("recommendations_handler", "api/recommendations_handler.py")
 trends_handler = load_handler("trends_handler", "api/trends_handler.py")
+crop_health_handler = load_handler("crop_health_handler", "api/crop_health_handler.py")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -75,6 +76,11 @@ class TrendsRequest(BaseModel):
     timePeriod: str = "30d"  # "7d", "30d", "90d", "1y"
     analysisType: str = "comprehensive"  # "comprehensive", "vegetation", "weather", "yield"
 
+class CropHealthRequest(BaseModel):
+    fieldId: str
+    coordinates: List[float]  # [lat, lon]
+    cropType: str = "general"  # "wheat", "rice", "corn", "soybean", "general"
+
 # Mock request class for compatibility
 class MockRequest:
     def __init__(self, method: str, json_data: Dict[str, Any]):
@@ -107,7 +113,11 @@ async def root():
                 "/api/trends/weather",
                 "/api/trends/performance",
                 "/api/trends/seasonal",
-                "/api/trends/anomalies"
+                "/api/trends/anomalies",
+                "/api/crop-health",
+                "/api/crop-health/stress",
+                "/api/crop-health/growth-stage",
+                "/api/crop-health/quality"
             ],
         "description": "Clean, minimal API for agricultural intelligence",
         "features": [
@@ -116,7 +126,11 @@ async def root():
             "Complete Weather Integration",
             "Actionable Recommendations",
             "Fertilizer & Irrigation Advice",
-            "Crop Health Monitoring",
+            "Advanced Crop Health Monitoring",
+            "Real-time Stress Detection",
+            "Growth Stage Analysis",
+            "Crop Quality Assessment",
+            "Disease & Pest Risk Analysis",
             "Risk Alerts & Warnings",
             "Historical Trends Analysis",
             "Seasonal Pattern Recognition",
@@ -549,6 +563,81 @@ async def anomaly_detection(request: TrendsRequest):
         
     except Exception as e:
         logger.error(f"📈 [FASTAPI] Anomaly Detection Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Crop Health Monitoring API Endpoints
+@app.post("/api/crop-health")
+async def crop_health_analysis(request: CropHealthRequest):
+    """Crop Health Analysis - Comprehensive crop health monitoring using satellite data"""
+    try:
+        logger.info(f"🌱 [FASTAPI] Crop Health Request - Field: {request.fieldId}")
+        logger.info(f"🌱 [FASTAPI] Crop Type: {request.cropType}")
+        
+        response = await crop_health_handler.get_crop_health(
+            request.fieldId,
+            request.coordinates,
+            request.cropType
+        )
+        
+        logger.info(f"🌱 [FASTAPI] Crop Health Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"🌱 [FASTAPI] Crop Health Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/crop-health/stress")
+async def crop_stress_analysis(request: CropHealthRequest):
+    """Crop Stress Analysis - Detailed stress monitoring and risk assessment"""
+    try:
+        logger.info(f"🌱 [FASTAPI] Crop Stress Request - Field: {request.fieldId}")
+        
+        response = await crop_health_handler.get_crop_stress(
+            request.fieldId,
+            request.coordinates
+        )
+        
+        logger.info(f"🌱 [FASTAPI] Crop Stress Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"🌱 [FASTAPI] Crop Stress Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/crop-health/growth-stage")
+async def crop_growth_stage(request: CropHealthRequest):
+    """Crop Growth Stage Analysis - Determine current growth stage and development status"""
+    try:
+        logger.info(f"🌱 [FASTAPI] Growth Stage Request - Field: {request.fieldId}")
+        
+        response = await crop_health_handler.get_growth_stage(
+            request.fieldId,
+            request.coordinates
+        )
+        
+        logger.info(f"🌱 [FASTAPI] Growth Stage Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"🌱 [FASTAPI] Growth Stage Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/crop-health/quality")
+async def crop_quality_analysis(request: CropHealthRequest):
+    """Crop Quality Analysis - Assess crop quality and harvest readiness"""
+    try:
+        logger.info(f"🌱 [FASTAPI] Crop Quality Request - Field: {request.fieldId}")
+        
+        response = await crop_health_handler.get_crop_quality(
+            request.fieldId,
+            request.coordinates
+        )
+        
+        logger.info(f"🌱 [FASTAPI] Crop Quality Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"🌱 [FASTAPI] Crop Quality Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":

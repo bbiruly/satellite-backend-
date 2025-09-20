@@ -380,29 +380,8 @@ def compute_indices_and_npk_for_bbox(bbox: Dict[str, float],
         cloud_cover = item.properties.get("eo:cloud_cover", 100)
         logger.info(f"🔍 DEBUG: Cloud cover: {cloud_cover}%")
         
-        # Always use fallback data for now due to URL expiration issues
-        logger.warning(f"⚠️ Using fallback data due to satellite data access issues")
-        return {
-            "success": True,
-            "satelliteItem": item.id,
-            "imageDate": item.properties.get("datetime"),
-            "cloudCover": cloud_cover,
-            "data": {
-                "indices": {
-                    "NDVI": {"mean": 0.35, "median": 0.35, "count": 100},  # Realistic fallback values
-                    "NDMI": {"mean": 0.25, "median": 0.25, "count": 100},
-                    "SAVI": {"mean": 0.30, "median": 0.30, "count": 100},
-                    "NDWI": {"mean": 0.15, "median": 0.15, "count": 100}
-                },
-                "npk": {
-                    "Nitrogen": "medium",
-                    "Phosphorus": "medium", 
-                    "Potassium": "medium",
-                    "SOC": "medium"
-                }
-            },
-            "warning": "Using estimated values due to satellite data access issues"
-        }
+        # Process real satellite data - removed fallback return
+        logger.info(f"🛰️ Processing real satellite data from {item.id}")
         
         # Collect assets we need; fallback if some bands missing
         assets = signed_item.assets
@@ -529,8 +508,12 @@ def compute_indices_and_npk_for_bbox(bbox: Dict[str, float],
             "satelliteItem": item.id,
             "imageDate": item.properties.get("datetime"),
             "cloudCover": item.properties.get("eo:cloud_cover"),
-            "indices": indices,
-            "npk": npk,
+            "data": {
+                "indices": indices,
+                "npk": npk
+            },
+            "indices": indices,  # Also include at root level for compatibility
+            "npk": npk,  # Also include at root level for compatibility
             "metadata": {
                 "provider": "Microsoft Planetary Computer",
                 "satellite": "Sentinel-2 L2A",
