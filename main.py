@@ -397,7 +397,7 @@ async def multi_satellite_analysis(request: Request):
             "success": False,
             "error": f"Multi-satellite analysis error: {str(e)}",
             "fieldId": request.fieldId,
-            "coordinates": coords
+            "coordinates": coords if coords is not None else "unknown"
         }
 
 @app.get("/api/multi-satellite-stats")
