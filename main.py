@@ -6,7 +6,7 @@ Agricultural Intelligence Platform
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Union
 import uvicorn
 import logging
 import sys
@@ -34,6 +34,9 @@ trends_handler = load_handler("trends_handler", "api/trends_handler.py")
 crop_health_handler = load_handler("crop_health_handler", "api/crop_health_handler.py")
 terrain_handler = load_handler("terrain_handler", "api/terrain_handler.py")
 
+# Import input validator
+from api.input_validator import input_validator
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -57,34 +60,34 @@ app.add_middleware(
 # Request models
 class NPKAnalysisRequest(BaseModel):
     fieldId: str
-    coordinates: List[List[float]]  # Simplified: [[lon, lat], [lon, lat], ...]
+    coordinates: Union[List[float], List[List[float]], str]  # Flexible: [lat, lon] or [[lat, lon], ...] or "lat,lon"
     metric: str = "npk"
 
 class WeatherRequest(BaseModel):
     fieldId: str
-    coordinates: List[float]  # [lat, lon]
-    days: int = 7
+    coordinates: Union[List[float], str]  # [lat, lon] or "lat,lon"
+    days: Optional[int] = 7
 
 class RecommendationsRequest(BaseModel):
     fieldId: str
-    coordinates: List[float]  # [lat, lon]
+    coordinates: Union[List[float], str]  # [lat, lon] or "lat,lon"
     fieldMetrics: Optional[Dict[str, Any]] = None
     weatherData: Optional[Dict[str, Any]] = None
 
 class TrendsRequest(BaseModel):
     fieldId: str
-    coordinates: List[float]  # [lat, lon]
-    timePeriod: str = "30d"  # "7d", "30d", "90d", "1y"
-    analysisType: str = "comprehensive"  # "comprehensive", "vegetation", "weather", "yield"
+    coordinates: Union[List[float], str]  # [lat, lon] or "lat,lon"
+    timePeriod: Optional[str] = "30d"  # "7d", "30d", "90d", "1y"
+    analysisType: Optional[str] = "comprehensive"  # "comprehensive", "vegetation", "weather", "yield"
 
 class CropHealthRequest(BaseModel):
     fieldId: str
-    coordinates: List[float]  # [lat, lon]
-    cropType: str = "general"  # "wheat", "rice", "corn", "soybean", "general"
+    coordinates: Union[List[float], str]  # [lat, lon] or "lat,lon"
+    cropType: Optional[str] = "general"  # "wheat", "rice", "corn", "soybean", "general"
 
 class TerrainRequest(BaseModel):
     fieldId: str
-    coordinates: List[float]  # [lat, lon]
+    coordinates: Union[List[float], str]  # [lat, lon] or "lat,lon"
 
 # Mock request class for compatibility
 class MockRequest:
@@ -161,11 +164,25 @@ async def field_metrics(request: NPKAnalysisRequest):
         logger.info(f"🚀 [FASTAPI] Field Metrics Request - Field: {request.fieldId}")
         logger.info(f"🚀 [FASTAPI] Coordinates: {len(request.coordinates)} coordinate arrays")
         
-        # Convert coordinates to the format expected by B2B handler
-        coordinates = request.coordinates
-        if coordinates and len(coordinates) > 0:
+        # Validate and clean input data
+        validation_result = input_validator.validate_complete_request(
+            request.dict(), 
+            required_fields=['fieldId', 'coordinates', 'metric']
+        )
+        
+        if not validation_result['success']:
+            logger.error(f"🚀 [FASTAPI] Validation Error - Field: {request.fieldId}, Errors: {validation_result['errors']}")
+            raise HTTPException(status_code=400, detail=f"Input validation failed: {', '.join(validation_result['errors'])}")
+        
+        # Log warnings if any
+        if validation_result['warnings']:
+            logger.warning(f"🚀 [FASTAPI] Validation Warnings - Field: {request.fieldId}, Warnings: {validation_result['warnings']}")
+        
+        # Use cleaned coordinates
+        cleaned_coordinates = validation_result['cleaned_data']['coordinates']
+        if cleaned_coordinates and len(cleaned_coordinates) > 0:
             # Take the first coordinate pair [lon, lat]
-            coordinates = coordinates[0] if coordinates[0] else [0, 0]
+            coordinates = cleaned_coordinates[0] if cleaned_coordinates[0] else [0, 0]
         else:
             coordinates = [0, 0]
         
@@ -196,10 +213,27 @@ async def weather_data(request: WeatherRequest):
         logger.info(f"🌤️ [FASTAPI] Weather Request - Field: {request.fieldId}")
         logger.info(f"🌤️ [FASTAPI] Coordinates: {request.coordinates}, Days: {request.days}")
         
+        # Validate and clean input data
+        validation_result = input_validator.validate_complete_request(
+            request.dict(), 
+            required_fields=['fieldId', 'coordinates']
+        )
+        
+        if not validation_result['success']:
+            logger.error(f"🌤️ [FASTAPI] Validation Error - Field: {request.fieldId}, Errors: {validation_result['errors']}")
+            raise HTTPException(status_code=400, detail=f"Input validation failed: {', '.join(validation_result['errors'])}")
+        
+        # Log warnings if any
+        if validation_result['warnings']:
+            logger.warning(f"🌤️ [FASTAPI] Validation Warnings - Field: {request.fieldId}, Warnings: {validation_result['warnings']}")
+        
+        # Use cleaned data
+        cleaned_data = validation_result['cleaned_data']
+        
         response = await weather_handler.get_field_weather(
-            request.fieldId, 
-            request.coordinates, 
-            request.days
+            cleaned_data['fieldId'], 
+            cleaned_data['coordinates'], 
+            cleaned_data.get('days', 7)
         )
         
         logger.info(f"🌤️ [FASTAPI] Weather Success - Field: {request.fieldId}")
