@@ -135,15 +135,18 @@ class Sentinel2Processor(BaseSatelliteProcessor):
         
         # NDVI = (NIR - Red) / (NIR + Red)
         if red_arr is not None and nir_arr is not None:
-            indices['ndvi'] = float(np.nanmean((nir_arr - red_arr) / (nir_arr + red_arr + 1e-8)))
+            ndvi_val = np.nanmean((nir_arr - red_arr) / (nir_arr + red_arr + 1e-8))
+            indices['ndvi'] = float(ndvi_val) if not np.isnan(ndvi_val) else 0.0
         
         # NDMI = (NIR - SWIR1) / (NIR + SWIR1)
         if nir_arr is not None and swir1_arr is not None:
-            indices['ndmi'] = float(np.nanmean((nir_arr - swir1_arr) / (nir_arr + swir1_arr + 1e-8)))
+            ndmi_val = np.nanmean((nir_arr - swir1_arr) / (nir_arr + swir1_arr + 1e-8))
+            indices['ndmi'] = float(ndmi_val) if not np.isnan(ndmi_val) else 0.0
         
         # NDWI = (Green - NIR) / (Green + NIR)
         if green_arr is not None and nir_arr is not None:
-            indices['ndwi'] = float(np.nanmean((green_arr - nir_arr) / (green_arr + nir_arr + 1e-8)))
+            ndwi_val = np.nanmean((green_arr - nir_arr) / (green_arr + nir_arr + 1e-8))
+            indices['ndwi'] = float(ndwi_val) if not np.isnan(ndwi_val) else 0.0
         
         return indices
     
@@ -229,15 +232,18 @@ class Landsat8Processor(BaseSatelliteProcessor):
         
         # NDVI = (NIR - Red) / (NIR + Red)
         if red_arr is not None and nir_arr is not None:
-            indices['ndvi'] = float(np.nanmean((nir_arr - red_arr) / (nir_arr + red_arr + 1e-8)))
+            ndvi_val = np.nanmean((nir_arr - red_arr) / (nir_arr + red_arr + 1e-8))
+            indices['ndvi'] = float(ndvi_val) if not np.isnan(ndvi_val) else 0.0
         
         # NDMI = (NIR - SWIR1) / (NIR + SWIR1)
         if nir_arr is not None and swir1_arr is not None:
-            indices['ndmi'] = float(np.nanmean((nir_arr - swir1_arr) / (nir_arr + swir1_arr + 1e-8)))
+            ndmi_val = np.nanmean((nir_arr - swir1_arr) / (nir_arr + swir1_arr + 1e-8))
+            indices['ndmi'] = float(ndmi_val) if not np.isnan(ndmi_val) else 0.0
         
         # NDWI = (Green - NIR) / (Green + NIR)
         if green_arr is not None and nir_arr is not None:
-            indices['ndwi'] = float(np.nanmean((green_arr - nir_arr) / (green_arr + nir_arr + 1e-8)))
+            ndwi_val = np.nanmean((green_arr - nir_arr) / (green_arr + nir_arr + 1e-8))
+            indices['ndwi'] = float(ndwi_val) if not np.isnan(ndwi_val) else 0.0
         
         return indices
     
@@ -323,15 +329,18 @@ class ModisProcessor(BaseSatelliteProcessor):
         
         # NDVI = (NIR - Red) / (NIR + Red)
         if red_arr is not None and nir_arr is not None:
-            indices['ndvi'] = float(np.nanmean((nir_arr - red_arr) / (nir_arr + red_arr + 1e-8)))
+            ndvi_val = np.nanmean((nir_arr - red_arr) / (nir_arr + red_arr + 1e-8))
+            indices['ndvi'] = float(ndvi_val) if not np.isnan(ndvi_val) else 0.0
         
         # NDMI = (NIR - SWIR1) / (NIR + SWIR1)
         if nir_arr is not None and swir1_arr is not None:
-            indices['ndmi'] = float(np.nanmean((nir_arr - swir1_arr) / (nir_arr + swir1_arr + 1e-8)))
+            ndmi_val = np.nanmean((nir_arr - swir1_arr) / (nir_arr + swir1_arr + 1e-8))
+            indices['ndmi'] = float(ndmi_val) if not np.isnan(ndmi_val) else 0.0
         
         # NDWI = (Green - NIR) / (Green + NIR)
         if green_arr is not None and nir_arr is not None:
-            indices['ndwi'] = float(np.nanmean((green_arr - nir_arr) / (green_arr + nir_arr + 1e-8)))
+            ndwi_val = np.nanmean((green_arr - nir_arr) / (green_arr + nir_arr + 1e-8))
+            indices['ndwi'] = float(ndwi_val) if not np.isnan(ndwi_val) else 0.0
         
         return indices
     
