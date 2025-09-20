@@ -34,8 +34,8 @@ trends_handler = load_handler("trends_handler", "api/trends_handler.py")
 crop_health_handler = load_handler("crop_health_handler", "api/crop_health_handler.py")
 terrain_handler = load_handler("terrain_handler", "api/terrain_handler.py")
 
-# Import input validator
-from api.input_validator import input_validator
+# Import simple validator
+from api.simple_validator import simple_validator
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -164,27 +164,24 @@ async def field_metrics(request: NPKAnalysisRequest):
         logger.info(f"🚀 [FASTAPI] Field Metrics Request - Field: {request.fieldId}")
         logger.info(f"🚀 [FASTAPI] Coordinates: {len(request.coordinates)} coordinate arrays")
         
-        # Validate and clean input data
-        validation_result = input_validator.validate_complete_request(
-            request.dict(), 
-            required_fields=['fieldId', 'coordinates', 'metric']
-        )
-        
-        if not validation_result['success']:
-            logger.error(f"🚀 [FASTAPI] Validation Error - Field: {request.fieldId}, Errors: {validation_result['errors']}")
-            raise HTTPException(status_code=400, detail=f"Input validation failed: {', '.join(validation_result['errors'])}")
-        
-        # Log warnings if any
-        if validation_result['warnings']:
-            logger.warning(f"🚀 [FASTAPI] Validation Warnings - Field: {request.fieldId}, Warnings: {validation_result['warnings']}")
-        
-        # Use cleaned coordinates
-        cleaned_coordinates = validation_result['cleaned_data']['coordinates']
-        if cleaned_coordinates and len(cleaned_coordinates) > 0:
-            # Take the first coordinate pair [lon, lat]
-            coordinates = cleaned_coordinates[0] if cleaned_coordinates[0] else [0, 0]
-        else:
-            coordinates = [0, 0]
+        # Simple validation and cleaning
+        try:
+            cleaned_data = simple_validator.validate_request(
+                request.dict(), 
+                required_fields=['fieldId', 'coordinates', 'metric']
+            )
+            
+            # Use cleaned coordinates
+            coordinates = cleaned_data['coordinates']
+            if isinstance(coordinates, list) and len(coordinates) > 0:
+                # Take the first coordinate pair [lon, lat]
+                coordinates = coordinates[0] if isinstance(coordinates[0], list) else coordinates
+            else:
+                coordinates = [0, 0]
+                
+        except ValueError as e:
+            logger.error(f"🚀 [FASTAPI] Validation Error - Field: {request.fieldId}, Error: {str(e)}")
+            raise HTTPException(status_code=400, detail=f"Input validation failed: {str(e)}")
         
         mock_request = MockRequest("POST", {
             "fieldId": request.fieldId,
@@ -213,28 +210,22 @@ async def weather_data(request: WeatherRequest):
         logger.info(f"🌤️ [FASTAPI] Weather Request - Field: {request.fieldId}")
         logger.info(f"🌤️ [FASTAPI] Coordinates: {request.coordinates}, Days: {request.days}")
         
-        # Validate and clean input data
-        validation_result = input_validator.validate_complete_request(
-            request.dict(), 
-            required_fields=['fieldId', 'coordinates']
-        )
-        
-        if not validation_result['success']:
-            logger.error(f"🌤️ [FASTAPI] Validation Error - Field: {request.fieldId}, Errors: {validation_result['errors']}")
-            raise HTTPException(status_code=400, detail=f"Input validation failed: {', '.join(validation_result['errors'])}")
-        
-        # Log warnings if any
-        if validation_result['warnings']:
-            logger.warning(f"🌤️ [FASTAPI] Validation Warnings - Field: {request.fieldId}, Warnings: {validation_result['warnings']}")
-        
-        # Use cleaned data
-        cleaned_data = validation_result['cleaned_data']
-        
-        response = await weather_handler.get_field_weather(
-            cleaned_data['fieldId'], 
-            cleaned_data['coordinates'], 
-            cleaned_data.get('days', 7)
-        )
+        # Simple validation and cleaning
+        try:
+            cleaned_data = simple_validator.validate_request(
+                request.dict(), 
+                required_fields=['fieldId', 'coordinates']
+            )
+            
+            response = await weather_handler.get_field_weather(
+                cleaned_data['fieldId'], 
+                cleaned_data['coordinates'], 
+                cleaned_data.get('days', 7)
+            )
+            
+        except ValueError as e:
+            logger.error(f"🌤️ [FASTAPI] Validation Error - Field: {request.fieldId}, Error: {str(e)}")
+            raise HTTPException(status_code=400, detail=f"Input validation failed: {str(e)}")
         
         logger.info(f"🌤️ [FASTAPI] Weather Success - Field: {request.fieldId}")
         return response
