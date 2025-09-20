@@ -318,15 +318,14 @@ async def field_recommendations(request: RecommendationsRequest):
         
         if not field_metrics:
             # Fetch field metrics
-            mock_request = MockRequest("POST", {
-                "fieldId": request.fieldId,
-                "coordinates": [request.coordinates[1], request.coordinates[0]],  # Convert [lat,lon] to [lon,lat]
-                "metric": "npk"
-            })
-            field_response = b2b_npk_handler(mock_request)
-            if field_response["statusCode"] == 200:
-                field_metrics = field_response["body"]
-            else:
+            try:
+                field_response = await optimized_field_metrics_handler.get_field_metrics(
+                    request.fieldId, 
+                    request.coordinates
+                )
+                field_metrics = field_response
+            except Exception as e:
+                logger.warning(f"⚠️ [RECOMMENDATIONS] Field metrics failed: {str(e)}")
                 field_metrics = {"npk": {}, "indices": {}}
         
         if not weather_data:
@@ -365,10 +364,14 @@ async def fertilizer_recommendations(request: RecommendationsRequest):
                 "coordinates": [request.coordinates[1], request.coordinates[0]],
                 "metric": "npk"
             })
-            field_response = b2b_npk_handler(mock_request)
-            if field_response["statusCode"] == 200:
-                field_metrics = field_response["body"]
-            else:
+            try:
+                field_response = await optimized_field_metrics_handler.get_field_metrics(
+                    request.fieldId, 
+                    request.coordinates
+                )
+                field_metrics = field_response
+            except Exception as e:
+                logger.warning(f"⚠️ [RECOMMENDATIONS] Field metrics failed: {str(e)}")
                 field_metrics = {"npk": {}, "indices": {}}
         
         npk_data = field_metrics.get("npk", {})
@@ -410,7 +413,10 @@ async def irrigation_recommendations(request: RecommendationsRequest):
                 "coordinates": [request.coordinates[1], request.coordinates[0]],
                 "metric": "npk"
             })
-            field_response = b2b_npk_handler(mock_request)
+            field_response = await optimized_field_metrics_handler.get_field_metrics(
+                request.fieldId, 
+                request.coordinates
+            )
             if field_response["statusCode"] == 200:
                 field_metrics = field_response["body"]
             else:
@@ -454,7 +460,10 @@ async def crop_health_recommendations(request: RecommendationsRequest):
                 "coordinates": [request.coordinates[1], request.coordinates[0]],
                 "metric": "npk"
             })
-            field_response = b2b_npk_handler(mock_request)
+            field_response = await optimized_field_metrics_handler.get_field_metrics(
+                request.fieldId, 
+                request.coordinates
+            )
             if field_response["statusCode"] == 200:
                 field_metrics = field_response["body"]
             else:
@@ -498,7 +507,10 @@ async def risk_alerts(request: RecommendationsRequest):
                 "coordinates": [request.coordinates[1], request.coordinates[0]],
                 "metric": "npk"
             })
-            field_response = b2b_npk_handler(mock_request)
+            field_response = await optimized_field_metrics_handler.get_field_metrics(
+                request.fieldId, 
+                request.coordinates
+            )
             if field_response["statusCode"] == 200:
                 field_metrics = field_response["body"]
             else:
@@ -891,13 +903,27 @@ async def get_field_metrics_stats():
     """Get performance statistics for field metrics API"""
     try:
         from api.planetary_computer_retry import retry_manager
+        from api.enhanced_planetary_computer import enhanced_pc_manager
         
-        stats = retry_manager.get_performance_stats()
+        # Get stats from both managers
+        retry_stats = retry_manager.get_performance_stats()
+        enhanced_stats = enhanced_pc_manager.get_performance_stats()
         
-        logger.info("📊 [FASTAPI] Performance Stats Retrieved")
+        combined_stats = {
+            "retry_manager": retry_stats,
+            "enhanced_manager": enhanced_stats,
+            "comparison": {
+                "total_requests": enhanced_stats.get('total_requests', 0),
+                "success_rate": enhanced_stats.get('success_rate', '0%'),
+                "cache_hit_rate": enhanced_stats.get('cache_hit_rate', '0%'),
+                "average_response_time": enhanced_stats.get('average_response_time', '0s')
+            }
+        }
+        
+        logger.info("📊 [FASTAPI] Enhanced Performance Stats Retrieved")
         return {
             "success": True,
-            "stats": stats,
+            "stats": combined_stats,
             "timestamp": datetime.now().isoformat()
         }
         

@@ -12,9 +12,10 @@ from typing import Dict, Any, List, Optional
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
 
-from performance_optimizer import performance_optimizer
-from sentinel_indices import compute_indices_and_npk_for_bbox
-from planetary_computer_retry import retry_manager
+from api.performance_optimizer import performance_optimizer
+from api.sentinel_indices import compute_indices_and_npk_for_bbox
+from api.planetary_computer_retry import retry_manager
+from api.enhanced_planetary_computer import enhanced_pc_manager
 
 logger = logging.getLogger("optimized_field_metrics")
 logger.setLevel(logging.INFO)
@@ -83,17 +84,19 @@ class OptimizedFieldMetricsService:
             raise
     
     async def _get_satellite_data_with_timeout(self, bbox: Dict[str, float], coordinates: List[float]) -> Optional[Dict[str, Any]]:
-        """Get satellite data with intelligent retry system"""
+        """Get satellite data with enhanced multi-satellite retry system"""
         try:
-            # Use the new retry manager for intelligent dataset fallback
-            result = await retry_manager.get_satellite_data_with_retry(
+            # Use the enhanced Planetary Computer manager
+            result = await enhanced_pc_manager.get_satellite_data_with_enhanced_retry(
                 coordinates=coordinates,
                 bbox=bbox,
-                field_id="optimized_field_metrics"
+                field_id="optimized_field_metrics",
+                cloud_coverage=None,  # Will be determined automatically
+                monsoon_phase=None    # Will be determined automatically
             )
             
             if result and result.get('success'):
-                self.logger.info(f"✅ [FIELD-METRICS] Satellite data retrieved using {result.get('dataset_used', 'unknown')}")
+                self.logger.info(f"✅ [FIELD-METRICS] Satellite data retrieved using {result.get('dataset', 'unknown')}")
                 return result.get('data', {})
             else:
                 self.logger.error(f"❌ [FIELD-METRICS] All satellite datasets failed: {result.get('error', 'Unknown error')}")

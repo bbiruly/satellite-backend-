@@ -235,7 +235,10 @@ class PlanetaryComputerRetryManager:
         """Fetch Sentinel-2 data using real satellite processing"""
         try:
             # Import the real satellite processing function
-            from sentinel_indices import compute_indices_and_npk_for_bbox
+            import sys
+            import os
+            sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            from api.sentinel_indices import compute_indices_and_npk_for_bbox
             
             # Use ThreadPoolExecutor for CPU-intensive processing
             with ThreadPoolExecutor(max_workers=1) as executor:
@@ -265,7 +268,10 @@ class PlanetaryComputerRetryManager:
         """Fetch Landsat-8 data using real satellite processing"""
         try:
             # Import the real satellite processing function
-            from sentinel_indices import compute_indices_and_npk_for_bbox
+            import sys
+            import os
+            sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            from api.sentinel_indices import compute_indices_and_npk_for_bbox
             
             # Use ThreadPoolExecutor for CPU-intensive processing
             with ThreadPoolExecutor(max_workers=1) as executor:
@@ -295,7 +301,10 @@ class PlanetaryComputerRetryManager:
         """Fetch MODIS data using real satellite processing"""
         try:
             # Import the real satellite processing function
-            from sentinel_indices import compute_indices_and_npk_for_bbox
+            import sys
+            import os
+            sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            from api.sentinel_indices import compute_indices_and_npk_for_bbox
             
             # Use ThreadPoolExecutor for CPU-intensive processing
             with ThreadPoolExecutor(max_workers=1) as executor:
