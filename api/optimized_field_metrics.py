@@ -59,7 +59,7 @@ class OptimizedFieldMetricsService:
             )
             
             # Process data - REAL DATA ONLY
-            if satellite_data and satellite_data.get('success'):
+            if satellite_data and satellite_data.get('indices') and satellite_data.get('npk'):
                 processed_data = self._process_satellite_data(satellite_data, field_id, coordinates)
             else:
                 # Return error for no data - customers pay for real data only
@@ -97,7 +97,17 @@ class OptimizedFieldMetricsService:
             
             if result and result.get('success'):
                 self.logger.info(f"✅ [FIELD-METRICS] Satellite data retrieved using {result.get('dataset', 'unknown')}")
-                return result.get('data', {})
+                # The enhanced system returns data in the 'data' field
+                satellite_data = result.get('data', {})
+                if satellite_data:
+                    # Add metadata from enhanced system
+                    satellite_data['dataset'] = result.get('dataset', 'unknown')
+                    satellite_data['source'] = result.get('source', 'unknown')
+                    satellite_data['resolution'] = result.get('resolution', 'unknown')
+                    return satellite_data
+                else:
+                    self.logger.error(f"❌ [FIELD-METRICS] No data in successful result: {result}")
+                    return None
             else:
                 self.logger.error(f"❌ [FIELD-METRICS] All satellite datasets failed: {result.get('error', 'Unknown error')}")
                 return None
