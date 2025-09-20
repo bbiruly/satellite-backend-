@@ -32,6 +32,7 @@ weather_handler = load_handler("weather_handler", "api/weather_handler.py")
 recommendations_handler = load_handler("recommendations_handler", "api/recommendations_handler.py")
 trends_handler = load_handler("trends_handler", "api/trends_handler.py")
 crop_health_handler = load_handler("crop_health_handler", "api/crop_health_handler.py")
+terrain_handler = load_handler("terrain_handler", "api/terrain_handler.py")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -81,6 +82,10 @@ class CropHealthRequest(BaseModel):
     coordinates: List[float]  # [lat, lon]
     cropType: str = "general"  # "wheat", "rice", "corn", "soybean", "general"
 
+class TerrainRequest(BaseModel):
+    fieldId: str
+    coordinates: List[float]  # [lat, lon]
+
 # Mock request class for compatibility
 class MockRequest:
     def __init__(self, method: str, json_data: Dict[str, Any]):
@@ -98,7 +103,7 @@ async def root():
         "message": "ZumAgro Python API",
         "version": "2.0.0",
         "status": "running",
-            "endpoints": [
+        "endpoints": [
                 "/api/field-metrics",
                 "/api/weather",
                 "/api/weather/alerts",
@@ -117,7 +122,10 @@ async def root():
                 "/api/crop-health",
                 "/api/crop-health/stress",
                 "/api/crop-health/growth-stage",
-                "/api/crop-health/quality"
+                "/api/crop-health/quality",
+                "/api/terrain/elevation",
+                "/api/terrain/land-cover",
+                "/api/terrain/comprehensive"
             ],
         "description": "Clean, minimal API for agricultural intelligence",
         "features": [
@@ -137,7 +145,12 @@ async def root():
             "Anomaly Detection",
             "Performance Tracking",
             "Real-time Processing",
-            "Intelligent Caching"
+            "Intelligent Caching",
+            "Terrain Elevation Analysis",
+            "Land Cover Classification",
+            "Agricultural Suitability Assessment",
+            "Drainage Analysis",
+            "Slope Analysis"
         ]
     }
 
@@ -275,7 +288,7 @@ async def field_recommendations(request: RecommendationsRequest):
         
         logger.info(f"🌱 [FASTAPI] Recommendations Success - Field: {request.fieldId}")
         return response
-        
+            
     except Exception as e:
         logger.error(f"🌱 [FASTAPI] Recommendations Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -311,7 +324,7 @@ async def fertilizer_recommendations(request: RecommendationsRequest):
         
         logger.info(f"🌱 [FASTAPI] Fertilizer Recommendations Success - Field: {request.fieldId}")
         return response
-        
+            
     except Exception as e:
         logger.error(f"🌱 [FASTAPI] Fertilizer Recommendations Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -443,7 +456,7 @@ async def risk_alerts(request: RecommendationsRequest):
         
         logger.info(f"🌱 [FASTAPI] Risk Alerts Success - Field: {request.fieldId}")
         return response
-        
+            
     except Exception as e:
         logger.error(f"🌱 [FASTAPI] Risk Alerts Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -465,7 +478,7 @@ async def field_trends(request: TrendsRequest):
         
         logger.info(f"📈 [FASTAPI] Trends Success - Field: {request.fieldId}")
         return response
-        
+            
     except Exception as e:
         logger.error(f"📈 [FASTAPI] Trends Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -484,7 +497,7 @@ async def vegetation_trends(request: TrendsRequest):
         
         logger.info(f"📈 [FASTAPI] Vegetation Trends Success - Field: {request.fieldId}")
         return response
-        
+            
     except Exception as e:
         logger.error(f"📈 [FASTAPI] Vegetation Trends Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -522,7 +535,7 @@ async def performance_trends(request: TrendsRequest):
         
         logger.info(f"📈 [FASTAPI] Performance Trends Success - Field: {request.fieldId}")
         return response
-        
+            
     except Exception as e:
         logger.error(f"📈 [FASTAPI] Performance Trends Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -560,7 +573,7 @@ async def anomaly_detection(request: TrendsRequest):
         
         logger.info(f"📈 [FASTAPI] Anomaly Detection Success - Field: {request.fieldId}")
         return response
-        
+            
     except Exception as e:
         logger.error(f"📈 [FASTAPI] Anomaly Detection Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -599,7 +612,7 @@ async def crop_stress_analysis(request: CropHealthRequest):
         
         logger.info(f"🌱 [FASTAPI] Crop Stress Success - Field: {request.fieldId}")
         return response
-        
+            
     except Exception as e:
         logger.error(f"🌱 [FASTAPI] Crop Stress Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -617,7 +630,7 @@ async def crop_growth_stage(request: CropHealthRequest):
         
         logger.info(f"🌱 [FASTAPI] Growth Stage Success - Field: {request.fieldId}")
         return response
-        
+            
     except Exception as e:
         logger.error(f"🌱 [FASTAPI] Growth Stage Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -635,9 +648,64 @@ async def crop_quality_analysis(request: CropHealthRequest):
         
         logger.info(f"🌱 [FASTAPI] Crop Quality Success - Field: {request.fieldId}")
         return response
-        
+            
     except Exception as e:
         logger.error(f"🌱 [FASTAPI] Crop Quality Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Terrain Analysis API Endpoints
+@app.post("/api/terrain/elevation")
+async def elevation_analysis(request: TerrainRequest):
+    """Elevation Analysis - Analyze terrain elevation and characteristics"""
+    try:
+        logger.info(f"🏔️ [FASTAPI] Elevation Request - Field: {request.fieldId}")
+        
+        response = await terrain_handler.get_elevation_analysis(
+            request.fieldId,
+            request.coordinates
+        )
+        
+        logger.info(f"🏔️ [FASTAPI] Elevation Success - Field: {request.fieldId}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"🏔️ [FASTAPI] Elevation Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/terrain/land-cover")
+async def land_cover_analysis(request: TerrainRequest):
+    """Land Cover Analysis - Analyze land use and cover types"""
+    try:
+        logger.info(f"🌍 [FASTAPI] Land Cover Request - Field: {request.fieldId}")
+        
+        response = await terrain_handler.get_land_cover_analysis(
+            request.fieldId,
+            request.coordinates
+        )
+        
+        logger.info(f"🌍 [FASTAPI] Land Cover Success - Field: {request.fieldId}")
+        return response
+            
+    except Exception as e:
+        logger.error(f"🌍 [FASTAPI] Land Cover Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/terrain/comprehensive")
+async def comprehensive_terrain_analysis(request: TerrainRequest):
+    """Comprehensive Terrain Analysis - Complete terrain and land cover analysis"""
+    try:
+        logger.info(f"🏔️🌍 [FASTAPI] Comprehensive Terrain Request - Field: {request.fieldId}")
+        
+        response = await terrain_handler.get_comprehensive_terrain_analysis(
+            request.fieldId,
+            request.coordinates
+        )
+        
+        logger.info(f"🏔️🌍 [FASTAPI] Comprehensive Terrain Success - Field: {request.fieldId}")
+        return response
+            
+    except Exception as e:
+        logger.error(f"🏔️🌍 [FASTAPI] Comprehensive Terrain Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":

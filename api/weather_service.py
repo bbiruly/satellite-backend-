@@ -196,7 +196,17 @@ class WeatherService:
                 },
                 "air_quality": self._process_air_quality(current.get("air_quality", {}))
             },
-            "agricultural_indicators": self._calculate_agricultural_indicators(current)
+            "agricultural_indicators": self._calculate_agricultural_indicators(current),
+            # Add flat structure for compatibility with existing code
+            "temperature": current.get("temp_c", 0),
+            "humidity": current.get("humidity", 0),
+            "pressure": current.get("pressure_mb", 0),
+            "wind_speed": current.get("wind_kph", 0),
+            "wind_direction": current.get("wind_degree", 0),
+            "visibility": current.get("vis_km", 0),
+            "uv_index": current.get("uv", 0),
+            "cloud_cover": current.get("cloud", 0),
+            "precip_mm": current.get("precip_mm", 0)
         }
     
     def _process_forecast(self, data: Dict[str, Any]) -> Dict[str, Any]:
