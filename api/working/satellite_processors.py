@@ -221,7 +221,7 @@ class Landsat8Processor(BaseSatelliteProcessor):
     """Landsat-8 C2 L2 processor (30m resolution, optical)"""
     
     def __init__(self):
-        super().__init__("landsat-8-c2-l2", "landsat-8-c2-l2", "30m")
+        super().__init__("landsat-8-c2-l2", "landsat-c2-l2", "30m")
         self.required_bands = {
             'red': ['B04'],
             'nir': ['B05'],
@@ -324,14 +324,14 @@ class ModisProcessor(BaseSatelliteProcessor):
     """MODIS 09A1 processor (250m resolution, optical)"""
     
     def __init__(self):
-        super().__init__("modis-09a1-v061", "modis-09a1-v061", "250m")
+        super().__init__("modis-09A1-061", "modis-09A1-061", "250m")
         self.required_bands = {
-            'red': ['B01'],
-            'nir': ['B02'],
-            'swir1': ['B06'],
-            'swir2': ['B07'],
-            'green': ['B04'],
-            'blue': ['B03']
+            'red': ['sur_refl_b01'],
+            'nir': ['sur_refl_b02'],
+            'swir1': ['sur_refl_b06'],
+            'swir2': ['sur_refl_b07'],
+            'green': ['sur_refl_b04'],
+            'blue': ['sur_refl_b03']
         }
     
     def compute_indices_from_arrays(self, red_arr: np.ndarray, nir_arr: np.ndarray, 

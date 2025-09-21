@@ -375,14 +375,14 @@ async def multi_satellite_analysis(request: Request):
             return {
                 "success": True,
                 "fieldId": request.fieldId,
-                "satellite": result.get('satellite'),
+                "satellite_used": result.get('satellite'),
                 "resolution": result.get('resolution'),
                 "cloud_coverage": result.get('cloud_coverage'),
                 "acquisition_date": result.get('acquisition_date'),
-                "indices": result.get('indices'),
-                "npk": result.get('npk'),
                 "processing_time": result.get('processing_time'),
-                "dataSource": "multi_satellite_real_data"
+                "dataSource": "multi_satellite_real_data",
+                "indices": result.get('indices'),
+                "npk": result.get('npk')
             }
         else:
             return {

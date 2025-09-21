@@ -40,12 +40,12 @@ class SatelliteSelector:
                 'max_field_size': 10000,  # 10000 hectares
                 'timeout': 35.0
             },
-            'modis-09a1-v061': {
+            'modis-09A1-061': {
                 'priority': 3,
                 'resolution': '250m',
                 'cloud_penetration': False,
                 'best_for': 'large_area_coverage',
-                'min_field_size': 1.0,  # 100 hectares
+                'min_field_size': 100.0,  # 100 hectares
                 'max_field_size': 100000,  # 100000 hectares
                 'timeout': 25.0
             },
@@ -122,7 +122,7 @@ class SatelliteSelector:
                 selected_satellites.append('landsat-8-c2-l2')
             # Large fields: MODIS first
             else:
-                selected_satellites.append('modis-09a1-v061')
+                selected_satellites.append('modis-09A1-061')
                 selected_satellites.append('landsat-8-c2-l2')
                 selected_satellites.append('sentinel-2-l2a')
         
@@ -134,7 +134,7 @@ class SatelliteSelector:
                 selected_satellites.append('landsat-8-c2-l2')
                 selected_satellites.append('sentinel-1-rtc')
             else:
-                selected_satellites.append('modis-09a1-v061')
+                selected_satellites.append('modis-09A1-061')
                 selected_satellites.append('landsat-8-c2-l2')
                 selected_satellites.append('sentinel-1-rtc')
         
