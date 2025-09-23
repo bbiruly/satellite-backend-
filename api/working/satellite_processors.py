@@ -9,8 +9,8 @@ import time
 import logging
 from typing import Dict, List, Any, Optional
 from datetime import datetime, timedelta
-import xarray as xr
 import numpy as np
+import xarray as xr
 import pystac_client
 from planetary_computer import sign as pc_sign
 
@@ -25,6 +25,39 @@ class BaseSatelliteProcessor:
         self.resolution = resolution
         self.logger = logging.getLogger(f"{__name__}.{satellite_id}")
     
+    def parse_datetime_safe(self, dt_str: str) -> datetime:
+        """Safely parse datetime string, handling various formats including Z suffix"""
+        try:
+            # Remove Z suffix and replace with +00:00 for UTC
+            if dt_str.endswith('Z'):
+                dt_str = dt_str[:-1] + '+00:00'
+            
+            # Handle microseconds - ensure consistent format
+            if '.' in dt_str:
+                # Split on the decimal point
+                base_part, microsecond_part = dt_str.split('.')
+                # Find where timezone starts
+                if '+' in microsecond_part:
+                    microsecond_str, tz_part = microsecond_part.split('+')
+                    tz_part = '+' + tz_part
+                elif '-' in microsecond_part and microsecond_part.count('-') > 1:
+                    # Handle negative timezone
+                    parts = microsecond_part.split('-')
+                    microsecond_str = parts[0]
+                    tz_part = '-' + '-'.join(parts[1:])
+                else:
+                    microsecond_str = microsecond_part
+                    tz_part = ''
+                
+                # Ensure microseconds are exactly 6 digits
+                microsecond_str = microsecond_str[:6].ljust(6, '0')
+                dt_str = f"{base_part}.{microsecond_str}{tz_part}"
+            
+            return datetime.fromisoformat(dt_str)
+        except Exception as e:
+            self.logger.warning(f"Failed to parse datetime '{dt_str}': {e}, using fallback")
+            return datetime(2023, 1, 1)
+
     def search_satellite_data(self, bbox: Dict[str, float], 
                              start_date: datetime = None,
                              end_date: datetime = None,
@@ -52,23 +85,99 @@ class BaseSatelliteProcessor:
         # Choose lowest cloud cover and most recent
         items_sorted = sorted(items, key=lambda it: (
             it.properties.get('eo:cloud_cover', 100), 
-            -datetime.fromisoformat(str(it.properties.get('datetime', '2023-01-01'))).timestamp()
+            -self.parse_datetime_safe(str(it.properties.get('datetime', '2023-01-01'))).timestamp()
         ))
         return items_sorted[0]
     
     def clip_band_to_bbox(self, asset_href: str, bbox: Dict[str, float]) -> xr.DataArray:
-        """Clip satellite band to bounding box"""
+        """Clip satellite band to bounding box with proper coordinate transformation"""
         try:
             # Use rioxarray for modern xarray compatibility
             import rioxarray as rio
-            da = rio.open_rasterio(asset_href)
-            clipped = da.sel(
-                x=slice(bbox['minLon'], bbox['maxLon']),
-                y=slice(bbox['maxLat'], bbox['minLat'])  # Note: y is inverted
-            )
-            return clipped
+            from pyproj import Transformer
+            
+            # Open the raster data
+            da = rio.open_rasterio(asset_href, masked=True)
+            
+            # Get data bounds and CRS
+            data_bounds = da.rio.bounds()
+            data_crs = da.rio.crs
+            
+            self.logger.info(f"🔍 DEBUG: Data bounds: {data_bounds}")
+            self.logger.info(f"🔍 DEBUG: Data CRS: {data_crs}")
+            self.logger.info(f"🔍 DEBUG: Requested bbox (geographic): {bbox}")
+            
+            # Convert geographic bbox to the data's CRS
+            transformer = Transformer.from_crs("EPSG:4326", data_crs, always_xy=True)
+            
+            # Transform the bbox corners
+            minx_proj, miny_proj = transformer.transform(bbox['minLon'], bbox['minLat'])
+            maxx_proj, maxy_proj = transformer.transform(bbox['maxLon'], bbox['maxLat'])
+            
+            self.logger.info(f"🔍 DEBUG: Transformed bbox: ({minx_proj}, {miny_proj}, {maxx_proj}, {maxy_proj})")
+            
+            # Check intersection with tolerance
+            tolerance = 1000  # 1km in projected units
+            intersects = not (maxx_proj + tolerance < data_bounds[0] or 
+                             minx_proj - tolerance > data_bounds[2] or
+                             maxy_proj + tolerance < data_bounds[1] or 
+                             miny_proj - tolerance > data_bounds[3])
+            
+            if not intersects:
+                self.logger.warning(f"⚠️ Bounding box does not intersect with asset bounds. Data: {data_bounds}, Transformed: ({minx_proj}, {miny_proj}, {maxx_proj}, {maxy_proj})")
+                return None
+            
+            # Clip using projected coordinates
+            try:
+                clipped = da.rio.clip_box(
+                    minx=minx_proj, 
+                    miny=miny_proj, 
+                    maxx=maxx_proj, 
+                    maxy=maxy_proj
+                )
+                arr = clipped.squeeze(drop=True)  # drop band dim if present
+                self.logger.info(f"✅ Successfully clipped band, shape: {arr.shape}")
+                
+                # Validate the clipped data
+                if arr.size == 0:
+                    self.logger.warning("⚠️ Clipped array is empty")
+                    return None
+                
+                # Check for valid data (not all NaN or zeros)
+                valid_pixels = np.sum(np.isfinite(arr) & (arr != 0))
+                if valid_pixels == 0:
+                    self.logger.warning("⚠️ No valid pixels found in clipped data")
+                    return None
+                
+                self.logger.info(f"✅ Valid pixels: {valid_pixels}/{arr.size} ({valid_pixels/arr.size*100:.1f}%)")
+                return arr
+                
+            except Exception as clip_error:
+                self.logger.warning(f"⚠️ Direct clipping failed: {clip_error}, trying with expanded bbox")
+                # Try with slightly expanded bbox
+                clipped = da.rio.clip_box(
+                    minx=minx_proj - tolerance, 
+                    miny=miny_proj - tolerance, 
+                    maxx=maxx_proj + tolerance, 
+                    maxy=maxy_proj + tolerance
+                )
+                arr = clipped.squeeze(drop=True)
+                
+                # Validate the expanded clipped data
+                if arr.size == 0:
+                    self.logger.warning("⚠️ Expanded clipped array is empty")
+                    return None
+                
+                valid_pixels = np.sum(np.isfinite(arr) & (arr != 0))
+                if valid_pixels == 0:
+                    self.logger.warning("⚠️ No valid pixels found in expanded clipped data")
+                    return None
+                
+                self.logger.info(f"✅ Successfully clipped with expanded bbox, shape: {arr.shape}, valid pixels: {valid_pixels}")
+                return arr
+                
         except Exception as e:
-            self.logger.error(f"Error clipping band {asset_href}: {str(e)}")
+            self.logger.error(f"❌ Error clipping band: {e}")
             return None
     
     def compute_indices_from_arrays(self, **kwargs) -> Dict[str, Any]:
@@ -130,28 +239,125 @@ class Sentinel2Processor(BaseSatelliteProcessor):
     
     def compute_indices_from_arrays(self, red_arr: np.ndarray, nir_arr: np.ndarray, 
                                    swir1_arr: np.ndarray = None, green_arr: np.ndarray = None) -> Dict[str, Any]:
-        """Compute vegetation indices from Sentinel-2 bands"""
+        """Compute vegetation indices from Sentinel-2 bands with robust validation"""
         indices = {}
         
+        # Helper function to validate array data
+        def validate_array(arr, name):
+            if arr is None:
+                self.logger.warning(f"⚠️ {name} array is None")
+                return False
+            if arr.size == 0:
+                self.logger.warning(f"⚠️ {name} array is empty")
+                return False
+            
+            # Check for valid data (not all NaN or zeros)
+            valid_pixels = np.sum(np.isfinite(arr) & (arr != 0))
+            if valid_pixels == 0:
+                self.logger.warning(f"⚠️ {name} array has no valid pixels")
+                return False
+            
+            # Check for reasonable satellite data values (typically 0-10000 for Sentinel-2)
+            if np.nanmax(arr) > 20000 or np.nanmin(arr) < -1000:
+                self.logger.warning(f"⚠️ {name} array has suspicious values: min={np.nanmin(arr)}, max={np.nanmax(arr)}")
+            
+            self.logger.info(f"✅ {name} array: shape={arr.shape}, valid_pixels={valid_pixels}/{arr.size} ({valid_pixels/arr.size*100:.1f}%), range=[{np.nanmin(arr):.1f}, {np.nanmax(arr):.1f}]")
+            return True
+        
         # NDVI = (NIR - Red) / (NIR + Red)
-        if red_arr is not None and nir_arr is not None and len(red_arr) > 0 and len(nir_arr) > 0:
-            ndvi_val = np.nanmean((nir_arr - red_arr) / (nir_arr + red_arr + 1e-8))
-            indices['ndvi'] = float(ndvi_val) if not np.isnan(ndvi_val) else 0.0
+        if validate_array(red_arr, "Red") and validate_array(nir_arr, "NIR"):
+            # Ensure arrays have same shape
+            if red_arr.shape != nir_arr.shape:
+                self.logger.warning(f"⚠️ Shape mismatch: Red {red_arr.shape} vs NIR {nir_arr.shape}")
+                # Use the smaller shape
+                min_rows = min(red_arr.shape[0], nir_arr.shape[0])
+                min_cols = min(red_arr.shape[1], nir_arr.shape[1])
+                red_arr = red_arr[:min_rows, :min_cols]
+                nir_arr = nir_arr[:min_rows, :min_cols]
+                self.logger.info(f"✅ Resized arrays to: {red_arr.shape}")
+            
+            # Compute NDVI with proper handling
+            epsilon = 1e-8
+            denom = nir_arr + red_arr + epsilon
+            valid = denom > epsilon
+            
+            ndvi = np.zeros_like(denom, dtype=np.float64)
+            ndvi[valid] = (nir_arr[valid] - red_arr[valid]) / denom[valid]
+            
+            # Clip NDVI to valid range [-1, 1]
+            ndvi = np.clip(ndvi, -1.0, 1.0)
+            
+            ndvi_mean = float(np.nanmean(ndvi))
+            ndvi_median = float(np.nanmedian(ndvi))
+            valid_count = int(np.sum(valid))
+            
+            self.logger.info(f"✅ NDVI: mean={ndvi_mean:.4f}, median={ndvi_median:.4f}, valid_pixels={valid_count}")
+            
+            indices['ndvi'] = ndvi_mean if not np.isnan(ndvi_mean) else 0.0
         else:
+            self.logger.warning("❌ Cannot compute NDVI: invalid Red or NIR data")
             indices['ndvi'] = 0.0
         
         # NDMI = (NIR - SWIR1) / (NIR + SWIR1)
-        if nir_arr is not None and swir1_arr is not None and len(nir_arr) > 0 and len(swir1_arr) > 0:
-            ndmi_val = np.nanmean((nir_arr - swir1_arr) / (nir_arr + swir1_arr + 1e-8))
-            indices['ndmi'] = float(ndmi_val) if not np.isnan(ndmi_val) else 0.0
+        if validate_array(nir_arr, "NIR") and validate_array(swir1_arr, "SWIR1"):
+            # Ensure arrays have same shape
+            if nir_arr.shape != swir1_arr.shape:
+                self.logger.warning(f"⚠️ Shape mismatch: NIR {nir_arr.shape} vs SWIR1 {swir1_arr.shape}")
+                min_rows = min(nir_arr.shape[0], swir1_arr.shape[0])
+                min_cols = min(nir_arr.shape[1], swir1_arr.shape[1])
+                nir_arr = nir_arr[:min_rows, :min_cols]
+                swir1_arr = swir1_arr[:min_rows, :min_cols]
+            
+            epsilon = 1e-8
+            denom = nir_arr + swir1_arr + epsilon
+            valid = denom > epsilon
+            
+            ndmi = np.zeros_like(denom, dtype=np.float64)
+            ndmi[valid] = (nir_arr[valid] - swir1_arr[valid]) / denom[valid]
+            
+            # Clip NDMI to valid range [-1, 1]
+            ndmi = np.clip(ndmi, -1.0, 1.0)
+            
+            ndmi_mean = float(np.nanmean(ndmi))
+            ndmi_median = float(np.nanmedian(ndmi))
+            valid_count = int(np.sum(valid))
+            
+            self.logger.info(f"✅ NDMI: mean={ndmi_mean:.4f}, median={ndmi_median:.4f}, valid_pixels={valid_count}")
+            
+            indices['ndmi'] = ndmi_mean if not np.isnan(ndmi_mean) else 0.0
         else:
+            self.logger.warning("❌ Cannot compute NDMI: invalid NIR or SWIR1 data")
             indices['ndmi'] = 0.0
         
         # NDWI = (Green - NIR) / (Green + NIR)
-        if green_arr is not None and nir_arr is not None and len(green_arr) > 0 and len(nir_arr) > 0:
-            ndwi_val = np.nanmean((green_arr - nir_arr) / (green_arr + nir_arr + 1e-8))
-            indices['ndwi'] = float(ndwi_val) if not np.isnan(ndwi_val) else 0.0
+        if validate_array(green_arr, "Green") and validate_array(nir_arr, "NIR"):
+            # Ensure arrays have same shape
+            if green_arr.shape != nir_arr.shape:
+                self.logger.warning(f"⚠️ Shape mismatch: Green {green_arr.shape} vs NIR {nir_arr.shape}")
+                min_rows = min(green_arr.shape[0], nir_arr.shape[0])
+                min_cols = min(green_arr.shape[1], nir_arr.shape[1])
+                green_arr = green_arr[:min_rows, :min_cols]
+                nir_arr = nir_arr[:min_rows, :min_cols]
+            
+            epsilon = 1e-8
+            denom = green_arr + nir_arr + epsilon
+            valid = denom > epsilon
+            
+            ndwi = np.zeros_like(denom, dtype=np.float64)
+            ndwi[valid] = (green_arr[valid] - nir_arr[valid]) / denom[valid]
+            
+            # Clip NDWI to valid range [-1, 1]
+            ndwi = np.clip(ndwi, -1.0, 1.0)
+            
+            ndwi_mean = float(np.nanmean(ndwi))
+            ndwi_median = float(np.nanmedian(ndwi))
+            valid_count = int(np.sum(valid))
+            
+            self.logger.info(f"✅ NDWI: mean={ndwi_mean:.4f}, median={ndwi_median:.4f}, valid_pixels={valid_count}")
+            
+            indices['ndwi'] = ndwi_mean if not np.isnan(ndwi_mean) else 0.0
         else:
+            self.logger.warning("❌ Cannot compute NDWI: invalid Green or NIR data")
             indices['ndwi'] = 0.0
         
         return indices
@@ -172,16 +378,35 @@ class Sentinel2Processor(BaseSatelliteProcessor):
             signed_item = pc_sign(item)
             assets = signed_item.assets
             
-            # Get required bands
+            # Get required bands with improved validation
             band_data = {}
+            self.logger.info(f"🔍 DEBUG: Processing {len(self.required_bands)} band types")
+            
             for band_type, possible_names in self.required_bands.items():
+                self.logger.info(f"🔍 DEBUG: Looking for {band_type} band in {possible_names}")
+                band_found = False
+                
                 for name in possible_names:
                     if name in assets:
+                        self.logger.info(f"🔍 DEBUG: Found {name} asset for {band_type}")
                         asset_href = assets[name].href
                         clipped = self.clip_band_to_bbox(asset_href, bbox)
+                        
                         if clipped is not None:
-                            band_data[band_type] = clipped.values[0]  # Remove band dimension
+                            # clipped is already a numpy array from our improved clip_band_to_bbox
+                            band_data[band_type] = clipped
+                            self.logger.info(f"✅ Successfully processed {band_type} band: shape={clipped.shape}")
+                            band_found = True
                             break
+                        else:
+                            self.logger.warning(f"⚠️ Failed to clip {name} for {band_type}")
+                    else:
+                        self.logger.debug(f"🔍 DEBUG: {name} not found in assets")
+                
+                if not band_found:
+                    self.logger.warning(f"⚠️ No valid {band_type} band found")
+            
+            self.logger.info(f"🔍 DEBUG: Successfully processed {len(band_data)} bands: {list(band_data.keys())}")
             
             # Compute indices
             indices = self.compute_indices_from_arrays(
@@ -233,28 +458,100 @@ class Landsat8Processor(BaseSatelliteProcessor):
     
     def compute_indices_from_arrays(self, red_arr: np.ndarray, nir_arr: np.ndarray, 
                                    swir1_arr: np.ndarray = None, green_arr: np.ndarray = None) -> Dict[str, Any]:
-        """Compute vegetation indices from Landsat-8 bands (same as Sentinel-2)"""
+        """Compute vegetation indices from Landsat-8 bands with robust validation"""
         indices = {}
         
+        # Helper function to validate array data
+        def validate_array(arr, name):
+            if arr is None:
+                self.logger.warning(f"⚠️ {name} array is None")
+                return False
+            if arr.size == 0:
+                self.logger.warning(f"⚠️ {name} array is empty")
+                return False
+            
+            # Check for valid data (not all NaN or zeros)
+            valid_pixels = np.sum(np.isfinite(arr) & (arr != 0))
+            if valid_pixels == 0:
+                self.logger.warning(f"⚠️ {name} array has no valid pixels")
+                return False
+            
+            # Check for reasonable satellite data values (typically 0-10000 for Landsat-8)
+            if np.nanmax(arr) > 20000 or np.nanmin(arr) < -1000:
+                self.logger.warning(f"⚠️ {name} array has suspicious values: min={np.nanmin(arr)}, max={np.nanmax(arr)}")
+            
+            self.logger.info(f"✅ {name} array: shape={arr.shape}, valid_pixels={valid_pixels}/{arr.size} ({valid_pixels/arr.size*100:.1f}%), range=[{np.nanmin(arr):.1f}, {np.nanmax(arr):.1f}]")
+            return True
+        
         # NDVI = (NIR - Red) / (NIR + Red)
-        if red_arr is not None and nir_arr is not None and len(red_arr) > 0 and len(nir_arr) > 0:
-            ndvi_val = np.nanmean((nir_arr - red_arr) / (nir_arr + red_arr + 1e-8))
-            indices['ndvi'] = float(ndvi_val) if not np.isnan(ndvi_val) else 0.0
+        if validate_array(red_arr, "Red") and validate_array(nir_arr, "NIR"):
+            # Ensure arrays have same shape
+            if red_arr.shape != nir_arr.shape:
+                self.logger.warning(f"⚠️ Shape mismatch: Red {red_arr.shape} vs NIR {nir_arr.shape}")
+                min_rows = min(red_arr.shape[0], nir_arr.shape[0])
+                min_cols = min(red_arr.shape[1], nir_arr.shape[1])
+                red_arr = red_arr[:min_rows, :min_cols]
+                nir_arr = nir_arr[:min_rows, :min_cols]
+            
+            epsilon = 1e-8
+            denom = nir_arr + red_arr + epsilon
+            valid = denom > epsilon
+            
+            ndvi = np.zeros_like(denom, dtype=np.float64)
+            ndvi[valid] = (nir_arr[valid] - red_arr[valid]) / denom[valid]
+            ndvi = np.clip(ndvi, -1.0, 1.0)
+            
+            ndvi_mean = float(np.nanmean(ndvi))
+            self.logger.info(f"✅ NDVI: mean={ndvi_mean:.4f}, valid_pixels={int(np.sum(valid))}")
+            indices['ndvi'] = ndvi_mean if not np.isnan(ndvi_mean) else 0.0
         else:
+            self.logger.warning("❌ Cannot compute NDVI: invalid Red or NIR data")
             indices['ndvi'] = 0.0
         
         # NDMI = (NIR - SWIR1) / (NIR + SWIR1)
-        if nir_arr is not None and swir1_arr is not None and len(nir_arr) > 0 and len(swir1_arr) > 0:
-            ndmi_val = np.nanmean((nir_arr - swir1_arr) / (nir_arr + swir1_arr + 1e-8))
-            indices['ndmi'] = float(ndmi_val) if not np.isnan(ndmi_val) else 0.0
+        if validate_array(nir_arr, "NIR") and validate_array(swir1_arr, "SWIR1"):
+            if nir_arr.shape != swir1_arr.shape:
+                min_rows = min(nir_arr.shape[0], swir1_arr.shape[0])
+                min_cols = min(nir_arr.shape[1], swir1_arr.shape[1])
+                nir_arr = nir_arr[:min_rows, :min_cols]
+                swir1_arr = swir1_arr[:min_rows, :min_cols]
+            
+            epsilon = 1e-8
+            denom = nir_arr + swir1_arr + epsilon
+            valid = denom > epsilon
+            
+            ndmi = np.zeros_like(denom, dtype=np.float64)
+            ndmi[valid] = (nir_arr[valid] - swir1_arr[valid]) / denom[valid]
+            ndmi = np.clip(ndmi, -1.0, 1.0)
+            
+            ndmi_mean = float(np.nanmean(ndmi))
+            self.logger.info(f"✅ NDMI: mean={ndmi_mean:.4f}, valid_pixels={int(np.sum(valid))}")
+            indices['ndmi'] = ndmi_mean if not np.isnan(ndmi_mean) else 0.0
         else:
+            self.logger.warning("❌ Cannot compute NDMI: invalid NIR or SWIR1 data")
             indices['ndmi'] = 0.0
         
         # NDWI = (Green - NIR) / (Green + NIR)
-        if green_arr is not None and nir_arr is not None and len(green_arr) > 0 and len(nir_arr) > 0:
-            ndwi_val = np.nanmean((green_arr - nir_arr) / (green_arr + nir_arr + 1e-8))
-            indices['ndwi'] = float(ndwi_val) if not np.isnan(ndwi_val) else 0.0
+        if validate_array(green_arr, "Green") and validate_array(nir_arr, "NIR"):
+            if green_arr.shape != nir_arr.shape:
+                min_rows = min(green_arr.shape[0], nir_arr.shape[0])
+                min_cols = min(green_arr.shape[1], nir_arr.shape[1])
+                green_arr = green_arr[:min_rows, :min_cols]
+                nir_arr = nir_arr[:min_rows, :min_cols]
+            
+            epsilon = 1e-8
+            denom = green_arr + nir_arr + epsilon
+            valid = denom > epsilon
+            
+            ndwi = np.zeros_like(denom, dtype=np.float64)
+            ndwi[valid] = (green_arr[valid] - nir_arr[valid]) / denom[valid]
+            ndwi = np.clip(ndwi, -1.0, 1.0)
+            
+            ndwi_mean = float(np.nanmean(ndwi))
+            self.logger.info(f"✅ NDWI: mean={ndwi_mean:.4f}, valid_pixels={int(np.sum(valid))}")
+            indices['ndwi'] = ndwi_mean if not np.isnan(ndwi_mean) else 0.0
         else:
+            self.logger.warning("❌ Cannot compute NDWI: invalid Green or NIR data")
             indices['ndwi'] = 0.0
         
         return indices
@@ -555,7 +852,8 @@ def get_satellite_processor(satellite_id: str) -> BaseSatelliteProcessor:
     processors = {
         "sentinel-2-l2a": Sentinel2Processor,
         "landsat-8-c2-l2": Landsat8Processor,
-        "modis-09a1-v061": ModisProcessor,
+        "modis-09A1-061": ModisProcessor,
+        "modis-09a1-v061": ModisProcessor,  # Keep both for compatibility
         "sentinel-1-rtc": Sentinel1Processor
     }
     

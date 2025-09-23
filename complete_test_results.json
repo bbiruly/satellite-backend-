@@ -1,0 +1,285 @@
+{
+  "test_info": {
+    "timestamp": "2025-09-23T14:20:28.068515",
+    "test_type": "complete_suite",
+    "total_states": 10,
+    "components_tested": [
+      "satellite_data",
+      "weather_data",
+      "api_endpoints"
+    ]
+  },
+  "satellite_data": [
+    {
+      "success": true,
+      "state": "Delhi",
+      "city": "New Delhi",
+      "ndvi": 0.217,
+      "ndmi": 0.026,
+      "cloud_cover": 0.000146,
+      "satellite": "S2C_MSIL2A_20250408T052711_R105_T43RGM_20250408T105617",
+      "date": "2025-04-08T05:27:11.024000Z",
+      "npk": {
+        "Nitrogen": "low",
+        "Phosphorus": "low",
+        "Potassium": "low",
+        "SOC": "low"
+      },
+      "data_source": "Microsoft Planetary Computer"
+    },
+    {
+      "success": true,
+      "state": "Maharashtra",
+      "city": "Mumbai",
+      "ndvi": 0.101,
+      "ndmi": -0.011,
+      "cloud_cover": 0.003374,
+      "satellite": "S2B_MSIL2A_20250406T053639_R005_T42QZG_20250406T074638",
+      "date": "2025-04-06T05:36:39.024000Z",
+      "npk": {
+        "Nitrogen": "low",
+        "Phosphorus": "low",
+        "Potassium": "low",
+        "SOC": "low"
+      },
+      "data_source": "Microsoft Planetary Computer"
+    },
+    {
+      "success": true,
+      "state": "Karnataka",
+      "city": "Bangalore",
+      "ndvi": 0.346,
+      "ndmi": 0.074,
+      "cloud_cover": 0.002623,
+      "satellite": "S2B_MSIL2A_20250407T050649_R019_T43PGQ_20250407T074451",
+      "date": "2025-04-07T05:06:49.024000Z",
+      "npk": {
+        "Nitrogen": "medium",
+        "Phosphorus": "medium",
+        "Potassium": "medium",
+        "SOC": "medium"
+      },
+      "data_source": "Microsoft Planetary Computer"
+    },
+    {
+      "success": true,
+      "state": "Tamil Nadu",
+      "city": "Chennai",
+      "ndvi": 0.113,
+      "ndmi": 0.059,
+      "cloud_cover": 2.411369,
+      "satellite": "S2A_MSIL2A_20250908T050231_R119_T44PMV_20250908T075758",
+      "date": "2025-09-08T05:02:31.024000Z",
+      "npk": {
+        "Nitrogen": "low",
+        "Phosphorus": "low",
+        "Potassium": "low",
+        "SOC": "low"
+      },
+      "data_source": "Microsoft Planetary Computer"
+    },
+    {
+      "success": true,
+      "state": "West Bengal",
+      "city": "Kolkata",
+      "ndvi": 0.388,
+      "ndmi": 0.16,
+      "cloud_cover": 0.000411,
+      "satellite": "S2B_MSIL2A_20250329T043659_R033_T45QWF_20250329T072509",
+      "date": "2025-03-29T04:36:59.024000Z",
+      "npk": {
+        "Nitrogen": "medium",
+        "Phosphorus": "medium",
+        "Potassium": "medium",
+        "SOC": "medium"
+      },
+      "data_source": "Microsoft Planetary Computer"
+    },
+    {
+      "success": true,
+      "state": "Gujarat",
+      "city": "Gandhinagar",
+      "ndvi": 0.171,
+      "ndmi": 0.072,
+      "cloud_cover": 0.000289,
+      "satellite": "S2A_MSIL2A_20250423T054251_R005_T42QZL_20250423T110616",
+      "date": "2025-04-23T05:42:51.024000Z",
+      "npk": {
+        "Nitrogen": "low",
+        "Phosphorus": "low",
+        "Potassium": "low",
+        "SOC": "low"
+      },
+      "data_source": "Microsoft Planetary Computer"
+    },
+    {
+      "success": true,
+      "state": "Rajasthan",
+      "city": "Jaipur",
+      "ndvi": 0.182,
+      "ndmi": -0.041,
+      "cloud_cover": 0.0,
+      "satellite": "S2B_MSIL2A_20250516T053639_R005_T43RCK_20250516T074822",
+      "date": "2025-05-16T05:36:39.024000Z",
+      "npk": {
+        "Nitrogen": "low",
+        "Phosphorus": "low",
+        "Potassium": "low",
+        "SOC": "low"
+      },
+      "data_source": "Microsoft Planetary Computer"
+    },
+    {
+      "success": true,
+      "state": "Uttar Pradesh",
+      "city": "Lucknow",
+      "ndvi": 0.163,
+      "ndmi": -0.007,
+      "cloud_cover": 0.000702,
+      "satellite": "S2B_MSIL2A_20250407T050649_R019_T44RMQ_20250407T074451",
+      "date": "2025-04-07T05:06:49.024000Z",
+      "npk": {
+        "Nitrogen": "low",
+        "Phosphorus": "low",
+        "Potassium": "low",
+        "SOC": "low"
+      },
+      "data_source": "Microsoft Planetary Computer"
+    },
+    {
+      "success": true,
+      "state": "Punjab",
+      "city": "Chandigarh",
+      "ndvi": 0.231,
+      "ndmi": 0.01,
+      "cloud_cover": 0.002258,
+      "satellite": "S2C_MSIL2A_20250428T052711_R105_T43RFQ_20250428T104014",
+      "date": "2025-04-28T05:27:11.025000Z",
+      "npk": {
+        "Nitrogen": "low",
+        "Phosphorus": "low",
+        "Potassium": "low",
+        "SOC": "low"
+      },
+      "data_source": "Microsoft Planetary Computer"
+    },
+    {
+      "success": true,
+      "state": "Kerala",
+      "city": "Thiruvananthapuram",
+      "ndvi": 0.281,
+      "ndmi": 0.028,
+      "cloud_cover": 6.771371,
+      "satellite": "S2B_MSIL2A_20250825T050659_R019_T43PGK_20250825T073826",
+      "date": "2025-08-25T05:06:59.024000Z",
+      "npk": {
+        "Nitrogen": "low",
+        "Phosphorus": "low",
+        "Potassium": "low",
+        "SOC": "low"
+      },
+      "data_source": "Microsoft Planetary Computer"
+    }
+  ],
+  "weather_data": [
+    {
+      "success": true,
+      "state": "Delhi",
+      "city": "New Delhi",
+      "temperature": 35.2,
+      "humidity": 39,
+      "condition": "Sunny",
+      "data_source": "WeatherAPI.com"
+    },
+    {
+      "success": true,
+      "state": "Maharashtra",
+      "city": "Mumbai",
+      "temperature": 29.1,
+      "humidity": 75,
+      "condition": "Mist",
+      "data_source": "WeatherAPI.com"
+    },
+    {
+      "success": true,
+      "state": "Karnataka",
+      "city": "Bangalore",
+      "temperature": 26.1,
+      "humidity": 79,
+      "condition": "Partly cloudy",
+      "data_source": "WeatherAPI.com"
+    },
+    {
+      "success": true,
+      "state": "Tamil Nadu",
+      "city": "Chennai",
+      "temperature": 33.2,
+      "humidity": 67,
+      "condition": "Partly cloudy",
+      "data_source": "WeatherAPI.com"
+    },
+    {
+      "success": true,
+      "state": "West Bengal",
+      "city": "Kolkata",
+      "temperature": 27.1,
+      "humidity": 94,
+      "condition": "Patchy light rain with thunder",
+      "data_source": "WeatherAPI.com"
+    },
+    {
+      "success": true,
+      "state": "Gujarat",
+      "city": "Gandhinagar",
+      "temperature": 32.0,
+      "humidity": 49,
+      "condition": "Overcast",
+      "data_source": "WeatherAPI.com"
+    },
+    {
+      "success": true,
+      "state": "Rajasthan",
+      "city": "Jaipur",
+      "temperature": 33.3,
+      "humidity": 44,
+      "condition": "Sunny",
+      "data_source": "WeatherAPI.com"
+    },
+    {
+      "success": true,
+      "state": "Uttar Pradesh",
+      "city": "Lucknow",
+      "temperature": 35.3,
+      "humidity": 56,
+      "condition": "Mist",
+      "data_source": "WeatherAPI.com"
+    },
+    {
+      "success": true,
+      "state": "Punjab",
+      "city": "Chandigarh",
+      "temperature": 32.0,
+      "humidity": 51,
+      "condition": "Sunny",
+      "data_source": "WeatherAPI.com"
+    },
+    {
+      "success": true,
+      "state": "Kerala",
+      "city": "Thiruvananthapuram",
+      "temperature": 31.0,
+      "humidity": 75,
+      "condition": "Light rain",
+      "data_source": "WeatherAPI.com"
+    }
+  ],
+  "api_endpoints": {
+    "tested": true,
+    "success": true
+  },
+  "summary": {
+    "satellite_success": 10,
+    "weather_success": 10,
+    "total_tests": 10
+  }
+}

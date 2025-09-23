@@ -4,6 +4,7 @@ Real Data Simple API - Direct call to sentinel_indices
 """
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 import time
@@ -15,6 +16,15 @@ logging.basicConfig(level=logging.INFO)
 
 app = FastAPI(title="ZumAgro Real Data Simple API")
 
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://localhost:5174", "http://localhost:3000", "http://127.0.0.1:5173", "http://127.0.0.1:5174"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 class Request(BaseModel):
     fieldId: str
     coordinates: List[float]
@@ -24,14 +34,16 @@ async def soc_analysis(request: Request):
     """SOC Analysis - REAL DATA ONLY from Microsoft Planetary Computer"""
     try:
         coords = request.coordinates
+        # Use actual coordinates from request
         lat, lon = coords[0], coords[1]
         
-        # Create bbox for satellite data
+        # Create larger bbox for better satellite data coverage
+        # 0.01 degrees ≈ 1km, better for satellite data retrieval
         bbox = {
-            'minLat': lat - 0.001,
-            'maxLat': lat + 0.001,
-            'minLon': lon - 0.001,
-            'maxLon': lon + 0.001
+            'minLat': lat - 0.01,
+            'maxLat': lat + 0.01,
+            'minLon': lon - 0.01,
+            'maxLon': lon + 0.01
         }
         
         # Use ORIGINAL working version
@@ -44,6 +56,22 @@ async def soc_analysis(request: Request):
             data = result.get('data', {})
             indices = data.get('indices', {})
             npk = data.get('npk', {})
+            
+            # Clean up any NaN values for JSON serialization
+            def clean_nan_values(obj):
+                if isinstance(obj, dict):
+                    return {k: clean_nan_values(v) for k, v in obj.items()}
+                elif isinstance(obj, list):
+                    return [clean_nan_values(item) for item in obj]
+                elif isinstance(obj, float) and (obj != obj):  # Check for NaN
+                    return 0.0
+                elif isinstance(obj, float) and (obj == float('inf') or obj == float('-inf')):
+                    return 0.0
+                else:
+                    return obj
+            
+            indices = clean_nan_values(indices)
+            npk = clean_nan_values(npk)
             
             # REAL SOC calculation from REAL satellite data
             ndvi = indices.get('NDVI', {}).get('mean', 0)
@@ -116,11 +144,12 @@ async def field_metrics(request: Request):
         coords = request.coordinates
         lat, lon = coords[0], coords[1]
         
+        # Create larger bbox for better satellite data coverage
         bbox = {
-            'minLat': lat - 0.001,
-            'maxLat': lat + 0.001,
-            'minLon': lon - 0.001,
-            'maxLon': lon + 0.001
+            'minLat': lat - 0.01,
+            'maxLat': lat + 0.01,
+            'minLon': lon - 0.01,
+            'maxLon': lon + 0.01
         }
         
         from api.working.sentinel_indices import compute_indices_and_npk_for_bbox
@@ -131,6 +160,22 @@ async def field_metrics(request: Request):
             data = result.get('data', {})
             indices = data.get('indices', {})
             npk = data.get('npk', {})
+            
+            # Clean up any NaN values for JSON serialization
+            def clean_nan_values(obj):
+                if isinstance(obj, dict):
+                    return {k: clean_nan_values(v) for k, v in obj.items()}
+                elif isinstance(obj, list):
+                    return [clean_nan_values(item) for item in obj]
+                elif isinstance(obj, float) and (obj != obj):  # Check for NaN
+                    return 0.0
+                elif isinstance(obj, float) and (obj == float('inf') or obj == float('-inf')):
+                    return 0.0
+                else:
+                    return obj
+            
+            indices = clean_nan_values(indices)
+            npk = clean_nan_values(npk)
             
             return {
                 "success": True,
@@ -169,11 +214,12 @@ async def vegetation_indices(request: Request):
         coords = request.coordinates
         lat, lon = coords[0], coords[1]
         
+        # Create larger bbox for better satellite data coverage
         bbox = {
-            'minLat': lat - 0.001,
-            'maxLat': lat + 0.001,
-            'minLon': lon - 0.001,
-            'maxLon': lon + 0.001
+            'minLat': lat - 0.01,
+            'maxLat': lat + 0.01,
+            'minLon': lon - 0.01,
+            'maxLon': lon + 0.01
         }
         
         from api.working.sentinel_indices import compute_indices_and_npk_for_bbox
@@ -183,6 +229,21 @@ async def vegetation_indices(request: Request):
         if result and result.get('success'):
             data = result.get('data', {})
             indices = data.get('indices', {})
+            
+            # Clean up any NaN values for JSON serialization
+            def clean_nan_values(obj):
+                if isinstance(obj, dict):
+                    return {k: clean_nan_values(v) for k, v in obj.items()}
+                elif isinstance(obj, list):
+                    return [clean_nan_values(item) for item in obj]
+                elif isinstance(obj, float) and (obj != obj):  # Check for NaN
+                    return 0.0
+                elif isinstance(obj, float) and (obj == float('inf') or obj == float('-inf')):
+                    return 0.0
+                else:
+                    return obj
+            
+            indices = clean_nan_values(indices)
             
             return {
                 "success": True,
@@ -273,12 +334,12 @@ async def recommendations(request: Request):
         coords = request.coordinates
         lat, lon = coords[0], coords[1]
         
-        # Get SOC data first
+        # Get SOC data first with larger bbox
         bbox = {
-            'minLat': lat - 0.001,
-            'maxLat': lat + 0.001,
-            'minLon': lon - 0.001,
-            'maxLon': lon + 0.001
+            'minLat': lat - 0.01,
+            'maxLat': lat + 0.01,
+            'minLon': lon - 0.01,
+            'maxLon': lon + 0.01
         }
         
         from api.working.sentinel_indices import compute_indices_and_npk_for_bbox
@@ -288,6 +349,21 @@ async def recommendations(request: Request):
         if result and result.get('success'):
             data = result.get('data', {})
             npk = data.get('npk', {})
+            
+            # Clean up any NaN values for JSON serialization
+            def clean_nan_values(obj):
+                if isinstance(obj, dict):
+                    return {k: clean_nan_values(v) for k, v in obj.items()}
+                elif isinstance(obj, list):
+                    return [clean_nan_values(item) for item in obj]
+                elif isinstance(obj, float) and (obj != obj):  # Check for NaN
+                    return 0.0
+                elif isinstance(obj, float) and (obj == float('inf') or obj == float('-inf')):
+                    return 0.0
+                else:
+                    return obj
+            
+            npk = clean_nan_values(npk)
             
             # Generate recommendations based on NPK levels
             recommendations_list = []
@@ -428,4 +504,4 @@ async def health():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8001)
+    uvicorn.run(app, host="localhost", port=8001)

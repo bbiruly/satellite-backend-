@@ -1,0 +1,125 @@
+{
+  "satellite_data": [
+    {
+      "success": false,
+      "state": "Delhi",
+      "city": "New Delhi",
+      "error": "'str' object has no attribute 'get'"
+    },
+    {
+      "success": false,
+      "state": "Maharashtra",
+      "city": "Mumbai",
+      "error": "'str' object has no attribute 'get'"
+    },
+    {
+      "success": false,
+      "state": "Karnataka",
+      "city": "Bangalore",
+      "error": "'str' object has no attribute 'get'"
+    },
+    {
+      "success": false,
+      "state": "Tamil Nadu",
+      "city": "Chennai",
+      "error": "'str' object has no attribute 'get'"
+    },
+    {
+      "success": false,
+      "state": "West Bengal",
+      "city": "Kolkata",
+      "error": "'str' object has no attribute 'get'"
+    },
+    {
+      "success": false,
+      "state": "Gujarat",
+      "city": "Gandhinagar",
+      "error": "'str' object has no attribute 'get'"
+    },
+    {
+      "success": false,
+      "state": "Rajasthan",
+      "city": "Jaipur",
+      "error": "'str' object has no attribute 'get'"
+    },
+    {
+      "success": false,
+      "state": "Uttar Pradesh",
+      "city": "Lucknow",
+      "error": "'str' object has no attribute 'get'"
+    }
+  ],
+  "weather_data": [
+    {
+      "success": true,
+      "state": "Delhi",
+      "city": "New Delhi",
+      "temperature": 35.2,
+      "humidity": 39,
+      "condition": "Sunny"
+    },
+    {
+      "success": true,
+      "state": "Maharashtra",
+      "city": "Mumbai",
+      "temperature": 29.1,
+      "humidity": 75,
+      "condition": "Mist"
+    },
+    {
+      "success": true,
+      "state": "Karnataka",
+      "city": "Bangalore",
+      "temperature": 26.4,
+      "humidity": 74,
+      "condition": "Partly cloudy"
+    },
+    {
+      "success": true,
+      "state": "Tamil Nadu",
+      "city": "Chennai",
+      "temperature": 33.4,
+      "humidity": 67,
+      "condition": "Partly cloudy"
+    },
+    {
+      "success": true,
+      "state": "West Bengal",
+      "city": "Kolkata",
+      "temperature": 27.1,
+      "humidity": 94,
+      "condition": "Patchy light rain with thunder"
+    },
+    {
+      "success": true,
+      "state": "Gujarat",
+      "city": "Gandhinagar",
+      "temperature": 32.0,
+      "humidity": 49,
+      "condition": "Overcast"
+    },
+    {
+      "success": true,
+      "state": "Rajasthan",
+      "city": "Jaipur",
+      "temperature": 33.3,
+      "humidity": 44,
+      "condition": "Sunny"
+    },
+    {
+      "success": true,
+      "state": "Uttar Pradesh",
+      "city": "Lucknow",
+      "temperature": 34.0,
+      "humidity": 63,
+      "condition": "Mist"
+    }
+  ],
+  "summary": {
+    "total_states": 8,
+    "satellite_success": 0,
+    "weather_success": 8
+  },
+  "test_timestamp": "2025-09-23T14:17:41.969526",
+  "test_type": "quick_test_key_states"
+}

@@ -225,18 +225,18 @@ class EnhancedRetryManager:
                                    bbox: Dict[str, float],
                                    start_date: datetime = None,
                                    end_date: datetime = None) -> Dict[str, Any]:
-        """Fetch data from specific satellite"""
+        """Fetch data from specific satellite using the robust sentinel_indices system"""
         config = self.selector.satellite_configs[satellite_id]
         
         try:
-            # Get the appropriate processor
-            processor = get_satellite_processor(satellite_id)
+            # Use the working sentinel_indices system instead of satellite_processors
+            from api.working.sentinel_indices import compute_indices_and_npk_for_bbox
             
             # Run the synchronous function in an executor
             result = await asyncio.wait_for(
                 asyncio.get_event_loop().run_in_executor(
                     None, 
-                    processor.process_satellite_data,
+                    compute_indices_and_npk_for_bbox,
                     bbox,
                     start_date,
                     end_date
@@ -245,9 +245,25 @@ class EnhancedRetryManager:
             )
             
             if result and result.get('success'):
-                result['dataset'] = satellite_id
-                self.logger.info(f"✅ [ENHANCED] Success with {satellite_id}")
-                return result
+                # Transform the result to match the expected format
+                transformed_result = {
+                    'success': True,
+                    'satellite': satellite_id,
+                    'resolution': config.get('resolution', '10m'),
+                    'cloud_coverage': result.get('cloudCover', 0),
+                    'acquisition_date': result.get('imageDate', ''),
+                    'processing_time': 0,  # Will be calculated by caller
+                    'indices': {
+                        'ndvi': result.get('indices', {}).get('NDVI', {}).get('mean', 0.0),
+                        'ndmi': result.get('indices', {}).get('NDMI', {}).get('mean', 0.0),
+                        'ndwi': result.get('indices', {}).get('NDWI', {}).get('mean', 0.0)
+                    },
+                    'npk': result.get('npk', {}),
+                    'dataset': satellite_id
+                }
+                
+                self.logger.info(f"✅ [ENHANCED] Success with {satellite_id} using sentinel_indices")
+                return transformed_result
             else:
                 self.logger.warning(f"⚠️ [ENHANCED] {satellite_id} returned no data")
                 return {

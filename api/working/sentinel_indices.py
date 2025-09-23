@@ -75,6 +75,39 @@ def clip_bands_parallel(asset_hrefs: List[str], bbox: Dict[str, float], max_work
     logger.info(f"🎯 Parallel processing completed for {len(results)} bands")
     return results
 
+def parse_datetime_safe(dt_str: str) -> datetime:
+    """Safely parse datetime string, handling various formats including Z suffix"""
+    try:
+        # Remove Z suffix and replace with +00:00 for UTC
+        if dt_str.endswith('Z'):
+            dt_str = dt_str[:-1] + '+00:00'
+        
+        # Handle microseconds - ensure consistent format
+        if '.' in dt_str:
+            # Split on the decimal point
+            base_part, microsecond_part = dt_str.split('.')
+            # Find where timezone starts
+            if '+' in microsecond_part:
+                microsecond_str, tz_part = microsecond_part.split('+')
+                tz_part = '+' + tz_part
+            elif '-' in microsecond_part and microsecond_part.count('-') > 1:
+                # Handle negative timezone
+                parts = microsecond_part.split('-')
+                microsecond_str = parts[0]
+                tz_part = '-' + '-'.join(parts[1:])
+            else:
+                microsecond_str = microsecond_part
+                tz_part = ''
+            
+            # Ensure microseconds are exactly 6 digits
+            microsecond_str = microsecond_str[:6].ljust(6, '0')
+            dt_str = f"{base_part}.{microsecond_str}{tz_part}"
+        
+        return datetime.fromisoformat(dt_str)
+    except Exception as e:
+        logger.warning(f"Failed to parse datetime '{dt_str}': {e}, using fallback")
+        return datetime(2023, 1, 1)
+
 def fetch_best_sentinel_item(bbox: Dict[str, float],
                              start_date: datetime = None,
                              end_date: datetime = None,
@@ -84,21 +117,37 @@ def fetch_best_sentinel_item(bbox: Dict[str, float],
     if end_date is None:
         end_date = datetime.utcnow()
     if start_date is None:
-        start_date = end_date - timedelta(days=90)  # default 90 days
+        start_date = end_date - timedelta(days=180)  # Increased to 180 days for better data availability
 
-    search = catalog.search(
-        collections=["sentinel-2-l2a"],
-        bbox=[bbox['minLon'], bbox['minLat'], bbox['maxLon'], bbox['maxLat']],
-        datetime=f"{start_date.isoformat()}/{end_date.isoformat()}",
-        query={"eo:cloud_cover": {"lt": max_cloud_cover}},
-        limit=50
-    )
-    items = list(search.items())
-    if not items:
-        return None
-    # choose lowest cloud cover and most recent preference
-    items_sorted = sorted(items, key=lambda it: (it.properties.get('eo:cloud_cover', 100), -datetime.fromisoformat(str(it.properties.get('datetime', '2023-01-01'))).timestamp()))
-    return items_sorted[0]
+    # Try different date ranges if no data found
+    date_ranges = [
+        (start_date, end_date),  # Original range
+        (end_date - timedelta(days=365), end_date),  # 1 year
+        (end_date - timedelta(days=730), end_date),  # 2 years
+    ]
+    
+    for start_dt, end_dt in date_ranges:
+        logger.info(f"🔍 DEBUG: Searching satellite data from {start_dt.date()} to {end_dt.date()}")
+        
+        search = catalog.search(
+            collections=["sentinel-2-l2a"],
+            bbox=[bbox['minLon'], bbox['minLat'], bbox['maxLon'], bbox['maxLat']],
+            datetime=f"{start_dt.isoformat()}/{end_dt.isoformat()}",
+            query={"eo:cloud_cover": {"lt": max_cloud_cover}},
+            limit=50
+        )
+        items = list(search.items())
+        
+        if items:
+            logger.info(f"✅ Found {len(items)} satellite items in date range {start_dt.date()} to {end_dt.date()}")
+            # choose lowest cloud cover and most recent preference
+            items_sorted = sorted(items, key=lambda it: (it.properties.get('eo:cloud_cover', 100), -parse_datetime_safe(str(it.properties.get('datetime', '2023-01-01'))).timestamp()))
+            return items_sorted[0]
+        else:
+            logger.info(f"❌ No satellite data found in date range {start_dt.date()} to {end_dt.date()}")
+    
+    logger.warning("❌ No satellite data found in any date range")
+    return None
 
 def clip_band_to_bbox(asset_href: str, bbox: Dict[str, float]) -> xr.DataArray:
     """
@@ -217,39 +266,92 @@ def compute_indices_from_arrays(red_arr: np.ndarray, nir_arr: np.ndarray, swir1_
         swir1 = _resize_to_shape(swir1, target_shape)
         green = _resize_to_shape(green, target_shape)
 
-        # NDVI
+        # NDVI with improved handling for bare soil/post-harvest
         if red is not None and nir is not None and red.size > 0 and nir.size > 0:
             logger.info(f"🔍 DEBUG: Red array shape: {red.shape}, NIR array shape: {nir.shape}")
             logger.info(f"🔍 DEBUG: Red min/max: {np.nanmin(red)}/{np.nanmax(red)}, NIR min/max: {np.nanmin(nir)}/{np.nanmax(nir)}")
-            denom = nir + red
-            valid = denom != 0
+            
+            # Add small epsilon to avoid division by zero
+            epsilon = 1e-8
+            denom = nir + red + epsilon
+            valid = denom > epsilon
+            
             ndvi = np.zeros_like(denom, dtype=np.float64)
             ndvi[valid] = (nir[valid] - red[valid]) / denom[valid]
+            
+            # Clip NDVI to valid range [-1, 1]
+            ndvi = np.clip(ndvi, -1.0, 1.0)
+            
             logger.info(f"🔍 DEBUG: NDVI min/max: {np.nanmin(ndvi)}/{np.nanmax(ndvi)}, valid pixels: {np.sum(valid)}")
             mean_ndvi = float(np.nanmean(ndvi))
+            median_ndvi = float(np.nanmedian(ndvi))
+            
+            # Handle NaN values for JSON serialization
+            if np.isnan(mean_ndvi):
+                mean_ndvi = 0.0
+            if np.isnan(median_ndvi):
+                median_ndvi = 0.0
+                
             logger.info(f"🔍 DEBUG: NDVI mean: {mean_ndvi}")
+            
+            # Provide interpretation for negative values
+            interpretation = "healthy_vegetation" if mean_ndvi > 0.3 else "sparse_vegetation" if mean_ndvi > 0.1 else "bare_soil_or_post_harvest"
+            
             out['NDVI'] = {
                 'mean': mean_ndvi,
-                'median': float(np.nanmedian(ndvi)),
-                'count': int(np.sum(valid))
+                'median': median_ndvi,
+                'count': int(np.sum(valid)),
+                'interpretation': interpretation,
+                'status': 'healthy' if mean_ndvi > 0.3 else 'needs_attention' if mean_ndvi > 0.1 else 'post_harvest_or_bare'
             }
         else:
             logger.warning(f"🔍 DEBUG: Red or NIR array is empty - Red: {red.size if red is not None else 'None'}, NIR: {nir.size if nir is not None else 'None'}")
-            out['NDVI'] = {'mean': 0, 'median': 0, 'count': 0}
+            out['NDVI'] = {
+                'mean': 0, 
+                'median': 0, 
+                'count': 0,
+                'interpretation': 'no_data',
+                'status': 'no_data'
+            }
 
-        # NDMI
+        # NDMI with improved handling
         if nir.size and swir1.size:
-            denom = nir + swir1
-            valid = denom != 0
+            epsilon = 1e-8
+            denom = nir + swir1 + epsilon
+            valid = denom > epsilon
+            
             ndmi = np.zeros_like(denom, dtype=np.float64)
             ndmi[valid] = (nir[valid] - swir1[valid]) / denom[valid]
+            
+            # Clip NDMI to valid range [-1, 1]
+            ndmi = np.clip(ndmi, -1.0, 1.0)
+            
+            mean_ndmi = float(np.nanmean(ndmi))
+            median_ndmi = float(np.nanmedian(ndmi))
+            
+            # Handle NaN values for JSON serialization
+            if np.isnan(mean_ndmi):
+                mean_ndmi = 0.0
+            if np.isnan(median_ndmi):
+                median_ndmi = 0.0
+                
+            interpretation = "high_moisture" if mean_ndmi > 0.2 else "moderate_moisture" if mean_ndmi > 0.0 else "low_moisture_or_dry_soil"
+            
             out['NDMI'] = {
-                'mean': float(np.nanmean(ndmi)),
-                'median': float(np.nanmedian(ndmi)),
-                'count': int(np.sum(valid))
+                'mean': mean_ndmi,
+                'median': median_ndmi,
+                'count': int(np.sum(valid)),
+                'interpretation': interpretation,
+                'status': 'adequate' if mean_ndmi > 0.1 else 'needs_irrigation' if mean_ndmi > -0.1 else 'dry_soil'
             }
         else:
-            out['NDMI'] = {'mean': None, 'median': None, 'count': 0}
+            out['NDMI'] = {
+                'mean': 0.0, 
+                'median': 0.0, 
+                'count': 0,
+                'interpretation': 'no_data',
+                'status': 'no_data'
+            }
 
         # SAVI (L = 0.5)
         L = 0.5
@@ -258,13 +360,23 @@ def compute_indices_from_arrays(red_arr: np.ndarray, nir_arr: np.ndarray, swir1_
             valid = denom != 0
             savi = np.zeros_like(denom, dtype=np.float64)
             savi[valid] = ((nir[valid] - red[valid]) * (1 + L)) / denom[valid]
+            
+            mean_savi = float(np.nanmean(savi))
+            median_savi = float(np.nanmedian(savi))
+            
+            # Handle NaN values for JSON serialization
+            if np.isnan(mean_savi):
+                mean_savi = 0.0
+            if np.isnan(median_savi):
+                median_savi = 0.0
+                
             out['SAVI'] = {
-                'mean': float(np.nanmean(savi)),
-                'median': float(np.nanmedian(savi)),
+                'mean': mean_savi,
+                'median': median_savi,
                 'count': int(np.sum(valid))
             }
         else:
-            out['SAVI'] = {'mean': None, 'median': None, 'count': 0}
+            out['SAVI'] = {'mean': 0.0, 'median': 0.0, 'count': 0}
 
         # NDWI (Green - NIR)
         if green.size and nir.size:
@@ -272,13 +384,23 @@ def compute_indices_from_arrays(red_arr: np.ndarray, nir_arr: np.ndarray, swir1_
             valid = denom != 0
             ndwi = np.zeros_like(denom, dtype=np.float64)
             ndwi[valid] = (green[valid] - nir[valid]) / denom[valid]
+            
+            mean_ndwi = float(np.nanmean(ndwi))
+            median_ndwi = float(np.nanmedian(ndwi))
+            
+            # Handle NaN values for JSON serialization
+            if np.isnan(mean_ndwi):
+                mean_ndwi = 0.0
+            if np.isnan(median_ndwi):
+                median_ndwi = 0.0
+                
             out['NDWI'] = {
-                'mean': float(np.nanmean(ndwi)),
-                'median': float(np.nanmedian(ndwi)),
+                'mean': mean_ndwi,
+                'median': median_ndwi,
                 'count': int(np.sum(valid))
             }
         else:
-            out['NDWI'] = {'mean': None, 'median': None, 'count': 0}
+            out['NDWI'] = {'mean': 0.0, 'median': 0.0, 'count': 0}
 
         return out
 
@@ -367,8 +489,18 @@ def compute_indices_and_npk_for_bbox(bbox: Dict[str, float],
     End-to-end: find best sentinel item, clip bands, compute indices, map to NPK/SOC.
     Returns structured payload suitable for B2B API responses.
     """
-    item = fetch_best_sentinel_item(bbox, start_date=start_date, end_date=end_date, max_cloud_cover=20)
+    # Try with different cloud cover thresholds for better data availability
+    cloud_thresholds = [20, 40, 60, 80]  # Start strict, get more lenient
+    
+    for max_cloud_cover in cloud_thresholds:
+        logger.info(f"🔍 DEBUG: Trying satellite search with {max_cloud_cover}% cloud cover")
+        item = fetch_best_sentinel_item(bbox, start_date=start_date, end_date=end_date, max_cloud_cover=max_cloud_cover)
+        if item is not None:
+            logger.info(f"✅ Found satellite data with {max_cloud_cover}% cloud cover")
+            break
+    
     if item is None:
+        logger.warning("❌ No satellite data found even with 80% cloud cover")
         return {"success": False, "error": "no_satellite_item_found", "satelliteItem": None}
 
     try:
