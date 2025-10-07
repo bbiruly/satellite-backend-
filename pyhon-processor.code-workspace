@@ -1,9 +1,6 @@
 {
     "folders": [
 		{
-			"path": "."
-		},
-		{
 			"path": "../zumagro pvt. ltd./zumagro_frontend"
 		},
 		{
@@ -11,6 +8,9 @@
 		},
 		{
 			"path": "../ZumagroMobile"
+		},
+		{
+			"path": "."
 		}
 	]
 }
