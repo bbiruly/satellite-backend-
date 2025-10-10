@@ -8,6 +8,13 @@ import planetary_computer as pc
 import rioxarray
 import xarray as xr
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from .npk_config import (
+    get_npk_coefficients, 
+    detect_region_from_coordinates, 
+    get_crop_type_from_string,
+    Region, 
+    CropType
+)
 
 
 logger = logging.getLogger("sentinel_indices")
@@ -423,67 +430,90 @@ def qualitative_from_index(value: float, index_name: str, thresholds: Dict[str, 
         return "medium"
     return "high"
 
-def estimate_nitrogen(ndvi: float, ndmi: float, savi: float) -> float:
+def estimate_nitrogen(ndvi: float, ndmi: float, savi: float, 
+                     region: Region = Region.GLOBAL, 
+                     crop_type: CropType = CropType.GENERIC,
+                     lat: float = None, lon: float = None) -> float:
     """
-    Estimate nitrogen content based on research by Lobell et al. (2002) and Gitelson et al. (2003)
-    Range: 15-120 kg/ha (typical for Indian soils)
+    Estimate nitrogen content using dynamic regional and crop-specific coefficients
     """
     if any(x is None or not isinstance(x, (int, float)) or np.isnan(x) for x in [ndvi, ndmi, savi]):
         return 0.0
     
-    # Primary formula (Lobell et al., 2002)
-    nitrogen_kg_ha = (ndvi * 45) + (ndmi * 12) + (savi * 8) + 15
+    # Get dynamic coefficients with local calibration
+    coeffs = get_npk_coefficients(region, crop_type, lat, lon)
     
-    # Clamp to realistic range for Indian soils
-    return max(15.0, min(120.0, nitrogen_kg_ha))
+    # Calculate nitrogen using dynamic coefficients
+    nitrogen_kg_ha = (ndvi * coeffs.nitrogen_ndvi) + (ndmi * coeffs.nitrogen_ndmi) + (savi * coeffs.nitrogen_savi) + coeffs.nitrogen_base
+    
+    # Clamp to regional range
+    return max(coeffs.nitrogen_min, min(coeffs.nitrogen_max, nitrogen_kg_ha))
 
-def estimate_phosphorus(ndvi: float, ndwi: float, savi: float) -> float:
+def estimate_phosphorus(ndvi: float, ndwi: float, savi: float,
+                      region: Region = Region.GLOBAL,
+                      crop_type: CropType = CropType.GENERIC,
+                      lat: float = None, lon: float = None) -> float:
     """
-    Estimate phosphorus content based on research by Sharpley et al. (2000) and Ben-Dor et al. (2009)
-    Range: 5-40 kg/ha (typical for Indian soils)
+    Estimate phosphorus content using dynamic regional and crop-specific coefficients
     """
     if any(x is None or not isinstance(x, (int, float)) or np.isnan(x) for x in [ndvi, ndwi, savi]):
         return 0.0
     
-    # Primary formula (Sharpley et al., 2000)
-    phosphorus_kg_ha = (ndvi * 8) + (ndwi * 5) + (savi * 3) + 5
+    # Get dynamic coefficients with local calibration
+    coeffs = get_npk_coefficients(region, crop_type, lat, lon)
     
-    # Clamp to realistic range for Indian soils
-    return max(5.0, min(40.0, phosphorus_kg_ha))
+    # Calculate phosphorus using dynamic coefficients
+    phosphorus_kg_ha = (ndvi * coeffs.phosphorus_ndvi) + (ndwi * coeffs.phosphorus_ndwi) + (savi * coeffs.phosphorus_savi) + coeffs.phosphorus_base
+    
+    # Clamp to regional range
+    return max(coeffs.phosphorus_min, min(coeffs.phosphorus_max, phosphorus_kg_ha))
 
-def estimate_potassium(ndvi: float, savi: float, ndmi: float) -> float:
+def estimate_potassium(ndvi: float, savi: float, ndmi: float,
+                      region: Region = Region.GLOBAL,
+                      crop_type: CropType = CropType.GENERIC,
+                      lat: float = None, lon: float = None) -> float:
     """
-    Estimate potassium content based on research by Mengel & Kirkby (2001) and Lobell et al. (2007)
-    Range: 40-200 kg/ha (typical for Indian soils)
+    Estimate potassium content using dynamic regional and crop-specific coefficients
     """
     if any(x is None or not isinstance(x, (int, float)) or np.isnan(x) for x in [ndvi, savi, ndmi]):
         return 0.0
     
-    # Primary formula (Mengel & Kirkby, 2001)
-    potassium_kg_ha = (ndvi * 60) + (savi * 25) + (ndmi * 15) + 40
+    # Get dynamic coefficients with local calibration
+    coeffs = get_npk_coefficients(region, crop_type, lat, lon)
     
-    # Clamp to realistic range for Indian soils
-    return max(40.0, min(200.0, potassium_kg_ha))
+    # Calculate potassium using dynamic coefficients
+    potassium_kg_ha = (ndvi * coeffs.potassium_ndvi) + (savi * coeffs.potassium_savi) + (ndmi * coeffs.potassium_ndmi) + coeffs.potassium_base
+    
+    # Clamp to regional range
+    return max(coeffs.potassium_min, min(coeffs.potassium_max, potassium_kg_ha))
 
-def estimate_soc(ndvi: float, ndmi: float, savi: float) -> float:
+def estimate_soc(ndvi: float, ndmi: float, savi: float,
+                 region: Region = Region.GLOBAL,
+                 crop_type: CropType = CropType.GENERIC,
+                 lat: float = None, lon: float = None) -> float:
     """
-    Estimate soil organic carbon based on research by Lobell et al. (2002) and Viscarra Rossel et al. (2006)
-    Range: 0.5-4.0% (typical for Indian soils)
+    Estimate soil organic carbon using dynamic regional and crop-specific coefficients
     """
     if any(x is None or not isinstance(x, (int, float)) or np.isnan(x) for x in [ndvi, ndmi, savi]):
         return 0.0
     
-    # Primary formula (Lobell et al., 2002)
-    soc_percentage = (ndvi * 1.2) + (ndmi * 0.8) + (savi * 0.6) + 0.5
+    # Get dynamic coefficients with local calibration
+    coeffs = get_npk_coefficients(region, crop_type, lat, lon)
     
-    # Clamp to realistic range for Indian soils
-    return max(0.5, min(4.0, soc_percentage))
+    # Calculate SOC using dynamic coefficients
+    soc_percentage = (ndvi * coeffs.soc_ndvi) + (ndmi * coeffs.soc_ndmi) + (savi * coeffs.soc_savi) + coeffs.soc_base
+    
+    # Clamp to regional range
+    return max(coeffs.soc_min, min(coeffs.soc_max, soc_percentage))
 
-def map_indices_to_npk_soc(indices: Dict[str, Any]) -> Dict[str, float]:
+def map_indices_to_npk_soc(indices: Dict[str, Any], 
+                          region: Region = Region.GLOBAL,
+                          crop_type: CropType = CropType.GENERIC,
+                          lat: float = None, lon: float = None,
+                          cloud_cover: float = 0.0, satellite_type: str = "sentinel_2") -> Dict[str, float]:
     """
-    Research-based quantitative mapping from satellite indices to NPK/SOC values.
-    Based on peer-reviewed research papers for Indian soil conditions.
-    Returns quantitative values in kg/ha for NPK and % for SOC.
+    Dynamic regional and crop-specific mapping from satellite indices to NPK/SOC values.
+    Uses configurable coefficients based on region and crop type.
     """
     # Extract vegetation indices
     ndvi = indices.get('NDVI', {}).get('mean', 0)
@@ -501,35 +531,61 @@ def map_indices_to_npk_soc(indices: Dict[str, Any]) -> Dict[str, float]:
             "SOC": 0.0
         }
 
-    # Estimate NPK using research-based formulas
-    nitrogen_kg_ha = estimate_nitrogen(ndvi, ndmi, savi)
-    phosphorus_kg_ha = estimate_phosphorus(ndvi, ndwi, savi)
-    potassium_kg_ha = estimate_potassium(ndvi, savi, ndmi)
-    soc_percentage = estimate_soc(ndvi, ndmi, savi)
+    # Estimate NPK using dynamic regional and crop-specific formulas with local calibration
+    nitrogen_kg_ha = estimate_nitrogen(ndvi, ndmi, savi, region, crop_type, lat, lon)
+    phosphorus_kg_ha = estimate_phosphorus(ndvi, ndwi, savi, region, crop_type, lat, lon)
+    potassium_kg_ha = estimate_potassium(ndvi, savi, ndmi, region, crop_type, lat, lon)
+    soc_percentage = estimate_soc(ndvi, ndmi, savi, region, crop_type, lat, lon)
 
-    logger.info(f"🔬 RESEARCH-BASED NPK ESTIMATION:")
+    # Calculate dynamic accuracy
+    from .npk_config import calculate_dynamic_accuracy
+    accuracy = calculate_dynamic_accuracy(ndvi, cloud_cover, satellite_type)
+
+    # Get soil type information
+    from .npk_config import detect_soil_type_from_coordinates
+    soil_type = detect_soil_type_from_coordinates(lat, lon) if lat and lon else "unknown"
+    
+    logger.info(f"🔬 DYNAMIC NPK ESTIMATION WITH LOCAL CALIBRATION:")
+    logger.info(f"   Region: {region.value}, Crop: {crop_type.value}")
+    logger.info(f"   Coordinates: {lat}, {lon}")
+    logger.info(f"   Soil Type: {soil_type}")
     logger.info(f"   NDVI: {ndvi:.3f}, NDMI: {ndmi:.3f}, SAVI: {savi:.3f}, NDWI: {ndwi:.3f}")
     logger.info(f"   Nitrogen: {nitrogen_kg_ha:.1f} kg/ha")
     logger.info(f"   Phosphorus: {phosphorus_kg_ha:.1f} kg/ha")
     logger.info(f"   Potassium: {potassium_kg_ha:.1f} kg/ha")
     logger.info(f"   SOC: {soc_percentage:.2f}%")
+    logger.info(f"   Dynamic Accuracy: {accuracy:.2f}")
 
     return {
         "Nitrogen": round(nitrogen_kg_ha, 1),
         "Phosphorus": round(phosphorus_kg_ha, 1),
         "Potassium": round(potassium_kg_ha, 1),
-        "SOC": round(soc_percentage, 2)
+        "SOC": round(soc_percentage, 2),
+        "Accuracy": round(accuracy, 2)
     }
 
 def compute_indices_and_npk_for_bbox(bbox: Dict[str, float],
                                      start_date: datetime = None,
-                                     end_date: datetime = None) -> Dict[str, Any]:
+                                     end_date: datetime = None,
+                                     crop_type: str = "GENERIC") -> Dict[str, Any]:
     """
     End-to-end: find best sentinel item, clip bands, compute indices, map to NPK/SOC.
+    Uses dynamic regional and crop-specific coefficients.
     Returns structured payload suitable for B2B API responses.
     """
-    # Try with different cloud cover thresholds for better data availability
-    cloud_thresholds = [20, 40, 60, 80]  # Start strict, get more lenient
+    # Detect region from coordinates
+    center_lat = (bbox['minLat'] + bbox['maxLat']) / 2
+    center_lon = (bbox['minLon'] + bbox['maxLon']) / 2
+    region = detect_region_from_coordinates(center_lat, center_lon)
+    
+    # Convert crop type string to enum
+    crop_enum = get_crop_type_from_string(crop_type)
+    
+    logger.info(f"🌍 Region detected: {region.value}")
+    logger.info(f"🌱 Crop type: {crop_enum.value}")
+    
+    # Optimized cloud cover thresholds for faster response
+    cloud_thresholds = [40, 60]  # Reduced from 4 to 2 attempts for faster response
     
     for max_cloud_cover in cloud_thresholds:
         logger.info(f"🔍 DEBUG: Trying satellite search with {max_cloud_cover}% cloud cover")
@@ -586,10 +642,10 @@ def compute_indices_and_npk_for_bbox(bbox: Dict[str, float],
             'green': green_href
         }
         
-        # Process bands in parallel for better performance
+        # Process bands in parallel for better performance (optimized workers)
         logger.info("🚀 Starting parallel band processing")
         start_time = datetime.utcnow()
-        band_data = clip_bands_parallel(band_assets, bbox, max_workers=4)
+        band_data = clip_bands_parallel(band_assets, bbox, max_workers=2)  # Reduced workers for faster processing
         parallel_time = (datetime.utcnow() - start_time).total_seconds()
         logger.info(f"⚡ Parallel band processing completed in {parallel_time:.2f}s")
         
@@ -671,14 +727,29 @@ def compute_indices_and_npk_for_bbox(bbox: Dict[str, float],
         
         indices = compute_indices_from_arrays(red_np, nir_np, swir1_np, green_np)
         logger.info(f"🔍 DEBUG: Computed indices: {indices}")
-        npk = map_indices_to_npk_soc(indices)
-        logger.info(f"🔍 DEBUG: Mapped NPK: {npk}")
+        
+        # Get cloud cover for accuracy calculation
+        cloud_cover = item.properties.get("eo:cloud_cover", 0)
+        
+        npk = map_indices_to_npk_soc(indices, region, crop_enum, center_lat, center_lon, cloud_cover, "sentinel_2")
+        logger.info(f"🔍 DEBUG: Mapped NPK with local calibration: {npk}")
 
+        # Get soil type information
+        from .npk_config import detect_soil_type_from_coordinates
+        soil_type = detect_soil_type_from_coordinates(center_lat, center_lon)
+        
         response = {
             "success": True,
             "satelliteItem": item.id,
             "imageDate": item.properties.get("datetime"),
             "cloudCover": item.properties.get("eo:cloud_cover"),
+            "region": region.value,
+            "cropType": crop_enum.value,
+            "coordinates": [center_lat, center_lon],
+            "soilType": soil_type,
+            "localCalibration": "applied",
+            "soilTypeCalibration": "applied",
+            "dynamicAccuracy": npk.get("Accuracy", 0.0),
             "data": {
                 "indices": indices,
                 "npk": npk
@@ -688,6 +759,12 @@ def compute_indices_and_npk_for_bbox(bbox: Dict[str, float],
             "metadata": {
                 "provider": "Microsoft Planetary Computer",
                 "satellite": "Sentinel-2 L2A",
+                "region": region.value,
+                "cropType": crop_enum.value,
+                "soilType": soil_type,
+                "localCalibration": "applied",
+                "soilTypeCalibration": "applied",
+                "dynamicAccuracy": npk.get("Accuracy", 0.0),
                 "fetchedAt": datetime.utcnow().isoformat()
             }
         }
