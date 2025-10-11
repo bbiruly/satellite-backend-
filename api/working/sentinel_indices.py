@@ -1,5 +1,7 @@
 # sentinel_indices.py
 import logging
+import json
+import os
 from datetime import datetime, timedelta
 from typing import Dict, Any, Tuple, List, Optional
 import numpy as np
@@ -16,9 +18,288 @@ from .npk_config import (
     CropType
 )
 
-
+# Set up logger first
 logger = logging.getLogger("sentinel_indices")
 logger.setLevel(logging.WARNING)  # Reduce log noise for performance
+
+# Import Phase 1 modules for ICAR integration
+try:
+    import sys
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'kanker_soil_analysis_data', 'modules'))
+    from range_processor import RangeProcessor, NutrientType, VillageContext
+    from coordinate_matcher import CoordinateMatcher, ZoneType
+    from data_validator import DataValidator, ValidationLevel
+    from calibration_system import CalibrationSystem, CalibrationMethod
+    ICAR_MODULES_AVAILABLE = True
+    logger.info("✅ ICAR Phase 1 modules imported successfully!")
+except ImportError as e:
+    ICAR_MODULES_AVAILABLE = False
+    logger.warning(f"⚠️ ICAR modules not available: {e}")
+
+# ICAR Data Integration
+class ICARDataManager:
+    """Manages ICAR 2024-25 data for enhanced NPK calculations"""
+    
+    def __init__(self):
+        self.icar_data = None
+        self.range_processor = None
+        self.coordinate_matcher = None
+        self.data_validator = None
+        self.calibration_system = None
+        
+        if ICAR_MODULES_AVAILABLE:
+            self._initialize_icar_modules()
+    
+    def _initialize_icar_modules(self):
+        """Initialize ICAR modules"""
+        try:
+            icar_data_path = os.path.join(
+                os.path.dirname(__file__), '..', '..', 'kanker_soil_analysis_data', 
+                'kanker_complete_soil_analysis_data.json'
+            )
+            
+            self.range_processor = RangeProcessor()
+            self.coordinate_matcher = CoordinateMatcher(icar_data_path)
+            self.data_validator = DataValidator()
+            self.calibration_system = CalibrationSystem(icar_data_path)
+            
+            # Load ICAR data
+            self.icar_data = self._load_icar_data(icar_data_path)
+            
+            logger.info("✅ ICAR modules initialized successfully!")
+            
+        except Exception as e:
+            logger.error(f"❌ Error initializing ICAR modules: {e}")
+            self.icar_data = None
+    
+    def _load_icar_data(self, path: str) -> Optional[Dict]:
+        """Load ICAR data from JSON file"""
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            logger.error(f"Error loading ICAR data: {e}")
+            return None
+    
+    def get_enhanced_npk_values(
+        self, 
+        lat: float, 
+        lon: float, 
+        base_npk: Dict[str, float],
+        crop_type: str = "GENERIC"
+    ) -> Dict[str, Any]:
+        """Get enhanced NPK values using ICAR data"""
+        try:
+            if not self.icar_data or not ICAR_MODULES_AVAILABLE:
+                return {
+                    'enhanced': False,
+                    'npk': base_npk,
+                    'confidence': 0.5,
+                    'reason': 'ICAR data not available'
+                }
+            
+            # Find closest village
+            village_data = self._find_closest_village(lat, lon)
+            if not village_data:
+                return {
+                    'enhanced': False,
+                    'npk': base_npk,
+                    'confidence': 0.6,
+                    'reason': 'No ICAR village data found'
+                }
+            
+            # Apply range processing
+            enhanced_npk = self._apply_range_processing(
+                base_npk, village_data, lat, lon, crop_type
+            )
+            
+            # Apply calibration
+            calibrated_npk = self._apply_calibration(
+                enhanced_npk, village_data, lat, lon, crop_type
+            )
+            
+            return {
+                'enhanced': True,
+                'npk': calibrated_npk,
+                'confidence': 0.85,
+                'village': village_data['village_name'],
+                'reason': 'ICAR data applied successfully'
+            }
+            
+        except Exception as e:
+            logger.error(f"Error in enhanced NPK calculation: {e}")
+            return {
+                'enhanced': False,
+                'npk': base_npk,
+                'confidence': 0.5,
+                'reason': f'Error: {str(e)}'
+            }
+    
+    def _find_closest_village(self, lat: float, lon: float) -> Optional[Dict]:
+        """Find closest village in ICAR data"""
+        try:
+            if not self.icar_data or 'village_data' not in self.icar_data:
+                return None
+            
+            villages = self.icar_data['village_data'].get('villages', [])
+            if not villages:
+                return None
+            
+            closest_village = None
+            min_distance = float('inf')
+            
+            for village in villages:
+                village_coords = village.get('coordinates', [])
+                if len(village_coords) == 2:
+                    village_lat, village_lon = village_coords
+                    distance = self._calculate_distance(lat, lon, village_lat, village_lon)
+                    
+                    if distance < min_distance:
+                        min_distance = distance
+                        closest_village = village
+            
+            if closest_village and min_distance <= 10.0:  # Within 10km
+                return closest_village
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error finding closest village: {e}")
+            return None
+    
+    def _apply_range_processing(
+        self, 
+        base_npk: Dict[str, float], 
+        village_data: Dict, 
+        lat: float, 
+        lon: float, 
+        crop_type: str
+    ) -> Dict[str, float]:
+        """Apply range processing to NPK values"""
+        try:
+            if not self.range_processor:
+                return base_npk
+            
+            enhanced_npk = {}
+            
+            # Create village context
+            village_context = VillageContext(
+                village_name=village_data.get('village_name', 'Unknown'),
+                coordinates=(lat, lon),
+                soil_type='clay',
+                crop_type=crop_type.lower(),
+                season='kharif',
+                rainfall='normal',
+                zone=village_data.get('nitrogen_zone', 'yellow'),
+                tehsil='kanker'
+            )
+            
+            # Process each nutrient
+            nutrients = ['nitrogen', 'phosphorus', 'potassium', 'soc', 'boron', 'iron', 'zinc', 'soil_ph']
+            
+            for nutrient in nutrients:
+                base_value = base_npk.get(nutrient.capitalize(), 0)
+                icar_value_str = village_data.get(f'estimated_{nutrient}', '0')
+                
+                # Handle range values (e.g., "453-523 kg/ha")
+                if '-' in str(icar_value_str) and 'kg/ha' in str(icar_value_str):
+                    # Extract numeric range
+                    range_part = str(icar_value_str).split(' kg/ha')[0]
+                    if '-' in range_part:
+                        min_val, max_val = map(float, range_part.split('-'))
+                        icar_value = (min_val + max_val) / 2  # Use average
+                    else:
+                        icar_value = float(range_part)
+                else:
+                    try:
+                        # Handle values with units (e.g., "0.137 ppm", "4.25")
+                        icar_value_str_clean = str(icar_value_str).split()[0]  # Remove units
+                        icar_value = float(icar_value_str_clean) if icar_value_str_clean != '0' else 0
+                    except (ValueError, TypeError):
+                        icar_value = 0
+                
+                if base_value > 0 and icar_value > 0:
+                    # Apply range processing
+                    nutrient_type = getattr(NutrientType, nutrient.upper(), NutrientType.NITROGEN)
+                    
+                    result = self.range_processor.ai_powered_range_processing(
+                        str(icar_value), base_value, village_context, nutrient_type
+                    )
+                    
+                    enhanced_npk[nutrient.capitalize()] = result['value']
+                elif icar_value > 0:
+                    # Use ICAR value directly if satellite value is 0
+                    enhanced_npk[nutrient.capitalize()] = icar_value
+                    logger.info(f"🔬 {nutrient.capitalize()}: Using ICAR value {icar_value} (direct)")
+                else:
+                    enhanced_npk[nutrient.capitalize()] = base_value
+            
+            return enhanced_npk
+            
+        except Exception as e:
+            logger.error(f"Error applying range processing: {e}")
+            return base_npk
+    
+    def _apply_calibration(
+        self, 
+        npk_data: Dict[str, float], 
+        village_data: Dict, 
+        lat: float, 
+        lon: float, 
+        crop_type: str
+    ) -> Dict[str, float]:
+        """Apply calibration to NPK data"""
+        try:
+            if not self.calibration_system:
+                return npk_data
+            
+            calibrated_npk = {}
+            
+            for nutrient, value in npk_data.items():
+                if value > 0:
+                    # Apply calibration
+                    calibration_result = self.calibration_system.dynamic_calibration(
+                        {nutrient: value},
+                        village_data,
+                        {'village_name': village_data['village_name'], 'coordinates': (lat, lon), 'soil_type': 'clay', 'crop_type': crop_type},
+                        nutrient.lower()
+                    )
+                    
+                    calibrated_npk[nutrient] = value * calibration_result.adjustment_factor
+                else:
+                    calibrated_npk[nutrient] = value
+            
+            return calibrated_npk
+            
+        except Exception as e:
+            logger.error(f"Error applying calibration: {e}")
+            return npk_data
+    
+    def _calculate_distance(self, lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+        """Calculate distance between two points"""
+        try:
+            import math
+            
+            R = 6371  # Earth's radius in kilometers
+            
+            dlat = math.radians(lat2 - lat1)
+            dlon = math.radians(lon2 - lon1)
+            
+            a = (math.sin(dlat/2) * math.sin(dlat/2) +
+                 math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) *
+                 math.sin(dlon/2) * math.sin(dlon/2))
+            
+            c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+            distance = R * c
+            
+            return distance
+            
+        except Exception as e:
+            logger.error(f"Error calculating distance: {e}")
+            return float('inf')
+
+# Initialize ICAR data manager
+icar_manager = ICARDataManager()
 
 # Default thresholds — configurable per region/crop via external config
 THRESHOLDS = {
@@ -545,23 +826,80 @@ def map_indices_to_npk_soc(indices: Dict[str, Any],
     from .npk_config import detect_soil_type_from_coordinates
     soil_type = detect_soil_type_from_coordinates(lat, lon) if lat and lon else "unknown"
     
+    # Base NPK values from satellite indices
+    base_npk = {
+        "Nitrogen": nitrogen_kg_ha,
+        "Phosphorus": phosphorus_kg_ha,
+        "Potassium": potassium_kg_ha,
+        "SOC": soc_percentage,
+        "Boron": 0.0,  # Default micronutrient values
+        "Iron": 0.0,
+        "Zinc": 0.0,
+        "Soil_pH": 0.0
+    }
+    
+    # Apply ICAR enhancement if available
+    if ICAR_MODULES_AVAILABLE and icar_manager and lat and lon:
+        try:
+            enhanced_result = icar_manager.get_enhanced_npk_values(
+                lat, lon, base_npk, crop_type.value
+            )
+            
+            if enhanced_result['enhanced']:
+                logger.info(f"🔬 ICAR ENHANCEMENT APPLIED:")
+                logger.info(f"   Village: {enhanced_result.get('village', 'Unknown')}")
+                logger.info(f"   Confidence: {enhanced_result['confidence']:.2f}")
+                logger.info(f"   Reason: {enhanced_result['reason']}")
+                
+                # Update NPK values with enhanced data
+                enhanced_npk = enhanced_result['npk']
+                base_npk.update(enhanced_npk)
+                
+                # Update accuracy with ICAR confidence
+                accuracy = (accuracy + enhanced_result['confidence']) / 2
+                
+                logger.info(f"   Enhanced Nitrogen: {enhanced_npk.get('Nitrogen', nitrogen_kg_ha):.1f} kg/ha")
+                logger.info(f"   Enhanced Phosphorus: {enhanced_npk.get('Phosphorus', phosphorus_kg_ha):.1f} kg/ha")
+                logger.info(f"   Enhanced Potassium: {enhanced_npk.get('Potassium', potassium_kg_ha):.1f} kg/ha")
+                logger.info(f"   Enhanced SOC: {enhanced_npk.get('SOC', soc_percentage):.2f}%")
+                logger.info(f"   Enhanced Boron: {enhanced_npk.get('Boron', 0.0):.2f} ppm")
+                logger.info(f"   Enhanced Iron: {enhanced_npk.get('Iron', 0.0):.2f} ppm")
+                logger.info(f"   Enhanced Zinc: {enhanced_npk.get('Zinc', 0.0):.2f} ppm")
+                logger.info(f"   Enhanced Soil pH: {enhanced_npk.get('Soil_pH', 0.0):.2f} pH")
+            else:
+                logger.info(f"⚠️ ICAR enhancement not applied: {enhanced_result['reason']}")
+                
+        except Exception as e:
+            logger.error(f"❌ Error applying ICAR enhancement: {e}")
+            logger.info("🔄 Falling back to base satellite NPK values")
+    
     logger.info(f"🔬 DYNAMIC NPK ESTIMATION WITH LOCAL CALIBRATION:")
     logger.info(f"   Region: {region.value}, Crop: {crop_type.value}")
     logger.info(f"   Coordinates: {lat}, {lon}")
     logger.info(f"   Soil Type: {soil_type}")
     logger.info(f"   NDVI: {ndvi:.3f}, NDMI: {ndmi:.3f}, SAVI: {savi:.3f}, NDWI: {ndwi:.3f}")
-    logger.info(f"   Nitrogen: {nitrogen_kg_ha:.1f} kg/ha")
-    logger.info(f"   Phosphorus: {phosphorus_kg_ha:.1f} kg/ha")
-    logger.info(f"   Potassium: {potassium_kg_ha:.1f} kg/ha")
-    logger.info(f"   SOC: {soc_percentage:.2f}%")
+    logger.info(f"   Nitrogen: {base_npk['Nitrogen']:.1f} kg/ha")
+    logger.info(f"   Phosphorus: {base_npk['Phosphorus']:.1f} kg/ha")
+    logger.info(f"   Potassium: {base_npk['Potassium']:.1f} kg/ha")
+    logger.info(f"   SOC: {base_npk['SOC']:.2f}%")
+    logger.info(f"   Boron: {base_npk.get('Boron', 0.0):.2f} ppm")
+    logger.info(f"   Iron: {base_npk.get('Iron', 0.0):.2f} ppm")
+    logger.info(f"   Zinc: {base_npk.get('Zinc', 0.0):.2f} ppm")
+    logger.info(f"   Soil pH: {base_npk.get('Soil_pH', 0.0):.2f} pH")
     logger.info(f"   Dynamic Accuracy: {accuracy:.2f}")
 
     return {
-        "Nitrogen": round(nitrogen_kg_ha, 1),
-        "Phosphorus": round(phosphorus_kg_ha, 1),
-        "Potassium": round(potassium_kg_ha, 1),
-        "SOC": round(soc_percentage, 2),
-        "Accuracy": round(accuracy, 2)
+        "Nitrogen": round(base_npk['Nitrogen'], 1),
+        "Phosphorus": round(base_npk['Phosphorus'], 1),
+        "Potassium": round(base_npk['Potassium'], 1),
+        "SOC": round(base_npk['SOC'], 2),
+        "Boron": round(base_npk.get('Boron', 0), 2),
+        "Iron": round(base_npk.get('Iron', 0), 2),
+        "Zinc": round(base_npk.get('Zinc', 0), 2),
+        "Soil_pH": round(base_npk.get('Soil_pH', 0), 2),
+        "Accuracy": round(accuracy, 2),
+        "ICAR_Enhanced": ICAR_MODULES_AVAILABLE and icar_manager is not None,
+        "Soil_Type": soil_type
     }
 
 def compute_indices_and_npk_for_bbox(bbox: Dict[str, float],

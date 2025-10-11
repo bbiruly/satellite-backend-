@@ -1,0 +1,4573 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_11f7cec7abd157e9206f30ebad989585 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+    <div style="position: fixed; 
+                bottom: 50px; left: 50px; width: 320px; height: 220px; 
+                background-color: white; border:2px solid grey; z-index:9999; 
+                font-size:14px; padding: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+        <h4 style="margin-top:0; color: #333; text-align: center;">Kanker District Zones</h4>
+        
+        <div style="margin: 8px 0; display: flex; align-items: center;">
+            <i class="fa fa-square fa-2x" style="color: #FFD700; margin-right: 10px;"></i> 
+            <span><b>Yellow Zone</b> (Low-Medium Nitrogen)</span>
+        </div>
+        
+        <div style="margin: 8px 0; display: flex; align-items: center;">
+            <i class="fa fa-square fa-2x" style="color: #DC143C; margin-right: 10px;"></i> 
+            <span><b>Red Zone</b> (High/Very High Nitrogen)</span>
+        </div>
+        
+        <hr style="margin: 10px 0;">
+        
+        <h5 style="margin: 8px 0; color: #333;">Nitrogen Level Markers:</h5>
+        <div style="display: flex; justify-content: space-between; margin: 5px 0;">
+            <span><i class="fa fa-circle" style="color: lightblue;"></i> Low</span>
+            <span><i class="fa fa-circle" style="color: blue;"></i> Low-Medium</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin: 5px 0;">
+            <span><i class="fa fa-circle" style="color: orange;"></i> Medium</span>
+            <span><i class="fa fa-circle" style="color: red;"></i> High</span>
+        </div>
+        <div style="margin: 5px 0;">
+            <i class="fa fa-circle" style="color: darkred;"></i> Very High
+        </div>
+        
+        <div style="margin: 10px 0 0 0; padding: 8px; background-color: #f0f0f0; border-radius: 3px;">
+            <p style="margin: 0; font-size: 12px; color: #666; text-align: center;">
+                <b>Total Villages:</b> 45 Yellow + 46 Red = 91
+            </p>
+        </div>
+    </div>
+    
+    
+            <div class="folium-map" id="map_11f7cec7abd157e9206f30ebad989585" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_11f7cec7abd157e9206f30ebad989585 = L.map(
+                "map_11f7cec7abd157e9206f30ebad989585",
+                {
+                    center: [20.4, 81.5],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 10,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_9c28e8a8af701fafd259a508e4671409 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_9c28e8a8af701fafd259a508e4671409.addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var polygon_a5b80b6bf66a06b6b9a333db4fbf8158 = L.polygon(
+                [[20.1, 80.9], [20.58, 80.9], [20.58, 81.4], [20.1, 81.4]],
+                {"bubblingMouseEvents": true, "color": "yellow", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "yellow", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+        var popup_dbe010fc21a9dcc37808e46b9c1b9610 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_a1a07d228943ece6ae3454a90d9d0004 = $(`<div id="html_a1a07d228943ece6ae3454a90d9d0004" style="width: 100.0%; height: 100.0%;">Yellow Zone (Low-Medium Nitrogen)</div>`)[0];
+                popup_dbe010fc21a9dcc37808e46b9c1b9610.setContent(html_a1a07d228943ece6ae3454a90d9d0004);
+            
+        
+
+        polygon_a5b80b6bf66a06b6b9a333db4fbf8158.bindPopup(popup_dbe010fc21a9dcc37808e46b9c1b9610)
+        ;
+
+        
+    
+    
+            var polygon_a13d9cd92c466b8026c9c5a4006e5a40 = L.polygon(
+                [[20.05, 81.25], [20.8, 81.25], [20.8, 82.0], [20.05, 82.0]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+        var popup_9de08f74dca305f6d67c6519f24efadb = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_fe70aa7800d56dbfdc3f1accbbc5882f = $(`<div id="html_fe70aa7800d56dbfdc3f1accbbc5882f" style="width: 100.0%; height: 100.0%;">Red Zone (High/Very High Nitrogen)</div>`)[0];
+                popup_9de08f74dca305f6d67c6519f24efadb.setContent(html_fe70aa7800d56dbfdc3f1accbbc5882f);
+            
+        
+
+        polygon_a13d9cd92c466b8026c9c5a4006e5a40.bindPopup(popup_9de08f74dca305f6d67c6519f24efadb)
+        ;
+
+        
+    
+    
+            var marker_fbdbc24c9ad1bcd20874a03207aed5f8 = L.marker(
+                [20.57085, 81.319881],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_071f71dd4b00bc4234bacc1b1a07d786 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e62b041160f490d562636e6d49105604 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_b739b49a9d675c2e7364d907796444eb = $(`<div id="html_b739b49a9d675c2e7364d907796444eb" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Dabena</h4>             <p><b>Population:</b> 1,602</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 310-350 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.5709°N, 81.3199°E</p>         </div>         </div>`)[0];
+                popup_e62b041160f490d562636e6d49105604.setContent(html_b739b49a9d675c2e7364d907796444eb);
+            
+        
+
+        marker_fbdbc24c9ad1bcd20874a03207aed5f8.bindPopup(popup_e62b041160f490d562636e6d49105604)
+        ;
+
+        
+    
+    
+            marker_fbdbc24c9ad1bcd20874a03207aed5f8.bindTooltip(
+                `<div>
+                     Yellow Zone: Dabena
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_fbdbc24c9ad1bcd20874a03207aed5f8.setIcon(icon_071f71dd4b00bc4234bacc1b1a07d786);
+            
+    
+            var marker_d7c8f026f63a2214cbf4d7c058ad87ce = L.marker(
+                [20.518626, 80.974093],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_454c76cd5e714c34d5a5689b86a2b2e7 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_fef3cc14fb254053cc617866aa2c4061 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_8f7af7748ce32cb379a5c0ef67ac72fd = $(`<div id="html_8f7af7748ce32cb379a5c0ef67ac72fd" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Kokanpur</h4>             <p><b>Population:</b> 1,424</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 395-445 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.5186°N, 80.9741°E</p>         </div>         </div>`)[0];
+                popup_fef3cc14fb254053cc617866aa2c4061.setContent(html_8f7af7748ce32cb379a5c0ef67ac72fd);
+            
+        
+
+        marker_d7c8f026f63a2214cbf4d7c058ad87ce.bindPopup(popup_fef3cc14fb254053cc617866aa2c4061)
+        ;
+
+        
+    
+    
+            marker_d7c8f026f63a2214cbf4d7c058ad87ce.bindTooltip(
+                `<div>
+                     Yellow Zone: Kokanpur
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_d7c8f026f63a2214cbf4d7c058ad87ce.setIcon(icon_454c76cd5e714c34d5a5689b86a2b2e7);
+            
+    
+            var marker_2aa92f49783dcfdd75f07d0feda7aec1 = L.marker(
+                [20.537746, 81.082682],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_5bf93cd6b651603461ef685293e6ded1 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_eeffd4032f4eaec617d42abc68127595 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_09b45d78b2f27ce1b394cd8fbe595f70 = $(`<div id="html_09b45d78b2f27ce1b394cd8fbe595f70" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Dumali</h4>             <p><b>Population:</b> 1,132</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 340-390 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.5377°N, 81.0827°E</p>         </div>         </div>`)[0];
+                popup_eeffd4032f4eaec617d42abc68127595.setContent(html_09b45d78b2f27ce1b394cd8fbe595f70);
+            
+        
+
+        marker_2aa92f49783dcfdd75f07d0feda7aec1.bindPopup(popup_eeffd4032f4eaec617d42abc68127595)
+        ;
+
+        
+    
+    
+            marker_2aa92f49783dcfdd75f07d0feda7aec1.bindTooltip(
+                `<div>
+                     Yellow Zone: Dumali
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_2aa92f49783dcfdd75f07d0feda7aec1.setIcon(icon_5bf93cd6b651603461ef685293e6ded1);
+            
+    
+            var marker_1954697d9bee4dfb096a0a8bd74331ba = L.marker(
+                [20.565189, 81.279229],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_827dfc1eca62e7d239367a5fcc97ccc6 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_3602caae7ec93d0a176686510a3861f9 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_2d74540deb176e3247592b09d5c0a961 = $(`<div id="html_2d74540deb176e3247592b09d5c0a961" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Nawagaon</h4>             <p><b>Population:</b> 968</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 377-427 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.5652°N, 81.2792°E</p>         </div>         </div>`)[0];
+                popup_3602caae7ec93d0a176686510a3861f9.setContent(html_2d74540deb176e3247592b09d5c0a961);
+            
+        
+
+        marker_1954697d9bee4dfb096a0a8bd74331ba.bindPopup(popup_3602caae7ec93d0a176686510a3861f9)
+        ;
+
+        
+    
+    
+            marker_1954697d9bee4dfb096a0a8bd74331ba.bindTooltip(
+                `<div>
+                     Yellow Zone: Nawagaon
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_1954697d9bee4dfb096a0a8bd74331ba.setIcon(icon_827dfc1eca62e7d239367a5fcc97ccc6);
+            
+    
+            var marker_7c8148223084c491af32df0661711dfb = L.marker(
+                [20.146858, 81.208854],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_b7a860677b7c52b51922cb10b8abf91a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c2bf470e9274f5b7025edb5395b0a8dc = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_53db152021f46d271fe3d5cc5523f829 = $(`<div id="html_53db152021f46d271fe3d5cc5523f829" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Gotpur</h4>             <p><b>Population:</b> 906</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 395-445 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.1469°N, 81.2089°E</p>         </div>         </div>`)[0];
+                popup_c2bf470e9274f5b7025edb5395b0a8dc.setContent(html_53db152021f46d271fe3d5cc5523f829);
+            
+        
+
+        marker_7c8148223084c491af32df0661711dfb.bindPopup(popup_c2bf470e9274f5b7025edb5395b0a8dc)
+        ;
+
+        
+    
+    
+            marker_7c8148223084c491af32df0661711dfb.bindTooltip(
+                `<div>
+                     Yellow Zone: Gotpur
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_7c8148223084c491af32df0661711dfb.setIcon(icon_b7a860677b7c52b51922cb10b8abf91a);
+            
+    
+            var marker_0aa970e4b02d1936da495b6893d62ec5 = L.marker(
+                [20.468965, 81.109559],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_cb9631c1752df4195ec4016aed030c15 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_34a6e90c9bd87dbc525ffc8b90613b98 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_bcd009ca749f5af8c7729fa0acad3aaa = $(`<div id="html_bcd009ca749f5af8c7729fa0acad3aaa" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Aturgaon</h4>             <p><b>Population:</b> 910</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 323-363 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.4690°N, 81.1096°E</p>         </div>         </div>`)[0];
+                popup_34a6e90c9bd87dbc525ffc8b90613b98.setContent(html_bcd009ca749f5af8c7729fa0acad3aaa);
+            
+        
+
+        marker_0aa970e4b02d1936da495b6893d62ec5.bindPopup(popup_34a6e90c9bd87dbc525ffc8b90613b98)
+        ;
+
+        
+    
+    
+            marker_0aa970e4b02d1936da495b6893d62ec5.bindTooltip(
+                `<div>
+                     Yellow Zone: Aturgaon
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_0aa970e4b02d1936da495b6893d62ec5.setIcon(icon_cb9631c1752df4195ec4016aed030c15);
+            
+    
+            var marker_f9166e602d890a5f8cf24eadfd5f4284 = L.marker(
+                [20.269332, 81.141869],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_bc6a31089d45398486091b1e50062294 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e1f45c1c40f255ab3f3f5b008d159a13 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_032f613c19ed3a03b6ce345a88c13aa7 = $(`<div id="html_032f613c19ed3a03b6ce345a88c13aa7" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Kodajunga</h4>             <p><b>Population:</b> 891</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 303-343 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.2693°N, 81.1419°E</p>         </div>         </div>`)[0];
+                popup_e1f45c1c40f255ab3f3f5b008d159a13.setContent(html_032f613c19ed3a03b6ce345a88c13aa7);
+            
+        
+
+        marker_f9166e602d890a5f8cf24eadfd5f4284.bindPopup(popup_e1f45c1c40f255ab3f3f5b008d159a13)
+        ;
+
+        
+    
+    
+            marker_f9166e602d890a5f8cf24eadfd5f4284.bindTooltip(
+                `<div>
+                     Yellow Zone: Kodajunga
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_f9166e602d890a5f8cf24eadfd5f4284.setIcon(icon_bc6a31089d45398486091b1e50062294);
+            
+    
+            var marker_7de7e367d86d53de1c886a2f628866fe = L.marker(
+                [20.463489, 81.052268],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_87676538792069b9436ce5c0cc8525ea = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightblue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c1208d592d6ceda5844de71152c15f45 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_2fea5e9dff5e289c33e2d0913aa964ad = $(`<div id="html_2fea5e9dff5e289c33e2d0913aa964ad" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Kokadi</h4>             <p><b>Population:</b> 880</p>             <p><b>Nitrogen Level:</b> Low</p>             <p><b>Estimated Nitrogen:</b> 266-296 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.4635°N, 81.0523°E</p>         </div>         </div>`)[0];
+                popup_c1208d592d6ceda5844de71152c15f45.setContent(html_2fea5e9dff5e289c33e2d0913aa964ad);
+            
+        
+
+        marker_7de7e367d86d53de1c886a2f628866fe.bindPopup(popup_c1208d592d6ceda5844de71152c15f45)
+        ;
+
+        
+    
+    
+            marker_7de7e367d86d53de1c886a2f628866fe.bindTooltip(
+                `<div>
+                     Yellow Zone: Kokadi
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_7de7e367d86d53de1c886a2f628866fe.setIcon(icon_87676538792069b9436ce5c0cc8525ea);
+            
+    
+            var marker_0f09c6b4e6a9bc2c7be49a1553520379 = L.marker(
+                [20.509248, 81.389264],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_b819fbfc70101cb240c017adcd9a3a91 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_02c0d2fc031f9d416919994b0c3f3f33 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_a8c52a5cd3d6a49fa915ecfa6da5b390 = $(`<div id="html_a8c52a5cd3d6a49fa915ecfa6da5b390" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Sidesar</h4>             <p><b>Population:</b> 894</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 391-441 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.5092°N, 81.3893°E</p>         </div>         </div>`)[0];
+                popup_02c0d2fc031f9d416919994b0c3f3f33.setContent(html_a8c52a5cd3d6a49fa915ecfa6da5b390);
+            
+        
+
+        marker_0f09c6b4e6a9bc2c7be49a1553520379.bindPopup(popup_02c0d2fc031f9d416919994b0c3f3f33)
+        ;
+
+        
+    
+    
+            marker_0f09c6b4e6a9bc2c7be49a1553520379.bindTooltip(
+                `<div>
+                     Yellow Zone: Sidesar
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_0f09c6b4e6a9bc2c7be49a1553520379.setIcon(icon_b819fbfc70101cb240c017adcd9a3a91);
+            
+    
+            var marker_00f73b1e84bb02a88eb6ac45d8cfc938 = L.marker(
+                [20.362207, 81.282799],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_6955690939091d0dec5983be8e5f32fa = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_7e9c421c27546efc6fb9401df7b64619 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_aa58a6e67429a6fbf784a15487b54a49 = $(`<div id="html_aa58a6e67429a6fbf784a15487b54a49" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Ghothiya</h4>             <p><b>Population:</b> 816</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 354-404 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.3622°N, 81.2828°E</p>         </div>         </div>`)[0];
+                popup_7e9c421c27546efc6fb9401df7b64619.setContent(html_aa58a6e67429a6fbf784a15487b54a49);
+            
+        
+
+        marker_00f73b1e84bb02a88eb6ac45d8cfc938.bindPopup(popup_7e9c421c27546efc6fb9401df7b64619)
+        ;
+
+        
+    
+    
+            marker_00f73b1e84bb02a88eb6ac45d8cfc938.bindTooltip(
+                `<div>
+                     Yellow Zone: Ghothiya
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_00f73b1e84bb02a88eb6ac45d8cfc938.setIcon(icon_6955690939091d0dec5983be8e5f32fa);
+            
+    
+            var marker_bc7dcedea3dfe9d5fa83d9f57a897982 = L.marker(
+                [20.357488, 81.251503],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_be95afb2729cd5b220e6dbbaafd56076 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_abd3543b5b47203c6e84c003afdf733c = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_960b6fff8ddf1e5ee30c62432a50bc59 = $(`<div id="html_960b6fff8ddf1e5ee30c62432a50bc59" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Domaharra</h4>             <p><b>Population:</b> 772</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 320-360 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.3575°N, 81.2515°E</p>         </div>         </div>`)[0];
+                popup_abd3543b5b47203c6e84c003afdf733c.setContent(html_960b6fff8ddf1e5ee30c62432a50bc59);
+            
+        
+
+        marker_bc7dcedea3dfe9d5fa83d9f57a897982.bindPopup(popup_abd3543b5b47203c6e84c003afdf733c)
+        ;
+
+        
+    
+    
+            marker_bc7dcedea3dfe9d5fa83d9f57a897982.bindTooltip(
+                `<div>
+                     Yellow Zone: Domaharra
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_bc7dcedea3dfe9d5fa83d9f57a897982.setIcon(icon_be95afb2729cd5b220e6dbbaafd56076);
+            
+    
+            var marker_5e014012d1498264b947adb880a37c22 = L.marker(
+                [20.399081, 81.091143],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_e9d18e15a0242f1ca222e60f04c13266 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_29c15cd8a1b7575da6e9a1685e93ae2f = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_bfcac4ed90891808e92f0df4bf9e487f = $(`<div id="html_bfcac4ed90891808e92f0df4bf9e487f" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Tultuli</h4>             <p><b>Population:</b> 754</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 294-334 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.3991°N, 81.0911°E</p>         </div>         </div>`)[0];
+                popup_29c15cd8a1b7575da6e9a1685e93ae2f.setContent(html_bfcac4ed90891808e92f0df4bf9e487f);
+            
+        
+
+        marker_5e014012d1498264b947adb880a37c22.bindPopup(popup_29c15cd8a1b7575da6e9a1685e93ae2f)
+        ;
+
+        
+    
+    
+            marker_5e014012d1498264b947adb880a37c22.bindTooltip(
+                `<div>
+                     Yellow Zone: Tultuli
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_5e014012d1498264b947adb880a37c22.setIcon(icon_e9d18e15a0242f1ca222e60f04c13266);
+            
+    
+            var marker_a2e7fc69ddffa60aff53071aecd08d7e = L.marker(
+                [20.253553, 81.037126],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_633d6e530b4e957ceda40847b4079508 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightblue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_9ddb894242f3bb9004564b5a81d5203f = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_1beb399d5858238c1d51a2ead7dc5ad5 = $(`<div id="html_1beb399d5858238c1d51a2ead7dc5ad5" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Nadanmara</h4>             <p><b>Population:</b> 748</p>             <p><b>Nitrogen Level:</b> Low</p>             <p><b>Estimated Nitrogen:</b> 265-295 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.2536°N, 81.0371°E</p>         </div>         </div>`)[0];
+                popup_9ddb894242f3bb9004564b5a81d5203f.setContent(html_1beb399d5858238c1d51a2ead7dc5ad5);
+            
+        
+
+        marker_a2e7fc69ddffa60aff53071aecd08d7e.bindPopup(popup_9ddb894242f3bb9004564b5a81d5203f)
+        ;
+
+        
+    
+    
+            marker_a2e7fc69ddffa60aff53071aecd08d7e.bindTooltip(
+                `<div>
+                     Yellow Zone: Nadanmara
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_a2e7fc69ddffa60aff53071aecd08d7e.setIcon(icon_633d6e530b4e957ceda40847b4079508);
+            
+    
+            var marker_9552223ae2849c031f607b2d9599d749 = L.marker(
+                [20.368392, 81.357651],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_9e1e22ce30c25a981b65e892679fef0e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_39521e09e5e7c212b3644ade626b5db7 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_22aa0f35f17ac3e0d68a1f8a9d2775ab = $(`<div id="html_22aa0f35f17ac3e0d68a1f8a9d2775ab" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Bhairadih</h4>             <p><b>Population:</b> 737</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 294-334 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.3684°N, 81.3577°E</p>         </div>         </div>`)[0];
+                popup_39521e09e5e7c212b3644ade626b5db7.setContent(html_22aa0f35f17ac3e0d68a1f8a9d2775ab);
+            
+        
+
+        marker_9552223ae2849c031f607b2d9599d749.bindPopup(popup_39521e09e5e7c212b3644ade626b5db7)
+        ;
+
+        
+    
+    
+            marker_9552223ae2849c031f607b2d9599d749.bindTooltip(
+                `<div>
+                     Yellow Zone: Bhairadih
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_9552223ae2849c031f607b2d9599d749.setIcon(icon_9e1e22ce30c25a981b65e892679fef0e);
+            
+    
+            var marker_70d64556f248b06468800e5dea63ed9e = L.marker(
+                [20.34277, 81.195979],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_57c6bb2d4d240e70c4b41742f07289d8 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightblue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_81f00be0bfdd2164027bfe42b5fdd10a = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_ad5a46349b1fbec1a7b62c38af77288c = $(`<div id="html_ad5a46349b1fbec1a7b62c38af77288c" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Pusawand</h4>             <p><b>Population:</b> 719</p>             <p><b>Nitrogen Level:</b> Low</p>             <p><b>Estimated Nitrogen:</b> 265-295 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.3428°N, 81.1960°E</p>         </div>         </div>`)[0];
+                popup_81f00be0bfdd2164027bfe42b5fdd10a.setContent(html_ad5a46349b1fbec1a7b62c38af77288c);
+            
+        
+
+        marker_70d64556f248b06468800e5dea63ed9e.bindPopup(popup_81f00be0bfdd2164027bfe42b5fdd10a)
+        ;
+
+        
+    
+    
+            marker_70d64556f248b06468800e5dea63ed9e.bindTooltip(
+                `<div>
+                     Yellow Zone: Pusawand
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_70d64556f248b06468800e5dea63ed9e.setIcon(icon_57c6bb2d4d240e70c4b41742f07289d8);
+            
+    
+            var marker_70586b4ec5f896e275151d1b45ee5490 = L.marker(
+                [20.124113, 81.060256],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_f2ba8fc900771bd555891ef28e25ab10 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_574d5d67c75a2ac1b32f2ed269ee78cf = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_b1fe41863ce163ab0286a21f6f5c7500 = $(`<div id="html_b1fe41863ce163ab0286a21f6f5c7500" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Siltara</h4>             <p><b>Population:</b> 616</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 365-415 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.1241°N, 81.0603°E</p>         </div>         </div>`)[0];
+                popup_574d5d67c75a2ac1b32f2ed269ee78cf.setContent(html_b1fe41863ce163ab0286a21f6f5c7500);
+            
+        
+
+        marker_70586b4ec5f896e275151d1b45ee5490.bindPopup(popup_574d5d67c75a2ac1b32f2ed269ee78cf)
+        ;
+
+        
+    
+    
+            marker_70586b4ec5f896e275151d1b45ee5490.bindTooltip(
+                `<div>
+                     Yellow Zone: Siltara
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_70586b4ec5f896e275151d1b45ee5490.setIcon(icon_f2ba8fc900771bd555891ef28e25ab10);
+            
+    
+            var marker_d6ef9a457c68b01a577ae60c6a2b9bee = L.marker(
+                [20.260319, 81.088534],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_b68dc3ce8de7e72ad4b0855a087c5ce1 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6acce4b30538738b2e769e4c33173b54 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_2b3c67ad2dc5172b9d59bb42e163aa05 = $(`<div id="html_2b3c67ad2dc5172b9d59bb42e163aa05" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Mardapoti</h4>             <p><b>Population:</b> 617</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 291-331 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.2603°N, 81.0885°E</p>         </div>         </div>`)[0];
+                popup_6acce4b30538738b2e769e4c33173b54.setContent(html_2b3c67ad2dc5172b9d59bb42e163aa05);
+            
+        
+
+        marker_d6ef9a457c68b01a577ae60c6a2b9bee.bindPopup(popup_6acce4b30538738b2e769e4c33173b54)
+        ;
+
+        
+    
+    
+            marker_d6ef9a457c68b01a577ae60c6a2b9bee.bindTooltip(
+                `<div>
+                     Yellow Zone: Mardapoti
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_d6ef9a457c68b01a577ae60c6a2b9bee.setIcon(icon_b68dc3ce8de7e72ad4b0855a087c5ce1);
+            
+    
+            var marker_85c2d8c4387d95738be6042fc2f181f6 = L.marker(
+                [20.504165, 81.330485],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_b12efbc0c7357dbcdd2e92ed34c80573 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f1fe215c69ec38969bf7d8002089a8da = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_126efefd33d741c0133e058f542fe3ce = $(`<div id="html_126efefd33d741c0133e058f542fe3ce" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Albeda</h4>             <p><b>Population:</b> 607</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 328-368 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.5042°N, 81.3305°E</p>         </div>         </div>`)[0];
+                popup_f1fe215c69ec38969bf7d8002089a8da.setContent(html_126efefd33d741c0133e058f542fe3ce);
+            
+        
+
+        marker_85c2d8c4387d95738be6042fc2f181f6.bindPopup(popup_f1fe215c69ec38969bf7d8002089a8da)
+        ;
+
+        
+    
+    
+            marker_85c2d8c4387d95738be6042fc2f181f6.bindTooltip(
+                `<div>
+                     Yellow Zone: Albeda
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_85c2d8c4387d95738be6042fc2f181f6.setIcon(icon_b12efbc0c7357dbcdd2e92ed34c80573);
+            
+    
+            var marker_c264d7d8fa9817e56dba5e66c56a5a49 = L.marker(
+                [20.454829, 80.999461],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_299f9ea4d480e5398374ac2cd2e6d59c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightblue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8666fb6eaaf5260762938b3fcb1d5429 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_c2cd3f649eff86f374204867e60420e5 = $(`<div id="html_c2cd3f649eff86f374204867e60420e5" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Ichchhapur</h4>             <p><b>Population:</b> 603</p>             <p><b>Nitrogen Level:</b> Low</p>             <p><b>Estimated Nitrogen:</b> 272-302 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.4548°N, 80.9995°E</p>         </div>         </div>`)[0];
+                popup_8666fb6eaaf5260762938b3fcb1d5429.setContent(html_c2cd3f649eff86f374204867e60420e5);
+            
+        
+
+        marker_c264d7d8fa9817e56dba5e66c56a5a49.bindPopup(popup_8666fb6eaaf5260762938b3fcb1d5429)
+        ;
+
+        
+    
+    
+            marker_c264d7d8fa9817e56dba5e66c56a5a49.bindTooltip(
+                `<div>
+                     Yellow Zone: Ichchhapur
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c264d7d8fa9817e56dba5e66c56a5a49.setIcon(icon_299f9ea4d480e5398374ac2cd2e6d59c);
+            
+    
+            var marker_c1cc820adce6bc7c05ae4c33767ae1bc = L.marker(
+                [20.506462, 81.358943],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_96f7bc86fa0c0ff7cda69f139a6206eb = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_774426c1e941e40498262874776deeb7 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_7ccd22678e97acdb97f1a8a7f299086d = $(`<div id="html_7ccd22678e97acdb97f1a8a7f299086d" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Gaurgaon</h4>             <p><b>Population:</b> 593</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 280-320 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.5065°N, 81.3589°E</p>         </div>         </div>`)[0];
+                popup_774426c1e941e40498262874776deeb7.setContent(html_7ccd22678e97acdb97f1a8a7f299086d);
+            
+        
+
+        marker_c1cc820adce6bc7c05ae4c33767ae1bc.bindPopup(popup_774426c1e941e40498262874776deeb7)
+        ;
+
+        
+    
+    
+            marker_c1cc820adce6bc7c05ae4c33767ae1bc.bindTooltip(
+                `<div>
+                     Yellow Zone: Gaurgaon
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c1cc820adce6bc7c05ae4c33767ae1bc.setIcon(icon_96f7bc86fa0c0ff7cda69f139a6206eb);
+            
+    
+            var marker_73495f7a1e284e9b1b2cf2a64e1d53c0 = L.marker(
+                [20.380422, 80.938453],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_e10627b94864874bacc09c53255b0aed = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_40419a28a295490e69c248e4f1a9d2d1 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_d095a3a438e23c7c58cecfa7ab13937f = $(`<div id="html_d095a3a438e23c7c58cecfa7ab13937f" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Sureli</h4>             <p><b>Population:</b> 590</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 291-331 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.3804°N, 80.9385°E</p>         </div>         </div>`)[0];
+                popup_40419a28a295490e69c248e4f1a9d2d1.setContent(html_d095a3a438e23c7c58cecfa7ab13937f);
+            
+        
+
+        marker_73495f7a1e284e9b1b2cf2a64e1d53c0.bindPopup(popup_40419a28a295490e69c248e4f1a9d2d1)
+        ;
+
+        
+    
+    
+            marker_73495f7a1e284e9b1b2cf2a64e1d53c0.bindTooltip(
+                `<div>
+                     Yellow Zone: Sureli
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_73495f7a1e284e9b1b2cf2a64e1d53c0.setIcon(icon_e10627b94864874bacc09c53255b0aed);
+            
+    
+            var marker_245354191a2ae7108271b03ff7c7b347 = L.marker(
+                [20.123727, 81.059466],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_06eff2e73cab1e5e20ac15f1d1328a3b = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_bfe3aba27a118456a6ed12f27661b48a = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_b09df688d1f8c2af3387a5a401ec3661 = $(`<div id="html_b09df688d1f8c2af3387a5a401ec3661" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Iradah</h4>             <p><b>Population:</b> 572</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 343-393 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.1237°N, 81.0595°E</p>         </div>         </div>`)[0];
+                popup_bfe3aba27a118456a6ed12f27661b48a.setContent(html_b09df688d1f8c2af3387a5a401ec3661);
+            
+        
+
+        marker_245354191a2ae7108271b03ff7c7b347.bindPopup(popup_bfe3aba27a118456a6ed12f27661b48a)
+        ;
+
+        
+    
+    
+            marker_245354191a2ae7108271b03ff7c7b347.bindTooltip(
+                `<div>
+                     Yellow Zone: Iradah
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_245354191a2ae7108271b03ff7c7b347.setIcon(icon_06eff2e73cab1e5e20ac15f1d1328a3b);
+            
+    
+            var marker_a14fb309b084ab423167b6da91cec1b0 = L.marker(
+                [20.435924, 81.366373],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_f37e86104244a330de55f93127b8d359 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_d1aca6b467d9a780e986f9181ad04ff1 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_a559b88de8f6f6827dc4ea700185aba9 = $(`<div id="html_a559b88de8f6f6827dc4ea700185aba9" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Kulgaon</h4>             <p><b>Population:</b> 555</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 285-325 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.4359°N, 81.3664°E</p>         </div>         </div>`)[0];
+                popup_d1aca6b467d9a780e986f9181ad04ff1.setContent(html_a559b88de8f6f6827dc4ea700185aba9);
+            
+        
+
+        marker_a14fb309b084ab423167b6da91cec1b0.bindPopup(popup_d1aca6b467d9a780e986f9181ad04ff1)
+        ;
+
+        
+    
+    
+            marker_a14fb309b084ab423167b6da91cec1b0.bindTooltip(
+                `<div>
+                     Yellow Zone: Kulgaon
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_a14fb309b084ab423167b6da91cec1b0.setIcon(icon_f37e86104244a330de55f93127b8d359);
+            
+    
+            var marker_1faf5b65253e84f2b796a1fef28cc339 = L.marker(
+                [20.439709, 81.372196],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_68bd01f95b4df753f0f316d51fddd791 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_fee5a911313653f5c1c9a276040899af = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_dd2949651297f299d8a57eebe5fb9b4d = $(`<div id="html_dd2949651297f299d8a57eebe5fb9b4d" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Kotgaon</h4>             <p><b>Population:</b> 542</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 322-362 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.4397°N, 81.3722°E</p>         </div>         </div>`)[0];
+                popup_fee5a911313653f5c1c9a276040899af.setContent(html_dd2949651297f299d8a57eebe5fb9b4d);
+            
+        
+
+        marker_1faf5b65253e84f2b796a1fef28cc339.bindPopup(popup_fee5a911313653f5c1c9a276040899af)
+        ;
+
+        
+    
+    
+            marker_1faf5b65253e84f2b796a1fef28cc339.bindTooltip(
+                `<div>
+                     Yellow Zone: Kotgaon
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_1faf5b65253e84f2b796a1fef28cc339.setIcon(icon_68bd01f95b4df753f0f316d51fddd791);
+            
+    
+            var marker_ea0fe3daea08c87a1667ab0f36aac736 = L.marker(
+                [20.331242, 81.071295],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_a7860848ab714f497246a8643b7dea05 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_62246053bf122ea35f14d722f26fb912 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_9f822866f7919338d1f7efc36e429896 = $(`<div id="html_9f822866f7919338d1f7efc36e429896" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Salhebhat</h4>             <p><b>Population:</b> 542</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 293-333 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.3312°N, 81.0713°E</p>         </div>         </div>`)[0];
+                popup_62246053bf122ea35f14d722f26fb912.setContent(html_9f822866f7919338d1f7efc36e429896);
+            
+        
+
+        marker_ea0fe3daea08c87a1667ab0f36aac736.bindPopup(popup_62246053bf122ea35f14d722f26fb912)
+        ;
+
+        
+    
+    
+            marker_ea0fe3daea08c87a1667ab0f36aac736.bindTooltip(
+                `<div>
+                     Yellow Zone: Salhebhat
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_ea0fe3daea08c87a1667ab0f36aac736.setIcon(icon_a7860848ab714f497246a8643b7dea05);
+            
+    
+            var marker_e2004a3ce08cf68b6d8e5eb1a22d157a = L.marker(
+                [20.564192, 81.277699],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_205afb327036dd3a44bcc9ceeefd381e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_4e5a51052ffac85eb6cc08bbfb3d82e9 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_573b4052db11a00a3268460da0d9b607 = $(`<div id="html_573b4052db11a00a3268460da0d9b607" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Nawagaon</h4>             <p><b>Population:</b> 576</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 395-445 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.5642°N, 81.2777°E</p>         </div>         </div>`)[0];
+                popup_4e5a51052ffac85eb6cc08bbfb3d82e9.setContent(html_573b4052db11a00a3268460da0d9b607);
+            
+        
+
+        marker_e2004a3ce08cf68b6d8e5eb1a22d157a.bindPopup(popup_4e5a51052ffac85eb6cc08bbfb3d82e9)
+        ;
+
+        
+    
+    
+            marker_e2004a3ce08cf68b6d8e5eb1a22d157a.bindTooltip(
+                `<div>
+                     Yellow Zone: Nawagaon
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_e2004a3ce08cf68b6d8e5eb1a22d157a.setIcon(icon_205afb327036dd3a44bcc9ceeefd381e);
+            
+    
+            var marker_5a4a730ed6e8eeafcfa89221b4bf7c65 = L.marker(
+                [20.282807, 81.213428],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_bb2eefa172243bc551ab2f020ba77208 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightblue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_33220de7335a16dabdb40f03fdf6e130 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_2f07315d04e3bca3556023e7daafdd1d = $(`<div id="html_2f07315d04e3bca3556023e7daafdd1d" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Barchegondi</h4>             <p><b>Population:</b> 561</p>             <p><b>Nitrogen Level:</b> Low</p>             <p><b>Estimated Nitrogen:</b> 265-295 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.2828°N, 81.2134°E</p>         </div>         </div>`)[0];
+                popup_33220de7335a16dabdb40f03fdf6e130.setContent(html_2f07315d04e3bca3556023e7daafdd1d);
+            
+        
+
+        marker_5a4a730ed6e8eeafcfa89221b4bf7c65.bindPopup(popup_33220de7335a16dabdb40f03fdf6e130)
+        ;
+
+        
+    
+    
+            marker_5a4a730ed6e8eeafcfa89221b4bf7c65.bindTooltip(
+                `<div>
+                     Yellow Zone: Barchegondi
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_5a4a730ed6e8eeafcfa89221b4bf7c65.setIcon(icon_bb2eefa172243bc551ab2f020ba77208);
+            
+    
+            var marker_facfe0cd4750316aa81cbfc2c96d31ce = L.marker(
+                [20.1576, 81.311677],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_f10bcba9131b0d06641a2aaec14f9a19 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_ead04810f80922da90360233cddbb362 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_8ea0950b27d561350e873f9a689e42c1 = $(`<div id="html_8ea0950b27d561350e873f9a689e42c1" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Koliyari</h4>             <p><b>Population:</b> 480</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 292-332 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.1576°N, 81.3117°E</p>         </div>         </div>`)[0];
+                popup_ead04810f80922da90360233cddbb362.setContent(html_8ea0950b27d561350e873f9a689e42c1);
+            
+        
+
+        marker_facfe0cd4750316aa81cbfc2c96d31ce.bindPopup(popup_ead04810f80922da90360233cddbb362)
+        ;
+
+        
+    
+    
+            marker_facfe0cd4750316aa81cbfc2c96d31ce.bindTooltip(
+                `<div>
+                     Yellow Zone: Koliyari
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_facfe0cd4750316aa81cbfc2c96d31ce.setIcon(icon_f10bcba9131b0d06641a2aaec14f9a19);
+            
+    
+            var marker_35e0f68af375f0aab34499bc7313c5ce = L.marker(
+                [20.230526, 81.343516],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_8fbc1923c65050aef3d98a3cf35ef4a5 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_ec3d1383a8facfe12ba0448ad502f52d = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_3c92563e9ba885ada4a8ec4375e7d66f = $(`<div id="html_3c92563e9ba885ada4a8ec4375e7d66f" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Mandri</h4>             <p><b>Population:</b> 450</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 354-404 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.2305°N, 81.3435°E</p>         </div>         </div>`)[0];
+                popup_ec3d1383a8facfe12ba0448ad502f52d.setContent(html_3c92563e9ba885ada4a8ec4375e7d66f);
+            
+        
+
+        marker_35e0f68af375f0aab34499bc7313c5ce.bindPopup(popup_ec3d1383a8facfe12ba0448ad502f52d)
+        ;
+
+        
+    
+    
+            marker_35e0f68af375f0aab34499bc7313c5ce.bindTooltip(
+                `<div>
+                     Yellow Zone: Mandri
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_35e0f68af375f0aab34499bc7313c5ce.setIcon(icon_8fbc1923c65050aef3d98a3cf35ef4a5);
+            
+    
+            var marker_140c44e6138c96896217febcbc079ae6 = L.marker(
+                [20.422366, 81.266249],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_10103343b9f01ad979be138e74e4bc01 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_5ada421a8282939f03cba517a74dda43 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_e9aa9191f874bc0deebcf1d8415b758f = $(`<div id="html_e9aa9191f874bc0deebcf1d8415b758f" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Koretha</h4>             <p><b>Population:</b> 452</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 324-364 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.4224°N, 81.2662°E</p>         </div>         </div>`)[0];
+                popup_5ada421a8282939f03cba517a74dda43.setContent(html_e9aa9191f874bc0deebcf1d8415b758f);
+            
+        
+
+        marker_140c44e6138c96896217febcbc079ae6.bindPopup(popup_5ada421a8282939f03cba517a74dda43)
+        ;
+
+        
+    
+    
+            marker_140c44e6138c96896217febcbc079ae6.bindTooltip(
+                `<div>
+                     Yellow Zone: Koretha
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_140c44e6138c96896217febcbc079ae6.setIcon(icon_10103343b9f01ad979be138e74e4bc01);
+            
+    
+            var marker_25e58314a682fdef857b7a52723ac781 = L.marker(
+                [20.500705, 81.337712],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_de75e84aef8fa341662fcb337196fa2c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_3cee458b653335a6db5bcd915a94c301 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_b33dfa6ca6a0801e13c48690b0fb0795 = $(`<div id="html_b33dfa6ca6a0801e13c48690b0fb0795" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Khamdhodangi</h4>             <p><b>Population:</b> 443</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 389-439 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.5007°N, 81.3377°E</p>         </div>         </div>`)[0];
+                popup_3cee458b653335a6db5bcd915a94c301.setContent(html_b33dfa6ca6a0801e13c48690b0fb0795);
+            
+        
+
+        marker_25e58314a682fdef857b7a52723ac781.bindPopup(popup_3cee458b653335a6db5bcd915a94c301)
+        ;
+
+        
+    
+    
+            marker_25e58314a682fdef857b7a52723ac781.bindTooltip(
+                `<div>
+                     Yellow Zone: Khamdhodangi
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_25e58314a682fdef857b7a52723ac781.setIcon(icon_de75e84aef8fa341662fcb337196fa2c);
+            
+    
+            var marker_1e28e78b73d2393f6b0f30bbf2700ec7 = L.marker(
+                [20.384148, 80.959597],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_db654b563423ca07d630723fc5b3731c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightblue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_663d77e3b3eb33cd4973b926c9fb26fc = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_d0213a15f9f6f57a946ffb5657ee7bd1 = $(`<div id="html_d0213a15f9f6f57a946ffb5657ee7bd1" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Rode</h4>             <p><b>Population:</b> 434</p>             <p><b>Nitrogen Level:</b> Low</p>             <p><b>Estimated Nitrogen:</b> 265-295 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.3841°N, 80.9596°E</p>         </div>         </div>`)[0];
+                popup_663d77e3b3eb33cd4973b926c9fb26fc.setContent(html_d0213a15f9f6f57a946ffb5657ee7bd1);
+            
+        
+
+        marker_1e28e78b73d2393f6b0f30bbf2700ec7.bindPopup(popup_663d77e3b3eb33cd4973b926c9fb26fc)
+        ;
+
+        
+    
+    
+            marker_1e28e78b73d2393f6b0f30bbf2700ec7.bindTooltip(
+                `<div>
+                     Yellow Zone: Rode
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_1e28e78b73d2393f6b0f30bbf2700ec7.setIcon(icon_db654b563423ca07d630723fc5b3731c);
+            
+    
+            var marker_62b03501a516154c608e0de6af0625e5 = L.marker(
+                [20.368935, 81.347884],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_00059807d5deba5457dc32f6ca7fe124 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightblue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_5e4b79adc5df7f66920047a4e7671904 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_9a3814d3333253a4892209f8e20838b3 = $(`<div id="html_9a3814d3333253a4892209f8e20838b3" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Devkongera</h4>             <p><b>Population:</b> 435</p>             <p><b>Nitrogen Level:</b> Low</p>             <p><b>Estimated Nitrogen:</b> 272-302 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.3689°N, 81.3479°E</p>         </div>         </div>`)[0];
+                popup_5e4b79adc5df7f66920047a4e7671904.setContent(html_9a3814d3333253a4892209f8e20838b3);
+            
+        
+
+        marker_62b03501a516154c608e0de6af0625e5.bindPopup(popup_5e4b79adc5df7f66920047a4e7671904)
+        ;
+
+        
+    
+    
+            marker_62b03501a516154c608e0de6af0625e5.bindTooltip(
+                `<div>
+                     Yellow Zone: Devkongera
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_62b03501a516154c608e0de6af0625e5.setIcon(icon_00059807d5deba5457dc32f6ca7fe124);
+            
+    
+            var marker_acbfa387662efcff235d91bacd308651 = L.marker(
+                [20.180648, 80.98263],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_aa284732585ac6338880e28851cb8116 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightblue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_865ed180f6a610a720b8dddd6e74fcae = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_70ff4efb11018af57edc1d6ae0402f12 = $(`<div id="html_70ff4efb11018af57edc1d6ae0402f12" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Kirgapati</h4>             <p><b>Population:</b> 386</p>             <p><b>Nitrogen Level:</b> Low</p>             <p><b>Estimated Nitrogen:</b> 265-295 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.1806°N, 80.9826°E</p>         </div>         </div>`)[0];
+                popup_865ed180f6a610a720b8dddd6e74fcae.setContent(html_70ff4efb11018af57edc1d6ae0402f12);
+            
+        
+
+        marker_acbfa387662efcff235d91bacd308651.bindPopup(popup_865ed180f6a610a720b8dddd6e74fcae)
+        ;
+
+        
+    
+    
+            marker_acbfa387662efcff235d91bacd308651.bindTooltip(
+                `<div>
+                     Yellow Zone: Kirgapati
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_acbfa387662efcff235d91bacd308651.setIcon(icon_aa284732585ac6338880e28851cb8116);
+            
+    
+            var marker_32e690069f02ad335c46e6c245c57d5a = L.marker(
+                [20.290491, 81.29166],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_f827a926527a8f26f405e6532adb30f1 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_cde6c4116cf12e45d625e4397be78ee2 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_9ca215f44557845dc5b70b2887c04d7c = $(`<div id="html_9ca215f44557845dc5b70b2887c04d7c" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Turakhar</h4>             <p><b>Population:</b> 338</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 315-355 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.2905°N, 81.2917°E</p>         </div>         </div>`)[0];
+                popup_cde6c4116cf12e45d625e4397be78ee2.setContent(html_9ca215f44557845dc5b70b2887c04d7c);
+            
+        
+
+        marker_32e690069f02ad335c46e6c245c57d5a.bindPopup(popup_cde6c4116cf12e45d625e4397be78ee2)
+        ;
+
+        
+    
+    
+            marker_32e690069f02ad335c46e6c245c57d5a.bindTooltip(
+                `<div>
+                     Yellow Zone: Turakhar
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_32e690069f02ad335c46e6c245c57d5a.setIcon(icon_f827a926527a8f26f405e6532adb30f1);
+            
+    
+            var marker_7239f0450f7dc8f6a490422f84cbd424 = L.marker(
+                [20.182259, 81.009817],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_773ea1163241474176284f02295568a6 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f2671e6b34bdee8c2dbe548f7aa39c1a = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_975cbe01a3f984e693c6716aa9aae5cd = $(`<div id="html_975cbe01a3f984e693c6716aa9aae5cd" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Awrabhat</h4>             <p><b>Population:</b> 336</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 308-348 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.1823°N, 81.0098°E</p>         </div>         </div>`)[0];
+                popup_f2671e6b34bdee8c2dbe548f7aa39c1a.setContent(html_975cbe01a3f984e693c6716aa9aae5cd);
+            
+        
+
+        marker_7239f0450f7dc8f6a490422f84cbd424.bindPopup(popup_f2671e6b34bdee8c2dbe548f7aa39c1a)
+        ;
+
+        
+    
+    
+            marker_7239f0450f7dc8f6a490422f84cbd424.bindTooltip(
+                `<div>
+                     Yellow Zone: Awrabhat
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_7239f0450f7dc8f6a490422f84cbd424.setIcon(icon_773ea1163241474176284f02295568a6);
+            
+    
+            var marker_f1a91432ecc8f677daf2dafec6c81b48 = L.marker(
+                [20.337845, 81.126676],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_61559754a04a08d37e263b4e3d0f6c30 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_7cc18c5d12a70c824af683fec0529bf9 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_f31eb0de219847c4c13fef5c73362154 = $(`<div id="html_f31eb0de219847c4c13fef5c73362154" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Marrapi</h4>             <p><b>Population:</b> 350</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 305-345 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.3378°N, 81.1267°E</p>         </div>         </div>`)[0];
+                popup_7cc18c5d12a70c824af683fec0529bf9.setContent(html_f31eb0de219847c4c13fef5c73362154);
+            
+        
+
+        marker_f1a91432ecc8f677daf2dafec6c81b48.bindPopup(popup_7cc18c5d12a70c824af683fec0529bf9)
+        ;
+
+        
+    
+    
+            marker_f1a91432ecc8f677daf2dafec6c81b48.bindTooltip(
+                `<div>
+                     Yellow Zone: Marrapi
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_f1a91432ecc8f677daf2dafec6c81b48.setIcon(icon_61559754a04a08d37e263b4e3d0f6c30);
+            
+    
+            var marker_fca181db8d6e2ea95687a2a9937f1740 = L.marker(
+                [20.379626, 80.941948],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_dbceaf9f511b5eaf026b752c12b79e55 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightblue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_9169e677591b5f3a28f0b277ebb00f27 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_b4b0506be20eebda72ce426259fa1541 = $(`<div id="html_b4b0506be20eebda72ce426259fa1541" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Malajkudum</h4>             <p><b>Population:</b> 315</p>             <p><b>Nitrogen Level:</b> Low</p>             <p><b>Estimated Nitrogen:</b> 277-307 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.3796°N, 80.9419°E</p>         </div>         </div>`)[0];
+                popup_9169e677591b5f3a28f0b277ebb00f27.setContent(html_b4b0506be20eebda72ce426259fa1541);
+            
+        
+
+        marker_fca181db8d6e2ea95687a2a9937f1740.bindPopup(popup_9169e677591b5f3a28f0b277ebb00f27)
+        ;
+
+        
+    
+    
+            marker_fca181db8d6e2ea95687a2a9937f1740.bindTooltip(
+                `<div>
+                     Yellow Zone: Malajkudum
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_fca181db8d6e2ea95687a2a9937f1740.setIcon(icon_dbceaf9f511b5eaf026b752c12b79e55);
+            
+    
+            var marker_e39bed3b15e09cecdab87a8f2c93147a = L.marker(
+                [20.12654, 81.086647],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_422b8f34515082fa5be3fb83415b056d = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_08d6f854798ad5b07fb4a2b14276fb64 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_c9980f40945d0e3acb1e734104febd96 = $(`<div id="html_c9980f40945d0e3acb1e734104febd96" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Borgaon</h4>             <p><b>Population:</b> 315</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 309-349 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.1265°N, 81.0866°E</p>         </div>         </div>`)[0];
+                popup_08d6f854798ad5b07fb4a2b14276fb64.setContent(html_c9980f40945d0e3acb1e734104febd96);
+            
+        
+
+        marker_e39bed3b15e09cecdab87a8f2c93147a.bindPopup(popup_08d6f854798ad5b07fb4a2b14276fb64)
+        ;
+
+        
+    
+    
+            marker_e39bed3b15e09cecdab87a8f2c93147a.bindTooltip(
+                `<div>
+                     Yellow Zone: Borgaon
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_e39bed3b15e09cecdab87a8f2c93147a.setIcon(icon_422b8f34515082fa5be3fb83415b056d);
+            
+    
+            var marker_2a8b4a26aa748c1a83e2b12ffa7de403 = L.marker(
+                [20.279416, 81.211935],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_e797ec381609775f605676bbcc9dffe5 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b7b27700e20b98d7e4f89f8392eb528a = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_cdee5b5324c63b3ed843dcd47efd672f = $(`<div id="html_cdee5b5324c63b3ed843dcd47efd672f" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Lulegondi</h4>             <p><b>Population:</b> 313</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 311-351 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.2794°N, 81.2119°E</p>         </div>         </div>`)[0];
+                popup_b7b27700e20b98d7e4f89f8392eb528a.setContent(html_cdee5b5324c63b3ed843dcd47efd672f);
+            
+        
+
+        marker_2a8b4a26aa748c1a83e2b12ffa7de403.bindPopup(popup_b7b27700e20b98d7e4f89f8392eb528a)
+        ;
+
+        
+    
+    
+            marker_2a8b4a26aa748c1a83e2b12ffa7de403.bindTooltip(
+                `<div>
+                     Yellow Zone: Lulegondi
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_2a8b4a26aa748c1a83e2b12ffa7de403.setIcon(icon_e797ec381609775f605676bbcc9dffe5);
+            
+    
+            var marker_32a811eaa833953cd4917401975a714e = L.marker(
+                [20.411055, 81.172039],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_c5e20dc5ae5e5c7ad96c116fe8943699 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_864a2bd0e4b6ebb2a7510d6fbbbd6b08 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_37b8ef831db49b439cca7364ac2b995b = $(`<div id="html_37b8ef831db49b439cca7364ac2b995b" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Tondamarka</h4>             <p><b>Population:</b> 134</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 290-330 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.4111°N, 81.1720°E</p>         </div>         </div>`)[0];
+                popup_864a2bd0e4b6ebb2a7510d6fbbbd6b08.setContent(html_37b8ef831db49b439cca7364ac2b995b);
+            
+        
+
+        marker_32a811eaa833953cd4917401975a714e.bindPopup(popup_864a2bd0e4b6ebb2a7510d6fbbbd6b08)
+        ;
+
+        
+    
+    
+            marker_32a811eaa833953cd4917401975a714e.bindTooltip(
+                `<div>
+                     Yellow Zone: Tondamarka
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_32a811eaa833953cd4917401975a714e.setIcon(icon_c5e20dc5ae5e5c7ad96c116fe8943699);
+            
+    
+            var marker_cda36e7c85bd75108e2e0d7cd40b0e30 = L.marker(
+                [20.236705, 81.397946],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_39775e433e57d12e73b6423f04d339c3 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightblue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e8ec678fd86c3381266e0e1b81ae8891 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_92761f7ac0ccce95ad2357c58b840c59 = $(`<div id="html_92761f7ac0ccce95ad2357c58b840c59" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Kalmuchche</h4>             <p><b>Population:</b> 123</p>             <p><b>Nitrogen Level:</b> Low</p>             <p><b>Estimated Nitrogen:</b> 265-295 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.2367°N, 81.3979°E</p>         </div>         </div>`)[0];
+                popup_e8ec678fd86c3381266e0e1b81ae8891.setContent(html_92761f7ac0ccce95ad2357c58b840c59);
+            
+        
+
+        marker_cda36e7c85bd75108e2e0d7cd40b0e30.bindPopup(popup_e8ec678fd86c3381266e0e1b81ae8891)
+        ;
+
+        
+    
+    
+            marker_cda36e7c85bd75108e2e0d7cd40b0e30.bindTooltip(
+                `<div>
+                     Yellow Zone: Kalmuchche
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_cda36e7c85bd75108e2e0d7cd40b0e30.setIcon(icon_39775e433e57d12e73b6423f04d339c3);
+            
+    
+            var marker_6df5d8ee3e0572238426f3616bcf2969 = L.marker(
+                [20.439222, 81.374199],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_52255f99ebd95804d57a4fb13d6015e6 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_62557d3394736c7d7fc23eda4607385c = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_d45bf7aa4e21d73850098c743fa8bf79 = $(`<div id="html_d45bf7aa4e21d73850098c743fa8bf79" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Kotgaon</h4>             <p><b>Population:</b> 67</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 302-342 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.4392°N, 81.3742°E</p>         </div>         </div>`)[0];
+                popup_62557d3394736c7d7fc23eda4607385c.setContent(html_d45bf7aa4e21d73850098c743fa8bf79);
+            
+        
+
+        marker_6df5d8ee3e0572238426f3616bcf2969.bindPopup(popup_62557d3394736c7d7fc23eda4607385c)
+        ;
+
+        
+    
+    
+            marker_6df5d8ee3e0572238426f3616bcf2969.bindTooltip(
+                `<div>
+                     Yellow Zone: Kotgaon
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_6df5d8ee3e0572238426f3616bcf2969.setIcon(icon_52255f99ebd95804d57a4fb13d6015e6);
+            
+    
+            var marker_89e8d2f5cd2752da27995d50ba3ca21b = L.marker(
+                [20.240657, 80.925415],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_c13655487a3ed440b3efb8050a2ef951 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_187ca16cacf12cb6ed1dc06d2f7d1c6d = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_cd1e9dcbd2d686e16d9851463d18764d = $(`<div id="html_cd1e9dcbd2d686e16d9851463d18764d" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Kumkakudum</h4>             <p><b>Population:</b> 46</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Estimated Nitrogen:</b> 285-325 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.2407°N, 80.9254°E</p>         </div>         </div>`)[0];
+                popup_187ca16cacf12cb6ed1dc06d2f7d1c6d.setContent(html_cd1e9dcbd2d686e16d9851463d18764d);
+            
+        
+
+        marker_89e8d2f5cd2752da27995d50ba3ca21b.bindPopup(popup_187ca16cacf12cb6ed1dc06d2f7d1c6d)
+        ;
+
+        
+    
+    
+            marker_89e8d2f5cd2752da27995d50ba3ca21b.bindTooltip(
+                `<div>
+                     Yellow Zone: Kumkakudum
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_89e8d2f5cd2752da27995d50ba3ca21b.setIcon(icon_c13655487a3ed440b3efb8050a2ef951);
+            
+    
+            var marker_fb6321296c98eebb56d8a6a3ee9e3b75 = L.marker(
+                [20.185918, 81.026544],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_9c1d6498aec51932d1c32ec5910318e7 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightblue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_3f036c21b7681570d8b16fccaa8fcefc = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_5f1a7d2816bd747f08e67f03a06cf9f1 = $(`<div id="html_5f1a7d2816bd747f08e67f03a06cf9f1" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #2E8B57; margin: 5px 0;">Budhiyarmari</h4>             <p><b>Population:</b> 13</p>             <p><b>Nitrogen Level:</b> Low</p>             <p><b>Estimated Nitrogen:</b> 265-295 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.1859°N, 81.0265°E</p>         </div>         </div>`)[0];
+                popup_3f036c21b7681570d8b16fccaa8fcefc.setContent(html_5f1a7d2816bd747f08e67f03a06cf9f1);
+            
+        
+
+        marker_fb6321296c98eebb56d8a6a3ee9e3b75.bindPopup(popup_3f036c21b7681570d8b16fccaa8fcefc)
+        ;
+
+        
+    
+    
+            marker_fb6321296c98eebb56d8a6a3ee9e3b75.bindTooltip(
+                `<div>
+                     Yellow Zone: Budhiyarmari
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_fb6321296c98eebb56d8a6a3ee9e3b75.setIcon(icon_9c1d6498aec51932d1c32ec5910318e7);
+            
+    
+            var marker_3a5404b96bf7bea750559284c282e0d7 = L.marker(
+                [20.720096, 81.488976],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_aa3931837d6a503edfb7cf3f56e5233b = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_738c18544c221a655babc71dc61fb705 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_cef42753ba6a97f11b37efe2648ddd59 = $(`<div id="html_cef42753ba6a97f11b37efe2648ddd59" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Kanker Municipality</h4>             <p><b>Population:</b> 37,442</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 453-523 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.7201°N, 81.4890°E</p>         </div>         </div>`)[0];
+                popup_738c18544c221a655babc71dc61fb705.setContent(html_cef42753ba6a97f11b37efe2648ddd59);
+            
+        
+
+        marker_3a5404b96bf7bea750559284c282e0d7.bindPopup(popup_738c18544c221a655babc71dc61fb705)
+        ;
+
+        
+    
+    
+            marker_3a5404b96bf7bea750559284c282e0d7.bindTooltip(
+                `<div>
+                     Red Zone: Kanker Municipality
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_3a5404b96bf7bea750559284c282e0d7.setIcon(icon_aa3931837d6a503edfb7cf3f56e5233b);
+            
+    
+            var marker_cc094c5b556982bb66d8de2e52ca63cd = L.marker(
+                [20.319875, 81.700605],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_23d623f80df3371821f9c2ec9aaa492f = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_84539339021ce037aef14bb42d5fcf09 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_f573bed98087c109aaa8c7e4031514b1 = $(`<div id="html_f573bed98087c109aaa8c7e4031514b1" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Kondagaon</h4>             <p><b>Population:</b> 3,143</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 380-440 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.3199°N, 81.7006°E</p>         </div>         </div>`)[0];
+                popup_84539339021ce037aef14bb42d5fcf09.setContent(html_f573bed98087c109aaa8c7e4031514b1);
+            
+        
+
+        marker_cc094c5b556982bb66d8de2e52ca63cd.bindPopup(popup_84539339021ce037aef14bb42d5fcf09)
+        ;
+
+        
+    
+    
+            marker_cc094c5b556982bb66d8de2e52ca63cd.bindTooltip(
+                `<div>
+                     Red Zone: Kondagaon
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_cc094c5b556982bb66d8de2e52ca63cd.setIcon(icon_23d623f80df3371821f9c2ec9aaa492f);
+            
+    
+            var marker_38382f914ae57ed619265f4bf42ddcb6 = L.marker(
+                [20.253079, 81.878787],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_d090af75f35a22fbf7841b6037987c51 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "darkred",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_53d15d8a68a780c81566e2a48df697b9 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_289bca2a46322f5fa4bbce6f8c31b1ab = $(`<div id="html_289bca2a46322f5fa4bbce6f8c31b1ab" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Gad Pichhawadi</h4>             <p><b>Population:</b> 2,327</p>             <p><b>Nitrogen Level:</b> Very High</p>             <p><b>Estimated Nitrogen:</b> 532-612 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.2531°N, 81.8788°E</p>         </div>         </div>`)[0];
+                popup_53d15d8a68a780c81566e2a48df697b9.setContent(html_289bca2a46322f5fa4bbce6f8c31b1ab);
+            
+        
+
+        marker_38382f914ae57ed619265f4bf42ddcb6.bindPopup(popup_53d15d8a68a780c81566e2a48df697b9)
+        ;
+
+        
+    
+    
+            marker_38382f914ae57ed619265f4bf42ddcb6.bindTooltip(
+                `<div>
+                     Red Zone: Gad Pichhawadi
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_38382f914ae57ed619265f4bf42ddcb6.setIcon(icon_d090af75f35a22fbf7841b6037987c51);
+            
+    
+            var marker_7c0d4462901c34731b98b7135b7cf364 = L.marker(
+                [20.470284, 82.0],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_6c0b5304a4a5cf0ff3240d96d9ad3f75 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_5cf80c01ae9e60350c7a7c800cd1152f = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_05f52ce06c3154330e04412f5a0fc401 = $(`<div id="html_05f52ce06c3154330e04412f5a0fc401" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Potgaon</h4>             <p><b>Population:</b> 2,361</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 456-526 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.4703°N, 82.0000°E</p>         </div>         </div>`)[0];
+                popup_5cf80c01ae9e60350c7a7c800cd1152f.setContent(html_05f52ce06c3154330e04412f5a0fc401);
+            
+        
+
+        marker_7c0d4462901c34731b98b7135b7cf364.bindPopup(popup_5cf80c01ae9e60350c7a7c800cd1152f)
+        ;
+
+        
+    
+    
+            marker_7c0d4462901c34731b98b7135b7cf364.bindTooltip(
+                `<div>
+                     Red Zone: Potgaon
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_7c0d4462901c34731b98b7135b7cf364.setIcon(icon_6c0b5304a4a5cf0ff3240d96d9ad3f75);
+            
+    
+            var marker_aef17aa25c1e1909597337053367a155 = L.marker(
+                [20.763957, 81.78234],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_b627d2e04ad2374eefce7940250ab8e0 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_06a3d9f55dc204f29dcc09816373f004 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_be43e3a609021154d666639d71fb5213 = $(`<div id="html_be43e3a609021154d666639d71fb5213" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Puswada</h4>             <p><b>Population:</b> 2,109</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 501-571 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.7640°N, 81.7823°E</p>         </div>         </div>`)[0];
+                popup_06a3d9f55dc204f29dcc09816373f004.setContent(html_be43e3a609021154d666639d71fb5213);
+            
+        
+
+        marker_aef17aa25c1e1909597337053367a155.bindPopup(popup_06a3d9f55dc204f29dcc09816373f004)
+        ;
+
+        
+    
+    
+            marker_aef17aa25c1e1909597337053367a155.bindTooltip(
+                `<div>
+                     Red Zone: Puswada
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_aef17aa25c1e1909597337053367a155.setIcon(icon_b627d2e04ad2374eefce7940250ab8e0);
+            
+    
+            var marker_b6ac6ef99499df6af72953ec49944bd9 = L.marker(
+                [20.556866, 81.803234],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_e6f67d953f2302150d253dfdba429d55 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_4a63b2e50503140b9c213682b2d69515 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_8af877c15cf8f03c45089cc8aa8e1af3 = $(`<div id="html_8af877c15cf8f03c45089cc8aa8e1af3" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Bevarti</h4>             <p><b>Population:</b> 2,076</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 440-510 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.5569°N, 81.8032°E</p>         </div>         </div>`)[0];
+                popup_4a63b2e50503140b9c213682b2d69515.setContent(html_8af877c15cf8f03c45089cc8aa8e1af3);
+            
+        
+
+        marker_b6ac6ef99499df6af72953ec49944bd9.bindPopup(popup_4a63b2e50503140b9c213682b2d69515)
+        ;
+
+        
+    
+    
+            marker_b6ac6ef99499df6af72953ec49944bd9.bindTooltip(
+                `<div>
+                     Red Zone: Bevarti
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_b6ac6ef99499df6af72953ec49944bd9.setIcon(icon_e6f67d953f2302150d253dfdba429d55);
+            
+    
+            var marker_431f971d2009e58bec1df56b508c68fb = L.marker(
+                [20.158987, 81.258996],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_ba6fca7c638eb5f7c3928e7c392886f0 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_21d47e024cfe10aef55061f2a815b201 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_4a7c30eb4fe4788ebef316c6fef05c82 = $(`<div id="html_4a7c30eb4fe4788ebef316c6fef05c82" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Mode</h4>             <p><b>Population:</b> 1,874</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 416-486 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.1590°N, 81.2590°E</p>         </div>         </div>`)[0];
+                popup_21d47e024cfe10aef55061f2a815b201.setContent(html_4a7c30eb4fe4788ebef316c6fef05c82);
+            
+        
+
+        marker_431f971d2009e58bec1df56b508c68fb.bindPopup(popup_21d47e024cfe10aef55061f2a815b201)
+        ;
+
+        
+    
+    
+            marker_431f971d2009e58bec1df56b508c68fb.bindTooltip(
+                `<div>
+                     Red Zone: Mode
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_431f971d2009e58bec1df56b508c68fb.setIcon(icon_ba6fca7c638eb5f7c3928e7c392886f0);
+            
+    
+            var marker_29a7c398c710e8e3f0457140091f60aa = L.marker(
+                [20.380166, 81.36461],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_646095ee3ed6caa3f702ad77a2da0857 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_735d70e9729ae94f56e2a98097b27cce = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_aa3d558f9ed4a370873092616c519b5b = $(`<div id="html_aa3d558f9ed4a370873092616c519b5b" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Deori</h4>             <p><b>Population:</b> 1,915</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 388-448 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.3802°N, 81.3646°E</p>         </div>         </div>`)[0];
+                popup_735d70e9729ae94f56e2a98097b27cce.setContent(html_aa3d558f9ed4a370873092616c519b5b);
+            
+        
+
+        marker_29a7c398c710e8e3f0457140091f60aa.bindPopup(popup_735d70e9729ae94f56e2a98097b27cce)
+        ;
+
+        
+    
+    
+            marker_29a7c398c710e8e3f0457140091f60aa.bindTooltip(
+                `<div>
+                     Red Zone: Deori
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_29a7c398c710e8e3f0457140091f60aa.setIcon(icon_646095ee3ed6caa3f702ad77a2da0857);
+            
+    
+            var marker_99e9a46809a5bb7677b03a016a08777f = L.marker(
+                [20.16624, 81.37063],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_721f1bda07d013fd0421b772c2134d9a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e6c565758708552b840fde949a5fe474 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_465dd7f766ac85d3782047e00b321de9 = $(`<div id="html_465dd7f766ac85d3782047e00b321de9" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Kanharpuri</h4>             <p><b>Population:</b> 1,790</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 459-529 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.1662°N, 81.3706°E</p>         </div>         </div>`)[0];
+                popup_e6c565758708552b840fde949a5fe474.setContent(html_465dd7f766ac85d3782047e00b321de9);
+            
+        
+
+        marker_99e9a46809a5bb7677b03a016a08777f.bindPopup(popup_e6c565758708552b840fde949a5fe474)
+        ;
+
+        
+    
+    
+            marker_99e9a46809a5bb7677b03a016a08777f.bindTooltip(
+                `<div>
+                     Red Zone: Kanharpuri
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_99e9a46809a5bb7677b03a016a08777f.setIcon(icon_721f1bda07d013fd0421b772c2134d9a);
+            
+    
+            var marker_b647cad2d8ea99d3740c33927ff8447f = L.marker(
+                [20.434008, 81.649197],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_7466074a8dda577b6d61ac3e345568eb = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_832ead8ca696f52579c2c21b0537933b = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_993f0f709ddc06e4a187730c4102b420 = $(`<div id="html_993f0f709ddc06e4a187730c4102b420" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Dashpur</h4>             <p><b>Population:</b> 1,756</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 415-485 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.4340°N, 81.6492°E</p>         </div>         </div>`)[0];
+                popup_832ead8ca696f52579c2c21b0537933b.setContent(html_993f0f709ddc06e4a187730c4102b420);
+            
+        
+
+        marker_b647cad2d8ea99d3740c33927ff8447f.bindPopup(popup_832ead8ca696f52579c2c21b0537933b)
+        ;
+
+        
+    
+    
+            marker_b647cad2d8ea99d3740c33927ff8447f.bindTooltip(
+                `<div>
+                     Red Zone: Dashpur
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_b647cad2d8ea99d3740c33927ff8447f.setIcon(icon_7466074a8dda577b6d61ac3e345568eb);
+            
+    
+            var marker_be25bb97e7c4d9e10bf8c5a9fd371a40 = L.marker(
+                [20.266289, 81.295218],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_6f111beb13d6133612b3d28a3d70b39f = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6dcbb8aa52ce3d6be70c391f1d968b07 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_d186d99146947728b2bf540437d844f2 = $(`<div id="html_d186d99146947728b2bf540437d844f2" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Talakurra</h4>             <p><b>Population:</b> 1,730</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 394-454 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.2663°N, 81.2952°E</p>         </div>         </div>`)[0];
+                popup_6dcbb8aa52ce3d6be70c391f1d968b07.setContent(html_d186d99146947728b2bf540437d844f2);
+            
+        
+
+        marker_be25bb97e7c4d9e10bf8c5a9fd371a40.bindPopup(popup_6dcbb8aa52ce3d6be70c391f1d968b07)
+        ;
+
+        
+    
+    
+            marker_be25bb97e7c4d9e10bf8c5a9fd371a40.bindTooltip(
+                `<div>
+                     Red Zone: Talakurra
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_be25bb97e7c4d9e10bf8c5a9fd371a40.setIcon(icon_6f111beb13d6133612b3d28a3d70b39f);
+            
+    
+            var marker_3960dd0359a4bcf6f70aa36998cf3895 = L.marker(
+                [20.736735, 81.588105],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_dad3029c4f4a6d7b265529a80163fc69 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_1529a011e76acc907c0967ad43772c36 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_ff75d635291f6789b09413acdf839baa = $(`<div id="html_ff75d635291f6789b09413acdf839baa" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Patoud</h4>             <p><b>Population:</b> 1,701</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 403-463 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.7367°N, 81.5881°E</p>         </div>         </div>`)[0];
+                popup_1529a011e76acc907c0967ad43772c36.setContent(html_ff75d635291f6789b09413acdf839baa);
+            
+        
+
+        marker_3960dd0359a4bcf6f70aa36998cf3895.bindPopup(popup_1529a011e76acc907c0967ad43772c36)
+        ;
+
+        
+    
+    
+            marker_3960dd0359a4bcf6f70aa36998cf3895.bindTooltip(
+                `<div>
+                     Red Zone: Patoud
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_3960dd0359a4bcf6f70aa36998cf3895.setIcon(icon_dad3029c4f4a6d7b265529a80163fc69);
+            
+    
+            var marker_324a078328abbb274d78ea44fccdfe3c = L.marker(
+                [20.349408, 81.820601],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_b285bc911d683fa9b73e0f178e1085dd = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "darkred",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e4a900cbab28fcedb40be337cd73cfca = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_cf1aef3c47b9f81a092df64682719f6b = $(`<div id="html_cf1aef3c47b9f81a092df64682719f6b" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Dhanelikanhar</h4>             <p><b>Population:</b> 1,563</p>             <p><b>Nitrogen Level:</b> Very High</p>             <p><b>Estimated Nitrogen:</b> 515-595 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.3494°N, 81.8206°E</p>         </div>         </div>`)[0];
+                popup_e4a900cbab28fcedb40be337cd73cfca.setContent(html_cf1aef3c47b9f81a092df64682719f6b);
+            
+        
+
+        marker_324a078328abbb274d78ea44fccdfe3c.bindPopup(popup_e4a900cbab28fcedb40be337cd73cfca)
+        ;
+
+        
+    
+    
+            marker_324a078328abbb274d78ea44fccdfe3c.bindTooltip(
+                `<div>
+                     Red Zone: Dhanelikanhar
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_324a078328abbb274d78ea44fccdfe3c.setIcon(icon_b285bc911d683fa9b73e0f178e1085dd);
+            
+    
+            var marker_7eb43e76a220562257675a068c828546 = L.marker(
+                [20.687015, 81.963461],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_619d3ab6a6f97317384e671f5976f08b = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c001c7721d80d10775494f4e4544098c = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_75cc4d8bd1211f4e5dd4651a5efff966 = $(`<div id="html_75cc4d8bd1211f4e5dd4651a5efff966" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Hatkongera</h4>             <p><b>Population:</b> 1,508</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 446-516 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.6870°N, 81.9635°E</p>         </div>         </div>`)[0];
+                popup_c001c7721d80d10775494f4e4544098c.setContent(html_75cc4d8bd1211f4e5dd4651a5efff966);
+            
+        
+
+        marker_7eb43e76a220562257675a068c828546.bindPopup(popup_c001c7721d80d10775494f4e4544098c)
+        ;
+
+        
+    
+    
+            marker_7eb43e76a220562257675a068c828546.bindTooltip(
+                `<div>
+                     Red Zone: Hatkongera
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_7eb43e76a220562257675a068c828546.setIcon(icon_619d3ab6a6f97317384e671f5976f08b);
+            
+    
+            var marker_702ccf0ec6d6911e6bf73ada9bd6a497 = L.marker(
+                [20.395037, 81.368874],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_03907d32a65fb19dcc9b7d8e27cd433f = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f47daa0e61ed7d513cab3ba8d65f6bed = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_7a0faa961d595b9a8fe629eee082dd55 = $(`<div id="html_7a0faa961d595b9a8fe629eee082dd55" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Viyas Kongera</h4>             <p><b>Population:</b> 1,517</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 450-520 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.3950°N, 81.3689°E</p>         </div>         </div>`)[0];
+                popup_f47daa0e61ed7d513cab3ba8d65f6bed.setContent(html_7a0faa961d595b9a8fe629eee082dd55);
+            
+        
+
+        marker_702ccf0ec6d6911e6bf73ada9bd6a497.bindPopup(popup_f47daa0e61ed7d513cab3ba8d65f6bed)
+        ;
+
+        
+    
+    
+            marker_702ccf0ec6d6911e6bf73ada9bd6a497.bindTooltip(
+                `<div>
+                     Red Zone: Viyas Kongera
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_702ccf0ec6d6911e6bf73ada9bd6a497.setIcon(icon_03907d32a65fb19dcc9b7d8e27cd433f);
+            
+    
+            var marker_c95cf9e902a44c4bc881687893a05865 = L.marker(
+                [20.141714, 81.841567],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_fc979479297823495b73f78680e3e33e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_9b39daa18a34db3eedf55b2f4dd4bb65 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_3ba16de8af11f05608eefff9338504fb = $(`<div id="html_3ba16de8af11f05608eefff9338504fb" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Markatola</h4>             <p><b>Population:</b> 1,459</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 475-545 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.1417°N, 81.8416°E</p>         </div>         </div>`)[0];
+                popup_9b39daa18a34db3eedf55b2f4dd4bb65.setContent(html_3ba16de8af11f05608eefff9338504fb);
+            
+        
+
+        marker_c95cf9e902a44c4bc881687893a05865.bindPopup(popup_9b39daa18a34db3eedf55b2f4dd4bb65)
+        ;
+
+        
+    
+    
+            marker_c95cf9e902a44c4bc881687893a05865.bindTooltip(
+                `<div>
+                     Red Zone: Markatola
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c95cf9e902a44c4bc881687893a05865.setIcon(icon_fc979479297823495b73f78680e3e33e);
+            
+    
+            var marker_6c77c8dacb0f71db21d0e0857a1faf29 = L.marker(
+                [20.266878, 81.28796],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_e0be70fe3e10d09046aee42d4e497f55 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8d43c46a11b79de82fc1dc42e4c0ee06 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_e83190f246d0abb87bef0857d22546df = $(`<div id="html_e83190f246d0abb87bef0857d22546df" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Telawat</h4>             <p><b>Population:</b> 1,366</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 465-535 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.2669°N, 81.2880°E</p>         </div>         </div>`)[0];
+                popup_8d43c46a11b79de82fc1dc42e4c0ee06.setContent(html_e83190f246d0abb87bef0857d22546df);
+            
+        
+
+        marker_6c77c8dacb0f71db21d0e0857a1faf29.bindPopup(popup_8d43c46a11b79de82fc1dc42e4c0ee06)
+        ;
+
+        
+    
+    
+            marker_6c77c8dacb0f71db21d0e0857a1faf29.bindTooltip(
+                `<div>
+                     Red Zone: Telawat
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_6c77c8dacb0f71db21d0e0857a1faf29.setIcon(icon_e0be70fe3e10d09046aee42d4e497f55);
+            
+    
+            var marker_f0462143cc55262890577846f047aff9 = L.marker(
+                [20.227158, 81.708253],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_d0855ca29e9c71855f649739c5162d8e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "darkred",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_befbe939128b2b0947f327e451fe58dd = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_8945a36cc0b2d59defb6e2bd70e29c81 = $(`<div id="html_8945a36cc0b2d59defb6e2bd70e29c81" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Kapsi</h4>             <p><b>Population:</b> 1,140</p>             <p><b>Nitrogen Level:</b> Very High</p>             <p><b>Estimated Nitrogen:</b> 572-652 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.2272°N, 81.7083°E</p>         </div>         </div>`)[0];
+                popup_befbe939128b2b0947f327e451fe58dd.setContent(html_8945a36cc0b2d59defb6e2bd70e29c81);
+            
+        
+
+        marker_f0462143cc55262890577846f047aff9.bindPopup(popup_befbe939128b2b0947f327e451fe58dd)
+        ;
+
+        
+    
+    
+            marker_f0462143cc55262890577846f047aff9.bindTooltip(
+                `<div>
+                     Red Zone: Kapsi
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_f0462143cc55262890577846f047aff9.setIcon(icon_d0855ca29e9c71855f649739c5162d8e);
+            
+    
+            var marker_115aefd419873506ca44c84c0d127dea = L.marker(
+                [20.764622, 81.741692],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_5b98690543735e237fbbd865def7574c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b6741011985d861974d689b067410b90 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_9318c703e259c11d31583737b469f801 = $(`<div id="html_9318c703e259c11d31583737b469f801" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Kokpur</h4>             <p><b>Population:</b> 1,102</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 370-430 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.7646°N, 81.7417°E</p>         </div>         </div>`)[0];
+                popup_b6741011985d861974d689b067410b90.setContent(html_9318c703e259c11d31583737b469f801);
+            
+        
+
+        marker_115aefd419873506ca44c84c0d127dea.bindPopup(popup_b6741011985d861974d689b067410b90)
+        ;
+
+        
+    
+    
+            marker_115aefd419873506ca44c84c0d127dea.bindTooltip(
+                `<div>
+                     Red Zone: Kokpur
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_115aefd419873506ca44c84c0d127dea.setIcon(icon_5b98690543735e237fbbd865def7574c);
+            
+    
+            var marker_50b8c20578f49bfd2ee3a7bec23d43b9 = L.marker(
+                [20.206625, 81.618636],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_ba9e966b751d2d84490270e042dfb4c9 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_40770b3bd53580edcabd07c3c0ae329a = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_983fe81cf6599a20f096da6606ec42f9 = $(`<div id="html_983fe81cf6599a20f096da6606ec42f9" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Mohpur</h4>             <p><b>Population:</b> 1,103</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 384-444 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.2066°N, 81.6186°E</p>         </div>         </div>`)[0];
+                popup_40770b3bd53580edcabd07c3c0ae329a.setContent(html_983fe81cf6599a20f096da6606ec42f9);
+            
+        
+
+        marker_50b8c20578f49bfd2ee3a7bec23d43b9.bindPopup(popup_40770b3bd53580edcabd07c3c0ae329a)
+        ;
+
+        
+    
+    
+            marker_50b8c20578f49bfd2ee3a7bec23d43b9.bindTooltip(
+                `<div>
+                     Red Zone: Mohpur
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_50b8c20578f49bfd2ee3a7bec23d43b9.setIcon(icon_ba9e966b751d2d84490270e042dfb4c9);
+            
+    
+            var marker_a5bdc68559c8636fec92beadffb78762 = L.marker(
+                [20.642885, 81.621833],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_3629cf4fc83f126eb1fb90613aae8810 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_67630e26789c1e1220f85d7cd603cc3f = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_6e2b05217cde0ca95fe44ff295b57019 = $(`<div id="html_6e2b05217cde0ca95fe44ff295b57019" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Malgaon</h4>             <p><b>Population:</b> 1,089</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 405-465 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.6429°N, 81.6218°E</p>         </div>         </div>`)[0];
+                popup_67630e26789c1e1220f85d7cd603cc3f.setContent(html_6e2b05217cde0ca95fe44ff295b57019);
+            
+        
+
+        marker_a5bdc68559c8636fec92beadffb78762.bindPopup(popup_67630e26789c1e1220f85d7cd603cc3f)
+        ;
+
+        
+    
+    
+            marker_a5bdc68559c8636fec92beadffb78762.bindTooltip(
+                `<div>
+                     Red Zone: Malgaon
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_a5bdc68559c8636fec92beadffb78762.setIcon(icon_3629cf4fc83f126eb1fb90613aae8810);
+            
+    
+            var marker_038daf408a57249599e67a996ed8b1ad = L.marker(
+                [20.22565, 81.725953],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_b560951fa432cb9c6debdf7b4abb0731 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_aa4c3d544bd585c4cc79aba2a22c5a9d = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_fd354b59f07cbae6d1615caf6d02e77c = $(`<div id="html_fd354b59f07cbae6d1615caf6d02e77c" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Matwada</h4>             <p><b>Population:</b> 1,066</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 504-574 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.2257°N, 81.7260°E</p>         </div>         </div>`)[0];
+                popup_aa4c3d544bd585c4cc79aba2a22c5a9d.setContent(html_fd354b59f07cbae6d1615caf6d02e77c);
+            
+        
+
+        marker_038daf408a57249599e67a996ed8b1ad.bindPopup(popup_aa4c3d544bd585c4cc79aba2a22c5a9d)
+        ;
+
+        
+    
+    
+            marker_038daf408a57249599e67a996ed8b1ad.bindTooltip(
+                `<div>
+                     Red Zone: Matwada
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_038daf408a57249599e67a996ed8b1ad.setIcon(icon_b560951fa432cb9c6debdf7b4abb0731);
+            
+    
+            var marker_da35c82779d179520c18f7fc031ae9ba = L.marker(
+                [20.720477, 81.431454],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_ca2a0af248293c627faaa401f7ac8e82 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_5b069dad9df98c7d29ba1189e4c2cd1d = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_df1a486d8248d2f3b666f2e9fe380f3b = $(`<div id="html_df1a486d8248d2f3b666f2e9fe380f3b" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Bhirawahi</h4>             <p><b>Population:</b> 1,078</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 370-430 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.7205°N, 81.4315°E</p>         </div>         </div>`)[0];
+                popup_5b069dad9df98c7d29ba1189e4c2cd1d.setContent(html_df1a486d8248d2f3b666f2e9fe380f3b);
+            
+        
+
+        marker_da35c82779d179520c18f7fc031ae9ba.bindPopup(popup_5b069dad9df98c7d29ba1189e4c2cd1d)
+        ;
+
+        
+    
+    
+            marker_da35c82779d179520c18f7fc031ae9ba.bindTooltip(
+                `<div>
+                     Red Zone: Bhirawahi
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_da35c82779d179520c18f7fc031ae9ba.setIcon(icon_ca2a0af248293c627faaa401f7ac8e82);
+            
+    
+            var marker_662e4c786bd86ce319f7ea221d2ca845 = L.marker(
+                [20.170369, 81.335552],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_df8edc5c1d0d2c575bcf80c47044d2fd = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_aecfa3a86c1acf17db446d36f81eb7dc = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_2e239f536c8a353872af9aab1a38d24f = $(`<div id="html_2e239f536c8a353872af9aab1a38d24f" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Mankeshri</h4>             <p><b>Population:</b> 1,077</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 435-505 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.1704°N, 81.3356°E</p>         </div>         </div>`)[0];
+                popup_aecfa3a86c1acf17db446d36f81eb7dc.setContent(html_2e239f536c8a353872af9aab1a38d24f);
+            
+        
+
+        marker_662e4c786bd86ce319f7ea221d2ca845.bindPopup(popup_aecfa3a86c1acf17db446d36f81eb7dc)
+        ;
+
+        
+    
+    
+            marker_662e4c786bd86ce319f7ea221d2ca845.bindTooltip(
+                `<div>
+                     Red Zone: Mankeshri
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_662e4c786bd86ce319f7ea221d2ca845.setIcon(icon_df8edc5c1d0d2c575bcf80c47044d2fd);
+            
+    
+            var marker_dbfe64b7b73a974d04481fa86efa1ab3 = L.marker(
+                [20.367233, 81.966944],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_bc86633376bfbe56be926c54c08ab971 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b7595899393f034478a3aef754551937 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_f964a2b1947a452f153680c367869986 = $(`<div id="html_f964a2b1947a452f153680c367869986" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Petoli</h4>             <p><b>Population:</b> 993</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 499-569 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.3672°N, 81.9669°E</p>         </div>         </div>`)[0];
+                popup_b7595899393f034478a3aef754551937.setContent(html_f964a2b1947a452f153680c367869986);
+            
+        
+
+        marker_dbfe64b7b73a974d04481fa86efa1ab3.bindPopup(popup_b7595899393f034478a3aef754551937)
+        ;
+
+        
+    
+    
+            marker_dbfe64b7b73a974d04481fa86efa1ab3.bindTooltip(
+                `<div>
+                     Red Zone: Petoli
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_dbfe64b7b73a974d04481fa86efa1ab3.setIcon(icon_bc86633376bfbe56be926c54c08ab971);
+            
+    
+            var marker_48179c7590810605edcc377ac2387e95 = L.marker(
+                [20.752099, 81.638584],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_23809fa38f52cd5d143d0083cb55d08b = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_d0131d1acae3735ea217ce601c11b994 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_7ae736247247bc6ad3f1604fafb9f323 = $(`<div id="html_7ae736247247bc6ad3f1604fafb9f323" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Kewatintola</h4>             <p><b>Population:</b> 972</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 420-490 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.7521°N, 81.6386°E</p>         </div>         </div>`)[0];
+                popup_d0131d1acae3735ea217ce601c11b994.setContent(html_7ae736247247bc6ad3f1604fafb9f323);
+            
+        
+
+        marker_48179c7590810605edcc377ac2387e95.bindPopup(popup_d0131d1acae3735ea217ce601c11b994)
+        ;
+
+        
+    
+    
+            marker_48179c7590810605edcc377ac2387e95.bindTooltip(
+                `<div>
+                     Red Zone: Kewatintola
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_48179c7590810605edcc377ac2387e95.setIcon(icon_23809fa38f52cd5d143d0083cb55d08b);
+            
+    
+            var marker_8a8d095f5ea9ef6050f5ddeae7cb21d9 = L.marker(
+                [20.563289, 81.871306],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_a04443817dd117083945538ff5c1dadf = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a53f63c8273526c4ebc6197b54cf1184 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_c787a7cb3448b0e6a710bfa91568bf69 = $(`<div id="html_c787a7cb3448b0e6a710bfa91568bf69" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Makri Singrai</h4>             <p><b>Population:</b> 975</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 510-580 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.5633°N, 81.8713°E</p>         </div>         </div>`)[0];
+                popup_a53f63c8273526c4ebc6197b54cf1184.setContent(html_c787a7cb3448b0e6a710bfa91568bf69);
+            
+        
+
+        marker_8a8d095f5ea9ef6050f5ddeae7cb21d9.bindPopup(popup_a53f63c8273526c4ebc6197b54cf1184)
+        ;
+
+        
+    
+    
+            marker_8a8d095f5ea9ef6050f5ddeae7cb21d9.bindTooltip(
+                `<div>
+                     Red Zone: Makri Singrai
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_8a8d095f5ea9ef6050f5ddeae7cb21d9.setIcon(icon_a04443817dd117083945538ff5c1dadf);
+            
+    
+            var marker_eb56bddfd2331d0fccb5c7d797a86023 = L.marker(
+                [20.64663, 81.661295],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_1b6959f2099cd6ab6bf8e3d0514c155c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_3f37bbc17861a3ed00b8e9e6bf198327 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_c3bfefc91784daa2ac01ee42017256a1 = $(`<div id="html_c3bfefc91784daa2ac01ee42017256a1" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Makrikhuna</h4>             <p><b>Population:</b> 939</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 398-458 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.6466°N, 81.6613°E</p>         </div>         </div>`)[0];
+                popup_3f37bbc17861a3ed00b8e9e6bf198327.setContent(html_c3bfefc91784daa2ac01ee42017256a1);
+            
+        
+
+        marker_eb56bddfd2331d0fccb5c7d797a86023.bindPopup(popup_3f37bbc17861a3ed00b8e9e6bf198327)
+        ;
+
+        
+    
+    
+            marker_eb56bddfd2331d0fccb5c7d797a86023.bindTooltip(
+                `<div>
+                     Red Zone: Makrikhuna
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_eb56bddfd2331d0fccb5c7d797a86023.setIcon(icon_1b6959f2099cd6ab6bf8e3d0514c155c);
+            
+    
+            var marker_7730e77f09a80fe0d8dde65277a287b2 = L.marker(
+                [20.657433, 81.759686],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_cd338fbec6821858e7fe2561e3b418a8 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_26eef8e0d287db73c144240c7cfffabe = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_aa578ec82e026adff8d81786a03fa848 = $(`<div id="html_aa578ec82e026adff8d81786a03fa848" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Pandarwahi</h4>             <p><b>Population:</b> 909</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 392-452 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.6574°N, 81.7597°E</p>         </div>         </div>`)[0];
+                popup_26eef8e0d287db73c144240c7cfffabe.setContent(html_aa578ec82e026adff8d81786a03fa848);
+            
+        
+
+        marker_7730e77f09a80fe0d8dde65277a287b2.bindPopup(popup_26eef8e0d287db73c144240c7cfffabe)
+        ;
+
+        
+    
+    
+            marker_7730e77f09a80fe0d8dde65277a287b2.bindTooltip(
+                `<div>
+                     Red Zone: Pandarwahi
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_7730e77f09a80fe0d8dde65277a287b2.setIcon(icon_cd338fbec6821858e7fe2561e3b418a8);
+            
+    
+            var marker_b4a556339b376e8c5f8a9a83af693f78 = L.marker(
+                [20.392361, 81.373962],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_f4aba81a844490e458e89af68fcd7d24 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_cab5f55f87837e45f0a3f5094c40ff43 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_3581d2ab196d671ddc4af8e61a5cdd6c = $(`<div id="html_3581d2ab196d671ddc4af8e61a5cdd6c" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Nara</h4>             <p><b>Population:</b> 858</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 417-477 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.3924°N, 81.3740°E</p>         </div>         </div>`)[0];
+                popup_cab5f55f87837e45f0a3f5094c40ff43.setContent(html_3581d2ab196d671ddc4af8e61a5cdd6c);
+            
+        
+
+        marker_b4a556339b376e8c5f8a9a83af693f78.bindPopup(popup_cab5f55f87837e45f0a3f5094c40ff43)
+        ;
+
+        
+    
+    
+            marker_b4a556339b376e8c5f8a9a83af693f78.bindTooltip(
+                `<div>
+                     Red Zone: Nara
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_b4a556339b376e8c5f8a9a83af693f78.setIcon(icon_f4aba81a844490e458e89af68fcd7d24);
+            
+    
+            var marker_abf95c293de30f03d398087254f61c4e = L.marker(
+                [20.768724, 81.792334],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_3f14f492e62209088e1f30a33979ef06 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f9233f68f5661beb76079e0f36b23ffc = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_b710fb794f70f334746051081f249961 = $(`<div id="html_b710fb794f70f334746051081f249961" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Mudpar</h4>             <p><b>Population:</b> 758</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 491-561 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.7687°N, 81.7923°E</p>         </div>         </div>`)[0];
+                popup_f9233f68f5661beb76079e0f36b23ffc.setContent(html_b710fb794f70f334746051081f249961);
+            
+        
+
+        marker_abf95c293de30f03d398087254f61c4e.bindPopup(popup_f9233f68f5661beb76079e0f36b23ffc)
+        ;
+
+        
+    
+    
+            marker_abf95c293de30f03d398087254f61c4e.bindTooltip(
+                `<div>
+                     Red Zone: Mudpar
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_abf95c293de30f03d398087254f61c4e.setIcon(icon_3f14f492e62209088e1f30a33979ef06);
+            
+    
+            var marker_65d7cd8bdc730deaf0eba556b289f873 = L.marker(
+                [20.519153, 81.514614],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_12b8b9afe22eb97dae79f568aa0bcfb9 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_01ec0e8b753b6e814891f09e10e80b2d = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_d7662b3ad131e45f904561fc2fc12306 = $(`<div id="html_d7662b3ad131e45f904561fc2fc12306" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Arjuni</h4>             <p><b>Population:</b> 673</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 420-490 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.5192°N, 81.5146°E</p>         </div>         </div>`)[0];
+                popup_01ec0e8b753b6e814891f09e10e80b2d.setContent(html_d7662b3ad131e45f904561fc2fc12306);
+            
+        
+
+        marker_65d7cd8bdc730deaf0eba556b289f873.bindPopup(popup_01ec0e8b753b6e814891f09e10e80b2d)
+        ;
+
+        
+    
+    
+            marker_65d7cd8bdc730deaf0eba556b289f873.bindTooltip(
+                `<div>
+                     Red Zone: Arjuni
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_65d7cd8bdc730deaf0eba556b289f873.setIcon(icon_12b8b9afe22eb97dae79f568aa0bcfb9);
+            
+    
+            var marker_2ad156fa584166c692c7535440ea048a = L.marker(
+                [20.444475, 81.784564],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_be7d84a00cfcf2658854e4ca90181fb2 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "darkred",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_7e7cd8c63dff9b69b501afa49a151fed = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_fa7e3fdd5bba0a37215eeba6b257a390 = $(`<div id="html_fa7e3fdd5bba0a37215eeba6b257a390" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Patharri</h4>             <p><b>Population:</b> 626</p>             <p><b>Nitrogen Level:</b> Very High</p>             <p><b>Estimated Nitrogen:</b> 514-594 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.4445°N, 81.7846°E</p>         </div>         </div>`)[0];
+                popup_7e7cd8c63dff9b69b501afa49a151fed.setContent(html_fa7e3fdd5bba0a37215eeba6b257a390);
+            
+        
+
+        marker_2ad156fa584166c692c7535440ea048a.bindPopup(popup_7e7cd8c63dff9b69b501afa49a151fed)
+        ;
+
+        
+    
+    
+            marker_2ad156fa584166c692c7535440ea048a.bindTooltip(
+                `<div>
+                     Red Zone: Patharri
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_2ad156fa584166c692c7535440ea048a.setIcon(icon_be7d84a00cfcf2658854e4ca90181fb2);
+            
+    
+            var marker_4736246273d91d193163c9d2d3a72693 = L.marker(
+                [20.697224, 81.27305],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_069b2bf69897e5b5deb61b0fe97c50be = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b4926e88e26a7f7a42d7ff406e4a9180 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_df1ff12f6a9528cd5a0a43984667a121 = $(`<div id="html_df1ff12f6a9528cd5a0a43984667a121" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Muddongari</h4>             <p><b>Population:</b> 552</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 412-472 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.6972°N, 81.2730°E</p>         </div>         </div>`)[0];
+                popup_b4926e88e26a7f7a42d7ff406e4a9180.setContent(html_df1ff12f6a9528cd5a0a43984667a121);
+            
+        
+
+        marker_4736246273d91d193163c9d2d3a72693.bindPopup(popup_b4926e88e26a7f7a42d7ff406e4a9180)
+        ;
+
+        
+    
+    
+            marker_4736246273d91d193163c9d2d3a72693.bindTooltip(
+                `<div>
+                     Red Zone: Muddongari
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4736246273d91d193163c9d2d3a72693.setIcon(icon_069b2bf69897e5b5deb61b0fe97c50be);
+            
+    
+            var marker_998c09df85cbccf866fb3adf4b183e1e = L.marker(
+                [20.327957, 81.70254],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_73089372bbda54b795c76c1386b0487a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_327df7007d5192ff29b0f73096f97791 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_3117364e9ec7e853e900b76f2e839cc4 = $(`<div id="html_3117364e9ec7e853e900b76f2e839cc4" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Bhaisgaon</h4>             <p><b>Population:</b> 449</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 391-451 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.3280°N, 81.7025°E</p>         </div>         </div>`)[0];
+                popup_327df7007d5192ff29b0f73096f97791.setContent(html_3117364e9ec7e853e900b76f2e839cc4);
+            
+        
+
+        marker_998c09df85cbccf866fb3adf4b183e1e.bindPopup(popup_327df7007d5192ff29b0f73096f97791)
+        ;
+
+        
+    
+    
+            marker_998c09df85cbccf866fb3adf4b183e1e.bindTooltip(
+                `<div>
+                     Red Zone: Bhaisgaon
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_998c09df85cbccf866fb3adf4b183e1e.setIcon(icon_73089372bbda54b795c76c1386b0487a);
+            
+    
+            var marker_4cb7ad61e75a2269c8f57a752dad07e9 = L.marker(
+                [20.202522, 81.559466],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_3220f45524f317951f4b296b239711b2 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_518b7e41e6670cf9c53b86f78c4facc5 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_ced23db17ffa8d36abef562e67296a5c = $(`<div id="html_ced23db17ffa8d36abef562e67296a5c" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Satlor</h4>             <p><b>Population:</b> 408</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 370-430 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.2025°N, 81.5595°E</p>         </div>         </div>`)[0];
+                popup_518b7e41e6670cf9c53b86f78c4facc5.setContent(html_ced23db17ffa8d36abef562e67296a5c);
+            
+        
+
+        marker_4cb7ad61e75a2269c8f57a752dad07e9.bindPopup(popup_518b7e41e6670cf9c53b86f78c4facc5)
+        ;
+
+        
+    
+    
+            marker_4cb7ad61e75a2269c8f57a752dad07e9.bindTooltip(
+                `<div>
+                     Red Zone: Satlor
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4cb7ad61e75a2269c8f57a752dad07e9.setIcon(icon_3220f45524f317951f4b296b239711b2);
+            
+    
+            var marker_ce1b72549b6bcb3e645c48ed6e033e6a = L.marker(
+                [20.237699, 81.812623],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_9c77282de2b20e12e897742e7c630d16 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_403761f799a252e8f7620bed6fd31454 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_c84c79137c17af376197451319845fe9 = $(`<div id="html_c84c79137c17af376197451319845fe9" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Chiwranj</h4>             <p><b>Population:</b> 402</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 389-449 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.2377°N, 81.8126°E</p>         </div>         </div>`)[0];
+                popup_403761f799a252e8f7620bed6fd31454.setContent(html_c84c79137c17af376197451319845fe9);
+            
+        
+
+        marker_ce1b72549b6bcb3e645c48ed6e033e6a.bindPopup(popup_403761f799a252e8f7620bed6fd31454)
+        ;
+
+        
+    
+    
+            marker_ce1b72549b6bcb3e645c48ed6e033e6a.bindTooltip(
+                `<div>
+                     Red Zone: Chiwranj
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_ce1b72549b6bcb3e645c48ed6e033e6a.setIcon(icon_9c77282de2b20e12e897742e7c630d16);
+            
+    
+            var marker_0b0a9d03114b94cff7057d9baa552514 = L.marker(
+                [20.701203, 81.321028],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_f1d1239372090494bc3535bb06119404 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8622ad782ac27f2e2cfb40571ac1e25d = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_2832ce3446a78fc3c7e2c045f603dea6 = $(`<div id="html_2832ce3446a78fc3c7e2c045f603dea6" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Malaldobri</h4>             <p><b>Population:</b> 415</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 508-578 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.7012°N, 81.3210°E</p>         </div>         </div>`)[0];
+                popup_8622ad782ac27f2e2cfb40571ac1e25d.setContent(html_2832ce3446a78fc3c7e2c045f603dea6);
+            
+        
+
+        marker_0b0a9d03114b94cff7057d9baa552514.bindPopup(popup_8622ad782ac27f2e2cfb40571ac1e25d)
+        ;
+
+        
+    
+    
+            marker_0b0a9d03114b94cff7057d9baa552514.bindTooltip(
+                `<div>
+                     Red Zone: Malaldobri
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_0b0a9d03114b94cff7057d9baa552514.setIcon(icon_f1d1239372090494bc3535bb06119404);
+            
+    
+            var marker_dee7d7551c945c07cf108023a81ef46c = L.marker(
+                [20.109553, 81.669806],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_75e2e65a983d5ff730b5a55982f96e6f = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_48c601f9512201c0d7da004430e7c1b6 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_34cfebd529835269cd887631bf0e820d = $(`<div id="html_34cfebd529835269cd887631bf0e820d" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Dhantulsi</h4>             <p><b>Population:</b> 382</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 370-430 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.1096°N, 81.6698°E</p>         </div>         </div>`)[0];
+                popup_48c601f9512201c0d7da004430e7c1b6.setContent(html_34cfebd529835269cd887631bf0e820d);
+            
+        
+
+        marker_dee7d7551c945c07cf108023a81ef46c.bindPopup(popup_48c601f9512201c0d7da004430e7c1b6)
+        ;
+
+        
+    
+    
+            marker_dee7d7551c945c07cf108023a81ef46c.bindTooltip(
+                `<div>
+                     Red Zone: Dhantulsi
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_dee7d7551c945c07cf108023a81ef46c.setIcon(icon_75e2e65a983d5ff730b5a55982f96e6f);
+            
+    
+            var marker_177dbcb72a0a26a25625f06397045079 = L.marker(
+                [20.57742, 81.929088],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_12c9dbd065fcefeec234a03d817c1d7e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "darkred",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8b0a9e6af7fbe1b92e8374138957b6b3 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_7dc2166dd5d1dcf03534241c70cb5506 = $(`<div id="html_7dc2166dd5d1dcf03534241c70cb5506" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Kanagaon</h4>             <p><b>Population:</b> 339</p>             <p><b>Nitrogen Level:</b> Very High</p>             <p><b>Estimated Nitrogen:</b> 542-622 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.5774°N, 81.9291°E</p>         </div>         </div>`)[0];
+                popup_8b0a9e6af7fbe1b92e8374138957b6b3.setContent(html_7dc2166dd5d1dcf03534241c70cb5506);
+            
+        
+
+        marker_177dbcb72a0a26a25625f06397045079.bindPopup(popup_8b0a9e6af7fbe1b92e8374138957b6b3)
+        ;
+
+        
+    
+    
+            marker_177dbcb72a0a26a25625f06397045079.bindTooltip(
+                `<div>
+                     Red Zone: Kanagaon
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_177dbcb72a0a26a25625f06397045079.setIcon(icon_12c9dbd065fcefeec234a03d817c1d7e);
+            
+    
+            var marker_d3e2c1cdf9d6071c763fb0126eb2b971 = L.marker(
+                [20.620144, 81.499097],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_12a75987557c473023ce8fa7a26bdd7e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_77024d1a582b4bba13da1cf3b1e37df0 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_10142ec28dc4b328705054ff252e7877 = $(`<div id="html_10142ec28dc4b328705054ff252e7877" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Gobardhan</h4>             <p><b>Population:</b> 303</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 443-513 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.6201°N, 81.4991°E</p>         </div>         </div>`)[0];
+                popup_77024d1a582b4bba13da1cf3b1e37df0.setContent(html_10142ec28dc4b328705054ff252e7877);
+            
+        
+
+        marker_d3e2c1cdf9d6071c763fb0126eb2b971.bindPopup(popup_77024d1a582b4bba13da1cf3b1e37df0)
+        ;
+
+        
+    
+    
+            marker_d3e2c1cdf9d6071c763fb0126eb2b971.bindTooltip(
+                `<div>
+                     Red Zone: Gobardhan
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_d3e2c1cdf9d6071c763fb0126eb2b971.setIcon(icon_12a75987557c473023ce8fa7a26bdd7e);
+            
+    
+            var marker_921afda56efc9f0df9e83f5b27e16d7e = L.marker(
+                [20.659049, 81.762962],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_59bcf404a395dd99a683476385245639 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_3c072fa9bf70e744c11969e2d5856a6b = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_d5982c9cb40fbf37c630e3d3b3419c2d = $(`<div id="html_d5982c9cb40fbf37c630e3d3b3419c2d" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Murragaon</h4>             <p><b>Population:</b> 205</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 426-496 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.6590°N, 81.7630°E</p>         </div>         </div>`)[0];
+                popup_3c072fa9bf70e744c11969e2d5856a6b.setContent(html_d5982c9cb40fbf37c630e3d3b3419c2d);
+            
+        
+
+        marker_921afda56efc9f0df9e83f5b27e16d7e.bindPopup(popup_3c072fa9bf70e744c11969e2d5856a6b)
+        ;
+
+        
+    
+    
+            marker_921afda56efc9f0df9e83f5b27e16d7e.bindTooltip(
+                `<div>
+                     Red Zone: Murragaon
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_921afda56efc9f0df9e83f5b27e16d7e.setIcon(icon_59bcf404a395dd99a683476385245639);
+            
+    
+            var marker_0c35d4326b7c9311c590b8eba095e7a2 = L.marker(
+                [20.522062, 81.557296],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_f9b0f01642ba9aea74c718ae903c6621 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_ca4fbe8b60451751201f451db8b3f550 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_e52cd83a32769a59df8ca72aca20b5a9 = $(`<div id="html_e52cd83a32769a59df8ca72aca20b5a9" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Komalpur</h4>             <p><b>Population:</b> 156</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 399-459 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.5221°N, 81.5573°E</p>         </div>         </div>`)[0];
+                popup_ca4fbe8b60451751201f451db8b3f550.setContent(html_e52cd83a32769a59df8ca72aca20b5a9);
+            
+        
+
+        marker_0c35d4326b7c9311c590b8eba095e7a2.bindPopup(popup_ca4fbe8b60451751201f451db8b3f550)
+        ;
+
+        
+    
+    
+            marker_0c35d4326b7c9311c590b8eba095e7a2.bindTooltip(
+                `<div>
+                     Red Zone: Komalpur
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_0c35d4326b7c9311c590b8eba095e7a2.setIcon(icon_f9b0f01642ba9aea74c718ae903c6621);
+            
+    
+            var marker_2a5059cd94d566cf08b7a10eda5ee5ae = L.marker(
+                [20.298793, 81.493188],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_17ac5e744c6e58b8263440149f814666 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_157f1ec33611e2c30140ee9d3a1b1806 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_19f05a231f8833508f762b21141fe056 = $(`<div id="html_19f05a231f8833508f762b21141fe056" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Pusajhar</h4>             <p><b>Population:</b> 97</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Estimated Nitrogen:</b> 389-449 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.2988°N, 81.4932°E</p>         </div>         </div>`)[0];
+                popup_157f1ec33611e2c30140ee9d3a1b1806.setContent(html_19f05a231f8833508f762b21141fe056);
+            
+        
+
+        marker_2a5059cd94d566cf08b7a10eda5ee5ae.bindPopup(popup_157f1ec33611e2c30140ee9d3a1b1806)
+        ;
+
+        
+    
+    
+            marker_2a5059cd94d566cf08b7a10eda5ee5ae.bindTooltip(
+                `<div>
+                     Red Zone: Pusajhar
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_2a5059cd94d566cf08b7a10eda5ee5ae.setIcon(icon_17ac5e744c6e58b8263440149f814666);
+            
+    
+            var marker_d53e52462f84447cacdf159a7365df7e = L.marker(
+                [20.178994, 81.402898],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_638b8246fd00af811b2ae116d843291a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_4068ad3eaeb5c7091f60c19da1c0cc3e = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_b1f727ea9a602aa6169911082424fbc4 = $(`<div id="html_b1f727ea9a602aa6169911082424fbc4" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Jiwalamari</h4>             <p><b>Population:</b> 86</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 500-570 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.1790°N, 81.4029°E</p>         </div>         </div>`)[0];
+                popup_4068ad3eaeb5c7091f60c19da1c0cc3e.setContent(html_b1f727ea9a602aa6169911082424fbc4);
+            
+        
+
+        marker_d53e52462f84447cacdf159a7365df7e.bindPopup(popup_4068ad3eaeb5c7091f60c19da1c0cc3e)
+        ;
+
+        
+    
+    
+            marker_d53e52462f84447cacdf159a7365df7e.bindTooltip(
+                `<div>
+                     Red Zone: Jiwalamari
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_d53e52462f84447cacdf159a7365df7e.setIcon(icon_638b8246fd00af811b2ae116d843291a);
+            
+    
+            var marker_4a0cefc39185f7cc2dc7dff44b24bb13 = L.marker(
+                [20.291311, 81.440311],
+                {
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+        
+    
+            var icon_c6414c46fea4a10c8daa490885c124cb = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_3bdd4607cdcf778f075abefc5766b239 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_049a6d98b3a5bd36a3b5c4bac23b42e9 = $(`<div id="html_049a6d98b3a5bd36a3b5c4bac23b42e9" style="width: 100.0%; height: 100.0%;">         <div style="width: 200px;">             <h4 style="color: #DC143C; margin: 5px 0;">Mujalgondi</h4>             <p><b>Population:</b> 50</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Estimated Nitrogen:</b> 434-504 kg/ha</p>             <p><b>Zone:</b> <span style="color: #DC143C; font-weight: bold;">RED ZONE</span></p>             <p><b>Coordinates:</b> 20.2913°N, 81.4403°E</p>         </div>         </div>`)[0];
+                popup_3bdd4607cdcf778f075abefc5766b239.setContent(html_049a6d98b3a5bd36a3b5c4bac23b42e9);
+            
+        
+
+        marker_4a0cefc39185f7cc2dc7dff44b24bb13.bindPopup(popup_3bdd4607cdcf778f075abefc5766b239)
+        ;
+
+        
+    
+    
+            marker_4a0cefc39185f7cc2dc7dff44b24bb13.bindTooltip(
+                `<div>
+                     Red Zone: Mujalgondi
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4a0cefc39185f7cc2dc7dff44b24bb13.setIcon(icon_c6414c46fea4a10c8daa490885c124cb);
+            
+    
+            var layer_control_3bba031235e0e76b4ff64dbf8e6ff835_layers = {
+                base_layers : {
+                    "openstreetmap" : tile_layer_9c28e8a8af701fafd259a508e4671409,
+                },
+                overlays :  {
+                },
+            };
+            let layer_control_3bba031235e0e76b4ff64dbf8e6ff835 = L.control.layers(
+                layer_control_3bba031235e0e76b4ff64dbf8e6ff835_layers.base_layers,
+                layer_control_3bba031235e0e76b4ff64dbf8e6ff835_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": true,
+  "autoZIndex": true,
+}
+            ).addTo(map_11f7cec7abd157e9206f30ebad989585);
+
+        
+</script>
+</html>

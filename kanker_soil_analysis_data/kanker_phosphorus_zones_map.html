@@ -1,0 +1,1984 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_05ec848028c696882c1d9b87cebeab71 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+    <div style="position: fixed; 
+                bottom: 50px; left: 50px; width: 350px; height: 280px; 
+                background-color: white; border:2px solid grey; z-index:9999; 
+                font-size:14px; padding: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+        <h4 style="margin-top:0; color: #333; text-align: center;">Kanker Phosphorus Zones</h4>
+        
+        <div style="margin: 8px 0; display: flex; align-items: center;">
+            <i class="fa fa-circle fa-2x" style="color: #FFD700; margin-right: 10px;"></i> 
+            <span><b>Yellow Zone</b> (Medium Phosphorus)</span>
+        </div>
+        
+        <div style="margin: 8px 0; display: flex; align-items: center;">
+            <i class="fa fa-circle fa-2x" style="color: #228B22; margin-right: 10px;"></i> 
+            <span><b>Green Zone</b> (High Phosphorus)</span>
+        </div>
+        
+        <div style="margin: 8px 0; display: flex; align-items: center;">
+            <i class="fa fa-circle fa-2x" style="color: lightgray; margin-right: 10px;"></i> 
+            <span><b>Low Phosphorus</b> Areas</span>
+        </div>
+        
+        <hr style="margin: 10px 0;">
+        
+        <h5 style="margin: 8px 0; color: #333;">Phosphorus Ranges:</h5>
+        <div style="margin: 5px 0; font-size: 12px;">
+            <span><b>Low:</b> 8-20 kg/ha</span>
+        </div>
+        <div style="margin: 5px 0; font-size: 12px;">
+            <span><b>Medium:</b> 15-25 kg/ha</span>
+        </div>
+        <div style="margin: 5px 0; font-size: 12px;">
+            <span><b>High:</b> 25-40 kg/ha</span>
+        </div>
+        
+        <div style="margin: 10px 0 0 0; padding: 8px; background-color: #f0f0f0; border-radius: 3px;">
+            <p style="margin: 0; font-size: 12px; color: #666; text-align: center;">
+                <b>Village Count:</b> 10 Yellow + 5 Green + 76 Low
+            </p>
+        </div>
+    </div>
+    
+    
+            <div class="folium-map" id="map_05ec848028c696882c1d9b87cebeab71" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_05ec848028c696882c1d9b87cebeab71 = L.map(
+                "map_05ec848028c696882c1d9b87cebeab71",
+                {
+                    center: [20.45, 81.5],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 11,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_934fc12128b5bb0b7416098b269bfb51 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_934fc12128b5bb0b7416098b269bfb51.addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var circle_c70969d469bb5a0f467a8a90429859c0 = L.circle(
+                [20.38, 81.45],
+                {"bubblingMouseEvents": true, "color": "yellow", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "yellow", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 16650.0, "stroke": true, "weight": 3}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+        var popup_78fcd1adbb9a66126c71a1f6b099c499 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_e9492cd1efad840e7ec990146818e881 = $(`<div id="html_e9492cd1efad840e7ec990146818e881" style="width: 100.0%; height: 100.0%;">             <div style="width: 250px;">                 <h4 style="color: yellow; margin: 5px 0;">Yellow Zone (Medium Phosphorus)</h4>                 <p><b>Coordinates:</b> 20.38°N, 81.45°E</p>                 <p><b>Description:</b> Southwestern & southern side of Kanker tehsil</p>                 <p><b>Phosphorus Level:</b> Medium Phosphorus</p>             </div>             </div>`)[0];
+                popup_78fcd1adbb9a66126c71a1f6b099c499.setContent(html_e9492cd1efad840e7ec990146818e881);
+            
+        
+
+        circle_c70969d469bb5a0f467a8a90429859c0.bindPopup(popup_78fcd1adbb9a66126c71a1f6b099c499)
+        ;
+
+        
+    
+    
+            var marker_ef5d6caa4def56989e91192f3cc5d9f1 = L.marker(
+                [20.38, 81.45],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_e77c319ebbe2af8116780b83a561e8ca = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "yellow",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_ec356ec25188cd29736eb10e3ea05e1e = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_68af89686baf9e6e14a469cda37dade8 = $(`<div id="html_68af89686baf9e6e14a469cda37dade8" style="width: 100.0%; height: 100.0%;"><b>Yellow Zone (Medium Phosphorus)</b><br>Center Point</div>`)[0];
+                popup_ec356ec25188cd29736eb10e3ea05e1e.setContent(html_68af89686baf9e6e14a469cda37dade8);
+            
+        
+
+        marker_ef5d6caa4def56989e91192f3cc5d9f1.bindPopup(popup_ec356ec25188cd29736eb10e3ea05e1e)
+        ;
+
+        
+    
+    
+            marker_ef5d6caa4def56989e91192f3cc5d9f1.bindTooltip(
+                `<div>
+                     Yellow Zone (Medium Phosphorus) Center
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_ef5d6caa4def56989e91192f3cc5d9f1.setIcon(icon_e77c319ebbe2af8116780b83a561e8ca);
+            
+    
+            var circle_515036abf0cacff870d79cc52d1d5e7f = L.circle(
+                [20.52, 81.62],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 13320.0, "stroke": true, "weight": 3}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+        var popup_b03c68abc4947eff3e0a285f7922fdf1 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_e40e3fb8df65cdfb4d608462bf37a4ce = $(`<div id="html_e40e3fb8df65cdfb4d608462bf37a4ce" style="width: 100.0%; height: 100.0%;">             <div style="width: 250px;">                 <h4 style="color: green; margin: 5px 0;">Green Zone (High Phosphorus)</h4>                 <p><b>Coordinates:</b> 20.52°N, 81.62°E</p>                 <p><b>Description:</b> Central-eastern and northeastern part of Kanker tehsil</p>                 <p><b>Phosphorus Level:</b> High Phosphorus</p>             </div>             </div>`)[0];
+                popup_b03c68abc4947eff3e0a285f7922fdf1.setContent(html_e40e3fb8df65cdfb4d608462bf37a4ce);
+            
+        
+
+        circle_515036abf0cacff870d79cc52d1d5e7f.bindPopup(popup_b03c68abc4947eff3e0a285f7922fdf1)
+        ;
+
+        
+    
+    
+            var marker_43e96e91f608dc8446a6d2bee377c422 = L.marker(
+                [20.52, 81.62],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_6a20d3f3358375f4f4e8362c81018e2a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_1ec0653af7840bcab119a6b8e1247b17 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d558ff62d323d5c436d1459cd789f6df = $(`<div id="html_d558ff62d323d5c436d1459cd789f6df" style="width: 100.0%; height: 100.0%;"><b>Green Zone (High Phosphorus)</b><br>Center Point</div>`)[0];
+                popup_1ec0653af7840bcab119a6b8e1247b17.setContent(html_d558ff62d323d5c436d1459cd789f6df);
+            
+        
+
+        marker_43e96e91f608dc8446a6d2bee377c422.bindPopup(popup_1ec0653af7840bcab119a6b8e1247b17)
+        ;
+
+        
+    
+    
+            marker_43e96e91f608dc8446a6d2bee377c422.bindTooltip(
+                `<div>
+                     Green Zone (High Phosphorus) Center
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_43e96e91f608dc8446a6d2bee377c422.setIcon(icon_6a20d3f3358375f4f4e8362c81018e2a);
+            
+    
+            var marker_70020b7fe9423deabe7b3259af63a434 = L.marker(
+                [20.380166, 81.36461],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_c8e8dea7b7748da91518bf8141cffaa4 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "yellow",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_92ac656b2695719cdb6477f29d566d92 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_214063d95dfdbc3aff9e5adfa7b63052 = $(`<div id="html_214063d95dfdbc3aff9e5adfa7b63052" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #FFD700; margin: 5px 0;">Deori</h4>             <p><b>Population:</b> 1,915</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Phosphorus Level:</b> <span style="color: #FFD700; font-weight: bold;">Medium</span></p>             <p><b>Estimated Phosphorus:</b> 16-22 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.3802°N, 81.3646°E</p>         </div>         </div>`)[0];
+                popup_92ac656b2695719cdb6477f29d566d92.setContent(html_214063d95dfdbc3aff9e5adfa7b63052);
+            
+        
+
+        marker_70020b7fe9423deabe7b3259af63a434.bindPopup(popup_92ac656b2695719cdb6477f29d566d92)
+        ;
+
+        
+    
+    
+            marker_70020b7fe9423deabe7b3259af63a434.bindTooltip(
+                `<div>
+                     Yellow Zone: Deori
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_70020b7fe9423deabe7b3259af63a434.setIcon(icon_c8e8dea7b7748da91518bf8141cffaa4);
+            
+    
+            var marker_eef7bbc8e1d3e8fdda04276abf33271a = L.marker(
+                [20.395037, 81.368874],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_05b4a8bbd1ac2602cb8213a44ce6ddab = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "yellow",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_d7d5841d7f6d50e793704ce1b91a5dfa = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_08a387f15f5d532ba397c0d968c2b156 = $(`<div id="html_08a387f15f5d532ba397c0d968c2b156" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #FFD700; margin: 5px 0;">Viyas Kongera</h4>             <p><b>Population:</b> 1,517</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Phosphorus Level:</b> <span style="color: #FFD700; font-weight: bold;">Medium</span></p>             <p><b>Estimated Phosphorus:</b> 16-24 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.3950°N, 81.3689°E</p>         </div>         </div>`)[0];
+                popup_d7d5841d7f6d50e793704ce1b91a5dfa.setContent(html_08a387f15f5d532ba397c0d968c2b156);
+            
+        
+
+        marker_eef7bbc8e1d3e8fdda04276abf33271a.bindPopup(popup_d7d5841d7f6d50e793704ce1b91a5dfa)
+        ;
+
+        
+    
+    
+            marker_eef7bbc8e1d3e8fdda04276abf33271a.bindTooltip(
+                `<div>
+                     Yellow Zone: Viyas Kongera
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_eef7bbc8e1d3e8fdda04276abf33271a.setIcon(icon_05b4a8bbd1ac2602cb8213a44ce6ddab);
+            
+    
+            var marker_d31cb92f28e74ccac0f41412b303a7ae = L.marker(
+                [20.392361, 81.373962],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_84590ce7e686d1c7733f7ecb68248e41 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "yellow",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c582fcae62eff6910a470829851087d1 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_fd8528796d3aba8abf2b579bd077e41f = $(`<div id="html_fd8528796d3aba8abf2b579bd077e41f" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #FFD700; margin: 5px 0;">Nara</h4>             <p><b>Population:</b> 858</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Phosphorus Level:</b> <span style="color: #FFD700; font-weight: bold;">Medium</span></p>             <p><b>Estimated Phosphorus:</b> 15-25 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.3924°N, 81.3740°E</p>         </div>         </div>`)[0];
+                popup_c582fcae62eff6910a470829851087d1.setContent(html_fd8528796d3aba8abf2b579bd077e41f);
+            
+        
+
+        marker_d31cb92f28e74ccac0f41412b303a7ae.bindPopup(popup_c582fcae62eff6910a470829851087d1)
+        ;
+
+        
+    
+    
+            marker_d31cb92f28e74ccac0f41412b303a7ae.bindTooltip(
+                `<div>
+                     Yellow Zone: Nara
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_d31cb92f28e74ccac0f41412b303a7ae.setIcon(icon_84590ce7e686d1c7733f7ecb68248e41);
+            
+    
+            var marker_6531388235e2eb3ed72a6a6a6921724a = L.marker(
+                [20.368392, 81.357651],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_391d85b1d1289beee54781c9907dbc8c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "yellow",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_1ec2ddb60eeebac6ae6765964df97d8f = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_703ea0bb5356c3808843de3004a5a28b = $(`<div id="html_703ea0bb5356c3808843de3004a5a28b" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #FFD700; margin: 5px 0;">Bhairadih</h4>             <p><b>Population:</b> 737</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Phosphorus Level:</b> <span style="color: #FFD700; font-weight: bold;">Medium</span></p>             <p><b>Estimated Phosphorus:</b> 16-24 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.3684°N, 81.3577°E</p>         </div>         </div>`)[0];
+                popup_1ec2ddb60eeebac6ae6765964df97d8f.setContent(html_703ea0bb5356c3808843de3004a5a28b);
+            
+        
+
+        marker_6531388235e2eb3ed72a6a6a6921724a.bindPopup(popup_1ec2ddb60eeebac6ae6765964df97d8f)
+        ;
+
+        
+    
+    
+            marker_6531388235e2eb3ed72a6a6a6921724a.bindTooltip(
+                `<div>
+                     Yellow Zone: Bhairadih
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_6531388235e2eb3ed72a6a6a6921724a.setIcon(icon_391d85b1d1289beee54781c9907dbc8c);
+            
+    
+            var marker_6c6d1ab9c91984a8dc16a3d729359943 = L.marker(
+                [20.435924, 81.366373],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_0f02e0138f7ef6656ee421ef44bacda9 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "yellow",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a360547a1dcaf1d47d57b22312127d29 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_deb3c5329bb34556f60369f35e8299b7 = $(`<div id="html_deb3c5329bb34556f60369f35e8299b7" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #FFD700; margin: 5px 0;">Kulgaon</h4>             <p><b>Population:</b> 555</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Phosphorus Level:</b> <span style="color: #FFD700; font-weight: bold;">Medium</span></p>             <p><b>Estimated Phosphorus:</b> 18-22 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.4359°N, 81.3664°E</p>         </div>         </div>`)[0];
+                popup_a360547a1dcaf1d47d57b22312127d29.setContent(html_deb3c5329bb34556f60369f35e8299b7);
+            
+        
+
+        marker_6c6d1ab9c91984a8dc16a3d729359943.bindPopup(popup_a360547a1dcaf1d47d57b22312127d29)
+        ;
+
+        
+    
+    
+            marker_6c6d1ab9c91984a8dc16a3d729359943.bindTooltip(
+                `<div>
+                     Yellow Zone: Kulgaon
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_6c6d1ab9c91984a8dc16a3d729359943.setIcon(icon_0f02e0138f7ef6656ee421ef44bacda9);
+            
+    
+            var marker_bd46679b8167b3ae4d34330c2b4f39bc = L.marker(
+                [20.439709, 81.372196],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_5046dce38069e84f6b5b70bbe9fff077 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "yellow",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e70b9bbe74a571da89afa5f8b2cd1bac = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_fd041e2838c33377bb924e11623e2616 = $(`<div id="html_fd041e2838c33377bb924e11623e2616" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #FFD700; margin: 5px 0;">Kotgaon</h4>             <p><b>Population:</b> 542</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Phosphorus Level:</b> <span style="color: #FFD700; font-weight: bold;">Medium</span></p>             <p><b>Estimated Phosphorus:</b> 16-22 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.4397°N, 81.3722°E</p>         </div>         </div>`)[0];
+                popup_e70b9bbe74a571da89afa5f8b2cd1bac.setContent(html_fd041e2838c33377bb924e11623e2616);
+            
+        
+
+        marker_bd46679b8167b3ae4d34330c2b4f39bc.bindPopup(popup_e70b9bbe74a571da89afa5f8b2cd1bac)
+        ;
+
+        
+    
+    
+            marker_bd46679b8167b3ae4d34330c2b4f39bc.bindTooltip(
+                `<div>
+                     Yellow Zone: Kotgaon
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_bd46679b8167b3ae4d34330c2b4f39bc.setIcon(icon_5046dce38069e84f6b5b70bbe9fff077);
+            
+    
+            var marker_81081b71c4f23883e52a1cc8cce8fdaa = L.marker(
+                [20.368935, 81.347884],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_c052f865a719ff132bdb369f3dd2ad32 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "yellow",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f72926b663d2e602cc512965be349879 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_b3296c0c8f70dc6c2dbeb5d3956e5fe3 = $(`<div id="html_b3296c0c8f70dc6c2dbeb5d3956e5fe3" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #FFD700; margin: 5px 0;">Devkongera</h4>             <p><b>Population:</b> 435</p>             <p><b>Nitrogen Level:</b> Low</p>             <p><b>Phosphorus Level:</b> <span style="color: #FFD700; font-weight: bold;">Medium</span></p>             <p><b>Estimated Phosphorus:</b> 17-22 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.3689°N, 81.3479°E</p>         </div>         </div>`)[0];
+                popup_f72926b663d2e602cc512965be349879.setContent(html_b3296c0c8f70dc6c2dbeb5d3956e5fe3);
+            
+        
+
+        marker_81081b71c4f23883e52a1cc8cce8fdaa.bindPopup(popup_f72926b663d2e602cc512965be349879)
+        ;
+
+        
+    
+    
+            marker_81081b71c4f23883e52a1cc8cce8fdaa.bindTooltip(
+                `<div>
+                     Yellow Zone: Devkongera
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_81081b71c4f23883e52a1cc8cce8fdaa.setIcon(icon_c052f865a719ff132bdb369f3dd2ad32);
+            
+    
+            var marker_891b8bd47a945457c830f8fae18dd2f3 = L.marker(
+                [20.298793, 81.493188],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_798b6d2806d8d5819b7e78f56f5cae25 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "yellow",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6c0c4d5f15a58d5db42e96f45691573c = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_15e0a19849fcab6521b253ed952224ed = $(`<div id="html_15e0a19849fcab6521b253ed952224ed" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #FFD700; margin: 5px 0;">Pusajhar</h4>             <p><b>Population:</b> 97</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Phosphorus Level:</b> <span style="color: #FFD700; font-weight: bold;">Medium</span></p>             <p><b>Estimated Phosphorus:</b> 16-24 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.2988°N, 81.4932°E</p>         </div>         </div>`)[0];
+                popup_6c0c4d5f15a58d5db42e96f45691573c.setContent(html_15e0a19849fcab6521b253ed952224ed);
+            
+        
+
+        marker_891b8bd47a945457c830f8fae18dd2f3.bindPopup(popup_6c0c4d5f15a58d5db42e96f45691573c)
+        ;
+
+        
+    
+    
+            marker_891b8bd47a945457c830f8fae18dd2f3.bindTooltip(
+                `<div>
+                     Yellow Zone: Pusajhar
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_891b8bd47a945457c830f8fae18dd2f3.setIcon(icon_798b6d2806d8d5819b7e78f56f5cae25);
+            
+    
+            var marker_33ea33cdb3d49cb02d41d35095bf2625 = L.marker(
+                [20.439222, 81.374199],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_73fadefec7346abbf8d69821bbcd629e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "yellow",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f4275a24cf7a1dfa5a2fcfeb645e7991 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_fe1665cdbb647a7ce161cec53dcc549c = $(`<div id="html_fe1665cdbb647a7ce161cec53dcc549c" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #FFD700; margin: 5px 0;">Kotgaon</h4>             <p><b>Population:</b> 67</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Phosphorus Level:</b> <span style="color: #FFD700; font-weight: bold;">Medium</span></p>             <p><b>Estimated Phosphorus:</b> 16-23 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.4392°N, 81.3742°E</p>         </div>         </div>`)[0];
+                popup_f4275a24cf7a1dfa5a2fcfeb645e7991.setContent(html_fe1665cdbb647a7ce161cec53dcc549c);
+            
+        
+
+        marker_33ea33cdb3d49cb02d41d35095bf2625.bindPopup(popup_f4275a24cf7a1dfa5a2fcfeb645e7991)
+        ;
+
+        
+    
+    
+            marker_33ea33cdb3d49cb02d41d35095bf2625.bindTooltip(
+                `<div>
+                     Yellow Zone: Kotgaon
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_33ea33cdb3d49cb02d41d35095bf2625.setIcon(icon_73fadefec7346abbf8d69821bbcd629e);
+            
+    
+            var marker_fb7ad69ecd366cc866ccb5a6c58c8f84 = L.marker(
+                [20.291311, 81.440311],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_d340bb14c3e24c80002eb9b7673003f4 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "yellow",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c2f6477016cf1015bfff749dda65deb2 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_3495d05d2d199f5ba3f261fa13d60b17 = $(`<div id="html_3495d05d2d199f5ba3f261fa13d60b17" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #FFD700; margin: 5px 0;">Mujalgondi</h4>             <p><b>Population:</b> 50</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Phosphorus Level:</b> <span style="color: #FFD700; font-weight: bold;">Medium</span></p>             <p><b>Estimated Phosphorus:</b> 17-23 kg/ha</p>             <p><b>Zone:</b> <span style="color: #FFD700; font-weight: bold;">YELLOW ZONE</span></p>             <p><b>Coordinates:</b> 20.2913°N, 81.4403°E</p>         </div>         </div>`)[0];
+                popup_c2f6477016cf1015bfff749dda65deb2.setContent(html_3495d05d2d199f5ba3f261fa13d60b17);
+            
+        
+
+        marker_fb7ad69ecd366cc866ccb5a6c58c8f84.bindPopup(popup_c2f6477016cf1015bfff749dda65deb2)
+        ;
+
+        
+    
+    
+            marker_fb7ad69ecd366cc866ccb5a6c58c8f84.bindTooltip(
+                `<div>
+                     Yellow Zone: Mujalgondi
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_fb7ad69ecd366cc866ccb5a6c58c8f84.setIcon(icon_d340bb14c3e24c80002eb9b7673003f4);
+            
+    
+            var marker_79b9b46cf8a8f42957fe29a8c9f7a40c = L.marker(
+                [20.434008, 81.649197],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_c2f6afeb2810ce3da8aa7eb5eacfc140 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8e134c9d7350191179a8a8a86ba0bd06 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_d29aad76454cfa95c563bd8901248709 = $(`<div id="html_d29aad76454cfa95c563bd8901248709" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #228B22; margin: 5px 0;">Dashpur</h4>             <p><b>Population:</b> 1,756</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Phosphorus Level:</b> <span style="color: #228B22; font-weight: bold;">High</span></p>             <p><b>Estimated Phosphorus:</b> 26-39 kg/ha</p>             <p><b>Zone:</b> <span style="color: #228B22; font-weight: bold;">GREEN ZONE</span></p>             <p><b>Coordinates:</b> 20.4340°N, 81.6492°E</p>         </div>         </div>`)[0];
+                popup_8e134c9d7350191179a8a8a86ba0bd06.setContent(html_d29aad76454cfa95c563bd8901248709);
+            
+        
+
+        marker_79b9b46cf8a8f42957fe29a8c9f7a40c.bindPopup(popup_8e134c9d7350191179a8a8a86ba0bd06)
+        ;
+
+        
+    
+    
+            marker_79b9b46cf8a8f42957fe29a8c9f7a40c.bindTooltip(
+                `<div>
+                     Green Zone: Dashpur
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_79b9b46cf8a8f42957fe29a8c9f7a40c.setIcon(icon_c2f6afeb2810ce3da8aa7eb5eacfc140);
+            
+    
+            var marker_6fc1fb50483caf863c3a4881986ae5ee = L.marker(
+                [20.642885, 81.621833],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_62dd04310a972e56f3c95759973487d7 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_498ca1cdb47cca7243c0e112b177e06b = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_5997f9d3e56bf71ccd74d44f7b635143 = $(`<div id="html_5997f9d3e56bf71ccd74d44f7b635143" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #228B22; margin: 5px 0;">Malgaon</h4>             <p><b>Population:</b> 1,089</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Phosphorus Level:</b> <span style="color: #228B22; font-weight: bold;">High</span></p>             <p><b>Estimated Phosphorus:</b> 27-37 kg/ha</p>             <p><b>Zone:</b> <span style="color: #228B22; font-weight: bold;">GREEN ZONE</span></p>             <p><b>Coordinates:</b> 20.6429°N, 81.6218°E</p>         </div>         </div>`)[0];
+                popup_498ca1cdb47cca7243c0e112b177e06b.setContent(html_5997f9d3e56bf71ccd74d44f7b635143);
+            
+        
+
+        marker_6fc1fb50483caf863c3a4881986ae5ee.bindPopup(popup_498ca1cdb47cca7243c0e112b177e06b)
+        ;
+
+        
+    
+    
+            marker_6fc1fb50483caf863c3a4881986ae5ee.bindTooltip(
+                `<div>
+                     Green Zone: Malgaon
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_6fc1fb50483caf863c3a4881986ae5ee.setIcon(icon_62dd04310a972e56f3c95759973487d7);
+            
+    
+            var marker_11eaf66524cea7d79e9cd36da740b805 = L.marker(
+                [20.64663, 81.661295],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_d3135df28675c2d0dd623f3c43549d2e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_133ffd0a05c15024f58093f264839423 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_56f5fc7b257e8b016a8ad6ca1fb78160 = $(`<div id="html_56f5fc7b257e8b016a8ad6ca1fb78160" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #228B22; margin: 5px 0;">Makrikhuna</h4>             <p><b>Population:</b> 939</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Phosphorus Level:</b> <span style="color: #228B22; font-weight: bold;">High</span></p>             <p><b>Estimated Phosphorus:</b> 25-39 kg/ha</p>             <p><b>Zone:</b> <span style="color: #228B22; font-weight: bold;">GREEN ZONE</span></p>             <p><b>Coordinates:</b> 20.6466°N, 81.6613°E</p>         </div>         </div>`)[0];
+                popup_133ffd0a05c15024f58093f264839423.setContent(html_56f5fc7b257e8b016a8ad6ca1fb78160);
+            
+        
+
+        marker_11eaf66524cea7d79e9cd36da740b805.bindPopup(popup_133ffd0a05c15024f58093f264839423)
+        ;
+
+        
+    
+    
+            marker_11eaf66524cea7d79e9cd36da740b805.bindTooltip(
+                `<div>
+                     Green Zone: Makrikhuna
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_11eaf66524cea7d79e9cd36da740b805.setIcon(icon_d3135df28675c2d0dd623f3c43549d2e);
+            
+    
+            var marker_d87ac792bd46f8623c14b883b7e56d65 = L.marker(
+                [20.519153, 81.514614],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_c88e72b6ac12c343f76d2250c0a17d6f = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c6cf6e08658aabe1f1b6bef7f30fee4f = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_23f287df8b31fe42291c68c5bca5398e = $(`<div id="html_23f287df8b31fe42291c68c5bca5398e" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #228B22; margin: 5px 0;">Arjuni</h4>             <p><b>Population:</b> 673</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Phosphorus Level:</b> <span style="color: #228B22; font-weight: bold;">High</span></p>             <p><b>Estimated Phosphorus:</b> 28-37 kg/ha</p>             <p><b>Zone:</b> <span style="color: #228B22; font-weight: bold;">GREEN ZONE</span></p>             <p><b>Coordinates:</b> 20.5192°N, 81.5146°E</p>         </div>         </div>`)[0];
+                popup_c6cf6e08658aabe1f1b6bef7f30fee4f.setContent(html_23f287df8b31fe42291c68c5bca5398e);
+            
+        
+
+        marker_d87ac792bd46f8623c14b883b7e56d65.bindPopup(popup_c6cf6e08658aabe1f1b6bef7f30fee4f)
+        ;
+
+        
+    
+    
+            marker_d87ac792bd46f8623c14b883b7e56d65.bindTooltip(
+                `<div>
+                     Green Zone: Arjuni
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_d87ac792bd46f8623c14b883b7e56d65.setIcon(icon_c88e72b6ac12c343f76d2250c0a17d6f);
+            
+    
+            var marker_2c7be9cbb7305cc55e9b1e8ded80253b = L.marker(
+                [20.522062, 81.557296],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_c02d50b61cd20a63f5c7bee0f2081e16 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f998f4364bb3e77a75d7fa65abd637e7 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_c7423c52db5ff203bb01e1b5bb6e75d6 = $(`<div id="html_c7423c52db5ff203bb01e1b5bb6e75d6" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #228B22; margin: 5px 0;">Komalpur</h4>             <p><b>Population:</b> 156</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Phosphorus Level:</b> <span style="color: #228B22; font-weight: bold;">High</span></p>             <p><b>Estimated Phosphorus:</b> 28-39 kg/ha</p>             <p><b>Zone:</b> <span style="color: #228B22; font-weight: bold;">GREEN ZONE</span></p>             <p><b>Coordinates:</b> 20.5221°N, 81.5573°E</p>         </div>         </div>`)[0];
+                popup_f998f4364bb3e77a75d7fa65abd637e7.setContent(html_c7423c52db5ff203bb01e1b5bb6e75d6);
+            
+        
+
+        marker_2c7be9cbb7305cc55e9b1e8ded80253b.bindPopup(popup_f998f4364bb3e77a75d7fa65abd637e7)
+        ;
+
+        
+    
+    
+            marker_2c7be9cbb7305cc55e9b1e8ded80253b.bindTooltip(
+                `<div>
+                     Green Zone: Komalpur
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_2c7be9cbb7305cc55e9b1e8ded80253b.setIcon(icon_c02d50b61cd20a63f5c7bee0f2081e16);
+            
+    
+            var marker_78f6b75c0a70e64f975965afa7eaa116 = L.marker(
+                [20.720096, 81.488976],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_bd057dca654af2dd182923d393674418 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightgray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_2d429bd9dc91c9be52fda56364806a03 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_c306dbc2928a110ee7fda7a774173611 = $(`<div id="html_c306dbc2928a110ee7fda7a774173611" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #666; margin: 5px 0;">Kanker Municipality</h4>             <p><b>Population:</b> 37,442</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Phosphorus Level:</b> <span style="color: #666; font-weight: bold;">Low</span></p>             <p><b>Estimated Phosphorus:</b> 8-15 kg/ha</p>             <p><b>Zone:</b> <span style="color: #666; font-weight: bold;">LOW PHOSPHORUS</span></p>             <p><b>Coordinates:</b> 20.7201°N, 81.4890°E</p>         </div>         </div>`)[0];
+                popup_2d429bd9dc91c9be52fda56364806a03.setContent(html_c306dbc2928a110ee7fda7a774173611);
+            
+        
+
+        marker_78f6b75c0a70e64f975965afa7eaa116.bindPopup(popup_2d429bd9dc91c9be52fda56364806a03)
+        ;
+
+        
+    
+    
+            marker_78f6b75c0a70e64f975965afa7eaa116.bindTooltip(
+                `<div>
+                     Low Phosphorus: Kanker Municipality
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_78f6b75c0a70e64f975965afa7eaa116.setIcon(icon_bd057dca654af2dd182923d393674418);
+            
+    
+            var marker_1a4cf5cbe75c8652bb7064ee29b0ecb0 = L.marker(
+                [20.319875, 81.700605],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_2075c1648d3ac34a5a548e42644d406f = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightgray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a8da7f8e812f87a58631ea8c34a326c7 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_b79f541b1e78f9132a60351ddb22bc0c = $(`<div id="html_b79f541b1e78f9132a60351ddb22bc0c" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #666; margin: 5px 0;">Kondagaon</h4>             <p><b>Population:</b> 3,143</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Phosphorus Level:</b> <span style="color: #666; font-weight: bold;">Low</span></p>             <p><b>Estimated Phosphorus:</b> 13-19 kg/ha</p>             <p><b>Zone:</b> <span style="color: #666; font-weight: bold;">LOW PHOSPHORUS</span></p>             <p><b>Coordinates:</b> 20.3199°N, 81.7006°E</p>         </div>         </div>`)[0];
+                popup_a8da7f8e812f87a58631ea8c34a326c7.setContent(html_b79f541b1e78f9132a60351ddb22bc0c);
+            
+        
+
+        marker_1a4cf5cbe75c8652bb7064ee29b0ecb0.bindPopup(popup_a8da7f8e812f87a58631ea8c34a326c7)
+        ;
+
+        
+    
+    
+            marker_1a4cf5cbe75c8652bb7064ee29b0ecb0.bindTooltip(
+                `<div>
+                     Low Phosphorus: Kondagaon
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_1a4cf5cbe75c8652bb7064ee29b0ecb0.setIcon(icon_2075c1648d3ac34a5a548e42644d406f);
+            
+    
+            var marker_9e8c05e45e3b9c09121f794e1e64c3a3 = L.marker(
+                [20.253079, 81.878787],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_05b7e63c2e8c2eaa66430f818d181589 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightgray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_12c0d521c45d8146ccfce0a229f7f483 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_b379b7f7cc103162e69a4c6225794602 = $(`<div id="html_b379b7f7cc103162e69a4c6225794602" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #666; margin: 5px 0;">Gad Pichhawadi</h4>             <p><b>Population:</b> 2,327</p>             <p><b>Nitrogen Level:</b> Very High</p>             <p><b>Phosphorus Level:</b> <span style="color: #666; font-weight: bold;">Low</span></p>             <p><b>Estimated Phosphorus:</b> 9-15 kg/ha</p>             <p><b>Zone:</b> <span style="color: #666; font-weight: bold;">LOW PHOSPHORUS</span></p>             <p><b>Coordinates:</b> 20.2531°N, 81.8788°E</p>         </div>         </div>`)[0];
+                popup_12c0d521c45d8146ccfce0a229f7f483.setContent(html_b379b7f7cc103162e69a4c6225794602);
+            
+        
+
+        marker_9e8c05e45e3b9c09121f794e1e64c3a3.bindPopup(popup_12c0d521c45d8146ccfce0a229f7f483)
+        ;
+
+        
+    
+    
+            marker_9e8c05e45e3b9c09121f794e1e64c3a3.bindTooltip(
+                `<div>
+                     Low Phosphorus: Gad Pichhawadi
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_9e8c05e45e3b9c09121f794e1e64c3a3.setIcon(icon_05b7e63c2e8c2eaa66430f818d181589);
+            
+    
+            var marker_2f9802205aff29eb79da19415b02f18b = L.marker(
+                [20.470284, 82.0],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_756ef6da6c5c8d6204eaeeb686d2e984 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightgray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_deb4a38eb8e000c0afdffe289fa5078b = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_40302be19e62c3827e7b613366bdf4f7 = $(`<div id="html_40302be19e62c3827e7b613366bdf4f7" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #666; margin: 5px 0;">Potgaon</h4>             <p><b>Population:</b> 2,361</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Phosphorus Level:</b> <span style="color: #666; font-weight: bold;">Low</span></p>             <p><b>Estimated Phosphorus:</b> 14-19 kg/ha</p>             <p><b>Zone:</b> <span style="color: #666; font-weight: bold;">LOW PHOSPHORUS</span></p>             <p><b>Coordinates:</b> 20.4703°N, 82.0000°E</p>         </div>         </div>`)[0];
+                popup_deb4a38eb8e000c0afdffe289fa5078b.setContent(html_40302be19e62c3827e7b613366bdf4f7);
+            
+        
+
+        marker_2f9802205aff29eb79da19415b02f18b.bindPopup(popup_deb4a38eb8e000c0afdffe289fa5078b)
+        ;
+
+        
+    
+    
+            marker_2f9802205aff29eb79da19415b02f18b.bindTooltip(
+                `<div>
+                     Low Phosphorus: Potgaon
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_2f9802205aff29eb79da19415b02f18b.setIcon(icon_756ef6da6c5c8d6204eaeeb686d2e984);
+            
+    
+            var marker_075edd7a9fcdb6957071a5517eb386c6 = L.marker(
+                [20.763957, 81.78234],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_27d6219819564629d7576a61722c24d7 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightgray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_573752a7b04f9564816b523497991b4c = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_e6bb4121ecbc852c27bc8a4ea39b5fd0 = $(`<div id="html_e6bb4121ecbc852c27bc8a4ea39b5fd0" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #666; margin: 5px 0;">Puswada</h4>             <p><b>Population:</b> 2,109</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Phosphorus Level:</b> <span style="color: #666; font-weight: bold;">Low</span></p>             <p><b>Estimated Phosphorus:</b> 14-20 kg/ha</p>             <p><b>Zone:</b> <span style="color: #666; font-weight: bold;">LOW PHOSPHORUS</span></p>             <p><b>Coordinates:</b> 20.7640°N, 81.7823°E</p>         </div>         </div>`)[0];
+                popup_573752a7b04f9564816b523497991b4c.setContent(html_e6bb4121ecbc852c27bc8a4ea39b5fd0);
+            
+        
+
+        marker_075edd7a9fcdb6957071a5517eb386c6.bindPopup(popup_573752a7b04f9564816b523497991b4c)
+        ;
+
+        
+    
+    
+            marker_075edd7a9fcdb6957071a5517eb386c6.bindTooltip(
+                `<div>
+                     Low Phosphorus: Puswada
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_075edd7a9fcdb6957071a5517eb386c6.setIcon(icon_27d6219819564629d7576a61722c24d7);
+            
+    
+            var marker_4b8651cf1e4bc6570f13dd2eae16a0db = L.marker(
+                [20.556866, 81.803234],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_9a321052421730aca1072aae27bfb808 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightgray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e0e8df0642d9eea28615e9c8ec861d85 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_56262dfd5dfe7b6400241a1e8e9705e1 = $(`<div id="html_56262dfd5dfe7b6400241a1e8e9705e1" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #666; margin: 5px 0;">Bevarti</h4>             <p><b>Population:</b> 2,076</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Phosphorus Level:</b> <span style="color: #666; font-weight: bold;">Low</span></p>             <p><b>Estimated Phosphorus:</b> 9-18 kg/ha</p>             <p><b>Zone:</b> <span style="color: #666; font-weight: bold;">LOW PHOSPHORUS</span></p>             <p><b>Coordinates:</b> 20.5569°N, 81.8032°E</p>         </div>         </div>`)[0];
+                popup_e0e8df0642d9eea28615e9c8ec861d85.setContent(html_56262dfd5dfe7b6400241a1e8e9705e1);
+            
+        
+
+        marker_4b8651cf1e4bc6570f13dd2eae16a0db.bindPopup(popup_e0e8df0642d9eea28615e9c8ec861d85)
+        ;
+
+        
+    
+    
+            marker_4b8651cf1e4bc6570f13dd2eae16a0db.bindTooltip(
+                `<div>
+                     Low Phosphorus: Bevarti
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4b8651cf1e4bc6570f13dd2eae16a0db.setIcon(icon_9a321052421730aca1072aae27bfb808);
+            
+    
+            var marker_1ac1ae940b195c61491a586341d82295 = L.marker(
+                [20.158987, 81.258996],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_b9d614593324ddc934e8791467ff5999 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightgray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b674755532181a0cc1a39bdd50fac32e = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_86bb4eb9918299471ab2b7b1997b59a9 = $(`<div id="html_86bb4eb9918299471ab2b7b1997b59a9" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #666; margin: 5px 0;">Mode</h4>             <p><b>Population:</b> 1,874</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Phosphorus Level:</b> <span style="color: #666; font-weight: bold;">Low</span></p>             <p><b>Estimated Phosphorus:</b> 11-19 kg/ha</p>             <p><b>Zone:</b> <span style="color: #666; font-weight: bold;">LOW PHOSPHORUS</span></p>             <p><b>Coordinates:</b> 20.1590°N, 81.2590°E</p>         </div>         </div>`)[0];
+                popup_b674755532181a0cc1a39bdd50fac32e.setContent(html_86bb4eb9918299471ab2b7b1997b59a9);
+            
+        
+
+        marker_1ac1ae940b195c61491a586341d82295.bindPopup(popup_b674755532181a0cc1a39bdd50fac32e)
+        ;
+
+        
+    
+    
+            marker_1ac1ae940b195c61491a586341d82295.bindTooltip(
+                `<div>
+                     Low Phosphorus: Mode
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_1ac1ae940b195c61491a586341d82295.setIcon(icon_b9d614593324ddc934e8791467ff5999);
+            
+    
+            var marker_b089156f4794e894464cad95b191e4e2 = L.marker(
+                [20.16624, 81.37063],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_e2aa599ff1e8ae6f8ed9199c4cf50749 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightgray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_7e0f7704a02086540e5e95187fb70222 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_ee6acb5198a6fe5225a3480c0d063cd3 = $(`<div id="html_ee6acb5198a6fe5225a3480c0d063cd3" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #666; margin: 5px 0;">Kanharpuri</h4>             <p><b>Population:</b> 1,790</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Phosphorus Level:</b> <span style="color: #666; font-weight: bold;">Low</span></p>             <p><b>Estimated Phosphorus:</b> 8-18 kg/ha</p>             <p><b>Zone:</b> <span style="color: #666; font-weight: bold;">LOW PHOSPHORUS</span></p>             <p><b>Coordinates:</b> 20.1662°N, 81.3706°E</p>         </div>         </div>`)[0];
+                popup_7e0f7704a02086540e5e95187fb70222.setContent(html_ee6acb5198a6fe5225a3480c0d063cd3);
+            
+        
+
+        marker_b089156f4794e894464cad95b191e4e2.bindPopup(popup_7e0f7704a02086540e5e95187fb70222)
+        ;
+
+        
+    
+    
+            marker_b089156f4794e894464cad95b191e4e2.bindTooltip(
+                `<div>
+                     Low Phosphorus: Kanharpuri
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_b089156f4794e894464cad95b191e4e2.setIcon(icon_e2aa599ff1e8ae6f8ed9199c4cf50749);
+            
+    
+            var marker_6425d8e981651b236f9c7e2291444929 = L.marker(
+                [20.266289, 81.295218],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_0b60e2887de0cf9149bdc38d8b6b7cb1 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightgray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_4e6274f28a659335272554249731960a = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_8e9e2abb607544a462bd102094284a68 = $(`<div id="html_8e9e2abb607544a462bd102094284a68" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #666; margin: 5px 0;">Talakurra</h4>             <p><b>Population:</b> 1,730</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Phosphorus Level:</b> <span style="color: #666; font-weight: bold;">Low</span></p>             <p><b>Estimated Phosphorus:</b> 8-16 kg/ha</p>             <p><b>Zone:</b> <span style="color: #666; font-weight: bold;">LOW PHOSPHORUS</span></p>             <p><b>Coordinates:</b> 20.2663°N, 81.2952°E</p>         </div>         </div>`)[0];
+                popup_4e6274f28a659335272554249731960a.setContent(html_8e9e2abb607544a462bd102094284a68);
+            
+        
+
+        marker_6425d8e981651b236f9c7e2291444929.bindPopup(popup_4e6274f28a659335272554249731960a)
+        ;
+
+        
+    
+    
+            marker_6425d8e981651b236f9c7e2291444929.bindTooltip(
+                `<div>
+                     Low Phosphorus: Talakurra
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_6425d8e981651b236f9c7e2291444929.setIcon(icon_0b60e2887de0cf9149bdc38d8b6b7cb1);
+            
+    
+            var marker_563622e5ea98b4f5f8407b2bf0247f9a = L.marker(
+                [20.736735, 81.588105],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_16e1444796c771ea26c070d97cf1a5eb = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightgray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_989f594dfcc76bd27e8595b9b5ad4c33 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_bdd0f1ff8a8fe51fdcabda403d07d6f3 = $(`<div id="html_bdd0f1ff8a8fe51fdcabda403d07d6f3" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #666; margin: 5px 0;">Patoud</h4>             <p><b>Population:</b> 1,701</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Phosphorus Level:</b> <span style="color: #666; font-weight: bold;">Low</span></p>             <p><b>Estimated Phosphorus:</b> 12-17 kg/ha</p>             <p><b>Zone:</b> <span style="color: #666; font-weight: bold;">LOW PHOSPHORUS</span></p>             <p><b>Coordinates:</b> 20.7367°N, 81.5881°E</p>         </div>         </div>`)[0];
+                popup_989f594dfcc76bd27e8595b9b5ad4c33.setContent(html_bdd0f1ff8a8fe51fdcabda403d07d6f3);
+            
+        
+
+        marker_563622e5ea98b4f5f8407b2bf0247f9a.bindPopup(popup_989f594dfcc76bd27e8595b9b5ad4c33)
+        ;
+
+        
+    
+    
+            marker_563622e5ea98b4f5f8407b2bf0247f9a.bindTooltip(
+                `<div>
+                     Low Phosphorus: Patoud
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_563622e5ea98b4f5f8407b2bf0247f9a.setIcon(icon_16e1444796c771ea26c070d97cf1a5eb);
+            
+    
+            var marker_a354fce8386bd368dadc82a106aec63e = L.marker(
+                [20.57085, 81.319881],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_e76f3e18d4753984e844c2015be1a868 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightgray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_5de49e61f0de4d0ead8297d5f83375eb = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_db3f0770ff71c4aba079e70058b38509 = $(`<div id="html_db3f0770ff71c4aba079e70058b38509" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #666; margin: 5px 0;">Dabena</h4>             <p><b>Population:</b> 1,602</p>             <p><b>Nitrogen Level:</b> Low-Medium</p>             <p><b>Phosphorus Level:</b> <span style="color: #666; font-weight: bold;">Low</span></p>             <p><b>Estimated Phosphorus:</b> 11-19 kg/ha</p>             <p><b>Zone:</b> <span style="color: #666; font-weight: bold;">LOW PHOSPHORUS</span></p>             <p><b>Coordinates:</b> 20.5709°N, 81.3199°E</p>         </div>         </div>`)[0];
+                popup_5de49e61f0de4d0ead8297d5f83375eb.setContent(html_db3f0770ff71c4aba079e70058b38509);
+            
+        
+
+        marker_a354fce8386bd368dadc82a106aec63e.bindPopup(popup_5de49e61f0de4d0ead8297d5f83375eb)
+        ;
+
+        
+    
+    
+            marker_a354fce8386bd368dadc82a106aec63e.bindTooltip(
+                `<div>
+                     Low Phosphorus: Dabena
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_a354fce8386bd368dadc82a106aec63e.setIcon(icon_e76f3e18d4753984e844c2015be1a868);
+            
+    
+            var marker_f3512161d3f51939d35c0e6baeebf6fe = L.marker(
+                [20.349408, 81.820601],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_188319fde7527ae976b974d5664ea4bb = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightgray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_7e5b2c9d0c0c45ebad6527bd3f4cb0c2 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_1bf982c2fc059aad36b75407be503fbf = $(`<div id="html_1bf982c2fc059aad36b75407be503fbf" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #666; margin: 5px 0;">Dhanelikanhar</h4>             <p><b>Population:</b> 1,563</p>             <p><b>Nitrogen Level:</b> Very High</p>             <p><b>Phosphorus Level:</b> <span style="color: #666; font-weight: bold;">Low</span></p>             <p><b>Estimated Phosphorus:</b> 10-17 kg/ha</p>             <p><b>Zone:</b> <span style="color: #666; font-weight: bold;">LOW PHOSPHORUS</span></p>             <p><b>Coordinates:</b> 20.3494°N, 81.8206°E</p>         </div>         </div>`)[0];
+                popup_7e5b2c9d0c0c45ebad6527bd3f4cb0c2.setContent(html_1bf982c2fc059aad36b75407be503fbf);
+            
+        
+
+        marker_f3512161d3f51939d35c0e6baeebf6fe.bindPopup(popup_7e5b2c9d0c0c45ebad6527bd3f4cb0c2)
+        ;
+
+        
+    
+    
+            marker_f3512161d3f51939d35c0e6baeebf6fe.bindTooltip(
+                `<div>
+                     Low Phosphorus: Dhanelikanhar
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_f3512161d3f51939d35c0e6baeebf6fe.setIcon(icon_188319fde7527ae976b974d5664ea4bb);
+            
+    
+            var marker_b15d4c358ca9f27e8eceb79262b785f3 = L.marker(
+                [20.687015, 81.963461],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_76461aa5d9acd0c942c9bbd26adaca02 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightgray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_ec4943536d1624b6f3da6c3766b3a698 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_9b0b4fa106aa5781870924bd56ddbbbd = $(`<div id="html_9b0b4fa106aa5781870924bd56ddbbbd" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #666; margin: 5px 0;">Hatkongera</h4>             <p><b>Population:</b> 1,508</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Phosphorus Level:</b> <span style="color: #666; font-weight: bold;">Low</span></p>             <p><b>Estimated Phosphorus:</b> 11-18 kg/ha</p>             <p><b>Zone:</b> <span style="color: #666; font-weight: bold;">LOW PHOSPHORUS</span></p>             <p><b>Coordinates:</b> 20.6870°N, 81.9635°E</p>         </div>         </div>`)[0];
+                popup_ec4943536d1624b6f3da6c3766b3a698.setContent(html_9b0b4fa106aa5781870924bd56ddbbbd);
+            
+        
+
+        marker_b15d4c358ca9f27e8eceb79262b785f3.bindPopup(popup_ec4943536d1624b6f3da6c3766b3a698)
+        ;
+
+        
+    
+    
+            marker_b15d4c358ca9f27e8eceb79262b785f3.bindTooltip(
+                `<div>
+                     Low Phosphorus: Hatkongera
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_b15d4c358ca9f27e8eceb79262b785f3.setIcon(icon_76461aa5d9acd0c942c9bbd26adaca02);
+            
+    
+            var marker_127dd04ce3a670821c625152635be710 = L.marker(
+                [20.141714, 81.841567],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_dc2e3666bf513164864fd7eebe964f0d = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightgray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_57916dbb5f4292f86ae69886ce85ee52 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_11f0fc3397cc525980250b57e762cc9a = $(`<div id="html_11f0fc3397cc525980250b57e762cc9a" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #666; margin: 5px 0;">Markatola</h4>             <p><b>Population:</b> 1,459</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Phosphorus Level:</b> <span style="color: #666; font-weight: bold;">Low</span></p>             <p><b>Estimated Phosphorus:</b> 15-18 kg/ha</p>             <p><b>Zone:</b> <span style="color: #666; font-weight: bold;">LOW PHOSPHORUS</span></p>             <p><b>Coordinates:</b> 20.1417°N, 81.8416°E</p>         </div>         </div>`)[0];
+                popup_57916dbb5f4292f86ae69886ce85ee52.setContent(html_11f0fc3397cc525980250b57e762cc9a);
+            
+        
+
+        marker_127dd04ce3a670821c625152635be710.bindPopup(popup_57916dbb5f4292f86ae69886ce85ee52)
+        ;
+
+        
+    
+    
+            marker_127dd04ce3a670821c625152635be710.bindTooltip(
+                `<div>
+                     Low Phosphorus: Markatola
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_127dd04ce3a670821c625152635be710.setIcon(icon_dc2e3666bf513164864fd7eebe964f0d);
+            
+    
+            var marker_83c370f65562beb7a13165bc21b7bf6d = L.marker(
+                [20.518626, 80.974093],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_a5be5bb7cd3f5d58e288fcf7188b13d9 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightgray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_9620b8a8ceb62326ad627669d7af1c26 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_3f43a5a0e87bd4174a09ba3aae3a9f3e = $(`<div id="html_3f43a5a0e87bd4174a09ba3aae3a9f3e" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #666; margin: 5px 0;">Kokanpur</h4>             <p><b>Population:</b> 1,424</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Phosphorus Level:</b> <span style="color: #666; font-weight: bold;">Low</span></p>             <p><b>Estimated Phosphorus:</b> 11-18 kg/ha</p>             <p><b>Zone:</b> <span style="color: #666; font-weight: bold;">LOW PHOSPHORUS</span></p>             <p><b>Coordinates:</b> 20.5186°N, 80.9741°E</p>         </div>         </div>`)[0];
+                popup_9620b8a8ceb62326ad627669d7af1c26.setContent(html_3f43a5a0e87bd4174a09ba3aae3a9f3e);
+            
+        
+
+        marker_83c370f65562beb7a13165bc21b7bf6d.bindPopup(popup_9620b8a8ceb62326ad627669d7af1c26)
+        ;
+
+        
+    
+    
+            marker_83c370f65562beb7a13165bc21b7bf6d.bindTooltip(
+                `<div>
+                     Low Phosphorus: Kokanpur
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_83c370f65562beb7a13165bc21b7bf6d.setIcon(icon_a5be5bb7cd3f5d58e288fcf7188b13d9);
+            
+    
+            var marker_e7f3a75354ad211f6b563cf35f2524ba = L.marker(
+                [20.266878, 81.28796],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_5c38f5c11702dacb82b9c29c1633f019 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightgray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_0a7a1d9959b8329339d8eb94c80adcca = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_910c2c4da959007ad525e081364bdc6a = $(`<div id="html_910c2c4da959007ad525e081364bdc6a" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #666; margin: 5px 0;">Telawat</h4>             <p><b>Population:</b> 1,366</p>             <p><b>Nitrogen Level:</b> High</p>             <p><b>Phosphorus Level:</b> <span style="color: #666; font-weight: bold;">Low</span></p>             <p><b>Estimated Phosphorus:</b> 12-18 kg/ha</p>             <p><b>Zone:</b> <span style="color: #666; font-weight: bold;">LOW PHOSPHORUS</span></p>             <p><b>Coordinates:</b> 20.2669°N, 81.2880°E</p>         </div>         </div>`)[0];
+                popup_0a7a1d9959b8329339d8eb94c80adcca.setContent(html_910c2c4da959007ad525e081364bdc6a);
+            
+        
+
+        marker_e7f3a75354ad211f6b563cf35f2524ba.bindPopup(popup_0a7a1d9959b8329339d8eb94c80adcca)
+        ;
+
+        
+    
+    
+            marker_e7f3a75354ad211f6b563cf35f2524ba.bindTooltip(
+                `<div>
+                     Low Phosphorus: Telawat
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_e7f3a75354ad211f6b563cf35f2524ba.setIcon(icon_5c38f5c11702dacb82b9c29c1633f019);
+            
+    
+            var marker_a0e72af366f6ae5c2bd0ce0ef6ba6451 = L.marker(
+                [20.227158, 81.708253],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_83ab33a7e42aff7d540354fee10786eb = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightgray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_cc53ec481a7ab615505ed26f223563e4 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_3471dd0475dd7747864f3dbb800c4cc6 = $(`<div id="html_3471dd0475dd7747864f3dbb800c4cc6" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #666; margin: 5px 0;">Kapsi</h4>             <p><b>Population:</b> 1,140</p>             <p><b>Nitrogen Level:</b> Very High</p>             <p><b>Phosphorus Level:</b> <span style="color: #666; font-weight: bold;">Low</span></p>             <p><b>Estimated Phosphorus:</b> 15-20 kg/ha</p>             <p><b>Zone:</b> <span style="color: #666; font-weight: bold;">LOW PHOSPHORUS</span></p>             <p><b>Coordinates:</b> 20.2272°N, 81.7083°E</p>         </div>         </div>`)[0];
+                popup_cc53ec481a7ab615505ed26f223563e4.setContent(html_3471dd0475dd7747864f3dbb800c4cc6);
+            
+        
+
+        marker_a0e72af366f6ae5c2bd0ce0ef6ba6451.bindPopup(popup_cc53ec481a7ab615505ed26f223563e4)
+        ;
+
+        
+    
+    
+            marker_a0e72af366f6ae5c2bd0ce0ef6ba6451.bindTooltip(
+                `<div>
+                     Low Phosphorus: Kapsi
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_a0e72af366f6ae5c2bd0ce0ef6ba6451.setIcon(icon_83ab33a7e42aff7d540354fee10786eb);
+            
+    
+            var marker_2664f3a7e605d34a26e95f62bfb5a276 = L.marker(
+                [20.537746, 81.082682],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_4718d3dc93c2b438c4d08e5000a3e6b0 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightgray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_3861225ab5a541a58de0e602688b2b2b = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_fefd5cfe7c7e53923232c7b9de0960aa = $(`<div id="html_fefd5cfe7c7e53923232c7b9de0960aa" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #666; margin: 5px 0;">Dumali</h4>             <p><b>Population:</b> 1,132</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Phosphorus Level:</b> <span style="color: #666; font-weight: bold;">Low</span></p>             <p><b>Estimated Phosphorus:</b> 9-16 kg/ha</p>             <p><b>Zone:</b> <span style="color: #666; font-weight: bold;">LOW PHOSPHORUS</span></p>             <p><b>Coordinates:</b> 20.5377°N, 81.0827°E</p>         </div>         </div>`)[0];
+                popup_3861225ab5a541a58de0e602688b2b2b.setContent(html_fefd5cfe7c7e53923232c7b9de0960aa);
+            
+        
+
+        marker_2664f3a7e605d34a26e95f62bfb5a276.bindPopup(popup_3861225ab5a541a58de0e602688b2b2b)
+        ;
+
+        
+    
+    
+            marker_2664f3a7e605d34a26e95f62bfb5a276.bindTooltip(
+                `<div>
+                     Low Phosphorus: Dumali
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_2664f3a7e605d34a26e95f62bfb5a276.setIcon(icon_4718d3dc93c2b438c4d08e5000a3e6b0);
+            
+    
+            var marker_156a0dffe6900c3bebed43719c1d70e9 = L.marker(
+                [20.764622, 81.741692],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_eacfc6c96841187b9ac8e980bb034b71 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightgray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a437e165d303e4baabb6393fc2b1ba68 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_67e625755ba57d9bbeb8ec46b454f801 = $(`<div id="html_67e625755ba57d9bbeb8ec46b454f801" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #666; margin: 5px 0;">Kokpur</h4>             <p><b>Population:</b> 1,102</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Phosphorus Level:</b> <span style="color: #666; font-weight: bold;">Low</span></p>             <p><b>Estimated Phosphorus:</b> 15-16 kg/ha</p>             <p><b>Zone:</b> <span style="color: #666; font-weight: bold;">LOW PHOSPHORUS</span></p>             <p><b>Coordinates:</b> 20.7646°N, 81.7417°E</p>         </div>         </div>`)[0];
+                popup_a437e165d303e4baabb6393fc2b1ba68.setContent(html_67e625755ba57d9bbeb8ec46b454f801);
+            
+        
+
+        marker_156a0dffe6900c3bebed43719c1d70e9.bindPopup(popup_a437e165d303e4baabb6393fc2b1ba68)
+        ;
+
+        
+    
+    
+            marker_156a0dffe6900c3bebed43719c1d70e9.bindTooltip(
+                `<div>
+                     Low Phosphorus: Kokpur
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_156a0dffe6900c3bebed43719c1d70e9.setIcon(icon_eacfc6c96841187b9ac8e980bb034b71);
+            
+    
+            var marker_86544f9afba7721ab2bcfed3fbc0277c = L.marker(
+                [20.206625, 81.618636],
+                {
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+        
+    
+            var icon_508b6512a810ddedb3e1e0ebff7a00ab = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightgray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_1e5fe079b2a5a306e2886e5054195a84 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_bdd361347fd0e5b93c4d467804b26a1c = $(`<div id="html_bdd361347fd0e5b93c4d467804b26a1c" style="width: 100.0%; height: 100.0%;">         <div style="width: 220px;">             <h4 style="color: #666; margin: 5px 0;">Mohpur</h4>             <p><b>Population:</b> 1,103</p>             <p><b>Nitrogen Level:</b> Medium</p>             <p><b>Phosphorus Level:</b> <span style="color: #666; font-weight: bold;">Low</span></p>             <p><b>Estimated Phosphorus:</b> 9-16 kg/ha</p>             <p><b>Zone:</b> <span style="color: #666; font-weight: bold;">LOW PHOSPHORUS</span></p>             <p><b>Coordinates:</b> 20.2066°N, 81.6186°E</p>         </div>         </div>`)[0];
+                popup_1e5fe079b2a5a306e2886e5054195a84.setContent(html_bdd361347fd0e5b93c4d467804b26a1c);
+            
+        
+
+        marker_86544f9afba7721ab2bcfed3fbc0277c.bindPopup(popup_1e5fe079b2a5a306e2886e5054195a84)
+        ;
+
+        
+    
+    
+            marker_86544f9afba7721ab2bcfed3fbc0277c.bindTooltip(
+                `<div>
+                     Low Phosphorus: Mohpur
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_86544f9afba7721ab2bcfed3fbc0277c.setIcon(icon_508b6512a810ddedb3e1e0ebff7a00ab);
+            
+    
+            var layer_control_88001e63ad923cf0ea6ea8a64de16f99_layers = {
+                base_layers : {
+                    "openstreetmap" : tile_layer_934fc12128b5bb0b7416098b269bfb51,
+                },
+                overlays :  {
+                },
+            };
+            let layer_control_88001e63ad923cf0ea6ea8a64de16f99 = L.control.layers(
+                layer_control_88001e63ad923cf0ea6ea8a64de16f99_layers.base_layers,
+                layer_control_88001e63ad923cf0ea6ea8a64de16f99_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": true,
+  "autoZIndex": true,
+}
+            ).addTo(map_05ec848028c696882c1d9b87cebeab71);
+
+        
+</script>
+</html>

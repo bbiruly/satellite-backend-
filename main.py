@@ -584,6 +584,17 @@ async def npk_analysis_by_date(request: Request):
             weather_data=weather_data
         )
         
+        # Import Enhanced NPK Calculator for ICAR integration
+        try:
+            from api.working.enhanced_npk_calculator import EnhancedNPKCalculator
+            enhanced_calculator = EnhancedNPKCalculator()
+            use_enhanced_calculator = True
+            print("✅ Enhanced NPK Calculator loaded successfully!")
+        except Exception as e:
+            print(f"⚠️ Enhanced NPK Calculator not available: {e}")
+            enhanced_calculator = None
+            use_enhanced_calculator = False
+        
         # Create larger bbox for better satellite data coverage
         bbox = {
             'minLat': lat - 0.01,
@@ -601,6 +612,49 @@ async def npk_analysis_by_date(request: Request):
             end_date=end_date,
             crop_type=request.crop_type
         )
+        
+        # Apply Enhanced NPK Calculator if available
+        if use_enhanced_calculator and result and result.get('success'):
+            try:
+                data = result.get('data', {})
+                indices = data.get('indices', {})
+                npk = data.get('npk', {})
+                
+                # Prepare satellite data for enhanced calculation
+                satellite_data = {
+                    'npk': npk,
+                    'indices': indices
+                }
+                
+                # Apply enhanced calculation
+                enhanced_result = enhanced_calculator.enhanced_npk_calculation(
+                    satellite_data=satellite_data,
+                    coordinates=(lat, lon),
+                    crop_type=request.crop_type,
+                    analysis_date=analysis_date
+                )
+                
+                if enhanced_result.get('success') and enhanced_result.get('enhanced'):
+                    print("🔬 Enhanced NPK calculation applied successfully!")
+                    print(f"   ICAR Integration: {enhanced_result.get('icar_integration', False)}")
+                    print(f"   Confidence Score: {enhanced_result.get('metadata', {}).get('confidence_score', 0.0):.2f}")
+                    print(f"   Data Quality: {enhanced_result.get('metadata', {}).get('data_quality', 'unknown')}")
+                    
+                    # Update result with enhanced data
+                    result['data']['npk'] = enhanced_result.get('npk', npk)
+                    result['data']['enhanced_details'] = enhanced_result.get('enhanced_details', {})
+                    result['metadata'] = enhanced_result.get('metadata', {})
+                    result['icar_enhanced'] = True
+                    
+                    # Also update the root level for compatibility
+                    result['npk'] = enhanced_result.get('npk', npk)
+                    result['enhanced_details'] = enhanced_result.get('enhanced_details', {})
+                else:
+                    print(f"⚠️ Enhanced calculation not applied: {enhanced_result.get('metadata', {}).get('fallback_reason', 'Unknown')}")
+                    
+            except Exception as e:
+                print(f"❌ Error in enhanced NPK calculation: {e}")
+                print("🔄 Falling back to standard NPK calculation")
         
         if result and result.get('success'):
             data = result.get('data', {})
@@ -633,15 +687,19 @@ async def npk_analysis_by_date(request: Request):
                 "satelliteItem": result.get('satelliteItem'),
                 "imageDate": result.get('imageDate'),
                 "cloudCover": result.get('cloudCover'),
-                "dataSource": "Microsoft Planetary Computer - Sentinel-2 L2A",
+                "dataSource": "Microsoft Planetary Computer - Sentinel-2 L2A + ICAR 2024-25",
                 "vegetationIndices": indices,
                 "soilNutrients": npk,
                 "data": {
                     "indices": indices,
-                    "npk": npk
+                    "npk": npk,
+                    "enhanced_details": result.get('data', {}).get('enhanced_details', {}),
+                    "icar_enhanced": result.get('icar_enhanced', False)
                 },
                 "indices": indices,  # Also include at root level for compatibility
                 "npk": npk,  # Also include at root level for compatibility
+                "icar_enhanced": result.get('icar_enhanced', False),
+                "enhanced_details": result.get('data', {}).get('enhanced_details', {}),
                 "hyperLocalCalibration": {
                     "calibrationLevel": hyper_local_cal["calibration_level"],
                     "accuracyFactor": hyper_local_cal["accuracy_factor"],
@@ -655,8 +713,15 @@ async def npk_analysis_by_date(request: Request):
                     "appliedWeights": hyper_local_cal["applied_weights"]
                 },
                 "metadata": {
-                    "provider": "Microsoft Planetary Computer",
+                    "provider": "Microsoft Planetary Computer + ICAR 2024-25",
                     "satellite": "Sentinel-2 L2A",
+                    "integration": "Enhanced with ICAR data",
+                    "data_quality": result.get('metadata', {}).get('data_quality', 'medium'),
+                    "confidence_score": result.get('metadata', {}).get('confidence_score', 0.8),
+                    "validation_level": result.get('metadata', {}).get('validation_level', 'medium'),
+                    "icar_village": result.get('metadata', {}).get('icar_village', None),
+                    "enhancement_factors": result.get('metadata', {}).get('enhancement_factors', {}),
+                    "processed_at": result.get('metadata', {}).get('processed_at', datetime.utcnow().isoformat()),
                     "region": result.get('region', 'unknown'),
                     "cropType": result.get('cropType', request.crop_type),
                     "confidenceScore": hyper_local_cal["accuracy_factor"],
@@ -957,6 +1022,115 @@ async def multi_satellite_stats():
 async def health():
     """Health check"""
     return {"status": "ok", "time": time.time(), "dataSource": "real_satellite_only"}
+
+# GIS Village Finder Endpoints
+# GIS Village Finder removed - using ICAR data integration instead
+# from gis_village_finder import KankerVillageFinder
+
+# Initialize GIS finder - disabled for ICAR integration
+# gis_finder = KankerVillageFinder()
+
+class BoundingBoxRequest(BaseModel):
+    min_lat: float = 20.24
+    max_lat: float = 20.53
+    min_lon: float = 81.30
+    max_lon: float = 81.72
+
+@app.post("/api/villages-in-yellow-area")
+async def get_villages_in_yellow_area(request: BoundingBoxRequest):
+    """Get villages within the yellow area bounding box"""
+    try:
+        villages = gis_finder.find_villages_in_yellow_area(
+            min_lat=request.min_lat,
+            max_lat=request.max_lat,
+            min_lon=request.min_lon,
+            max_lon=request.max_lon
+        )
+        
+        # Convert to JSON-serializable format
+        villages_data = []
+        for idx, village in villages.iterrows():
+            villages_data.append({
+                "village_name": village['village_name'],
+                "population": village['population'],
+                "nitrogen_level": village['nitrogen_level'],
+                "estimated_nitrogen": village['estimated_nitrogen'],
+                "coordinates": [village.geometry.y, village.geometry.x]  # [lat, lon]
+            })
+        
+        return {
+            "success": True,
+            "total_villages": len(villages_data),
+            "villages": villages_data,
+            "bounding_box": {
+                "min_lat": request.min_lat,
+                "max_lat": request.max_lat,
+                "min_lon": request.min_lon,
+                "max_lon": request.max_lon
+            }
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "error": f"Error finding villages: {str(e)}"
+        }
+
+@app.get("/api/yellow-area-summary")
+async def get_yellow_area_summary():
+    """Get summary statistics for yellow area villages"""
+    try:
+        summary = gis_finder.get_village_summary()
+        return {
+            "success": True,
+            "summary": summary
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": f"Error getting summary: {str(e)}"
+        }
+
+@app.get("/api/yellow-area-tehsils")
+async def get_yellow_tehsils():
+    """Get tehsils marked as yellow on the map"""
+    try:
+        yellow_tehsils = gis_finder.get_yellow_area_tehsils()
+        return {
+            "success": True,
+            "yellow_tehsils": yellow_tehsils
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": f"Error getting yellow tehsils: {str(e)}"
+        }
+
+@app.post("/api/create-village-map")
+async def create_village_map(request: BoundingBoxRequest):
+    """Create and return interactive map of villages in yellow area"""
+    try:
+        map_obj = gis_finder.create_interactive_map(
+            min_lat=request.min_lat,
+            max_lat=request.max_lat,
+            min_lon=request.min_lon,
+            max_lon=request.max_lon
+        )
+        
+        # Save map to file
+        map_filename = f"kanker_yellow_area_map_{int(time.time())}.html"
+        map_obj.save(map_filename)
+        
+        return {
+            "success": True,
+            "map_filename": map_filename,
+            "message": f"Interactive map saved as {map_filename}"
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": f"Error creating map: {str(e)}"
+        }
 
 if __name__ == "__main__":
     import uvicorn

@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_aec9c4ece6c1f9a7572e515713e02ac8 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+        <div style="position: fixed; 
+                    bottom: 50px; left: 50px; width: 200px; height: 120px; 
+                    background-color: white; border:2px solid grey; z-index:9999; 
+                    font-size:14px; padding: 10px">
+        <p><b>Kanker Yellow Area</b></p>
+        <p><i class="fa fa-map-marker fa-2x" style="color:red"></i> Villages</p>
+        <p><i class="fa fa-square fa-2x" style="color:yellow"></i> Yellow Area</p>
+        </div>
+        
+    
+            <div class="folium-map" id="map_aec9c4ece6c1f9a7572e515713e02ac8" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_aec9c4ece6c1f9a7572e515713e02ac8 = L.map(
+                "map_aec9c4ece6c1f9a7572e515713e02ac8",
+                {
+                    center: [20.34, 81.15],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 11,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_22a923aa63cf99b37a3ce2f6c82f7705 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_22a923aa63cf99b37a3ce2f6c82f7705.addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var polygon_6a8c899d6a716b3d529e9114a8670feb = L.polygon(
+                [[20.1, 80.9], [20.58, 80.9], [20.58, 81.4], [20.1, 81.4]],
+                {"bubblingMouseEvents": true, "color": "yellow", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "yellow", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+        var popup_5d3e492646a5088386311455f9c3b8ac = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_cc4e42b7db5c2e32c09e48112883cc83 = $(`<div id="html_cc4e42b7db5c2e32c09e48112883cc83" style="width: 100.0%; height: 100.0%;">Kanker Yellow Area</div>`)[0];
+                popup_5d3e492646a5088386311455f9c3b8ac.setContent(html_cc4e42b7db5c2e32c09e48112883cc83);
+            
+        
+
+        polygon_6a8c899d6a716b3d529e9114a8670feb.bindPopup(popup_5d3e492646a5088386311455f9c3b8ac)
+        ;
+
+        
+    
+    
+            var marker_e897cd054a7ca2172a14d6c0c92e07a1 = L.marker(
+                [20.301160999999997, 81.30839999999999],
+                {
+}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var icon_4d2ad7ffafa99b603bd194d5f8505118 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_97442e4f66171460edcf6c9cd9f58824 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_1ff20d20da7c07097db9a7645f5cc168 = $(`<div id="html_1ff20d20da7c07097db9a7645f5cc168" style="width: 100.0%; height: 100.0%;">                 <b>Puswada</b><br>                 Population: 2109<br>                 Nitrogen Level: High<br>                 Estimated Nitrogen: 501-571 kg/ha                 </div>`)[0];
+                popup_97442e4f66171460edcf6c9cd9f58824.setContent(html_1ff20d20da7c07097db9a7645f5cc168);
+            
+        
+
+        marker_e897cd054a7ca2172a14d6c0c92e07a1.bindPopup(popup_97442e4f66171460edcf6c9cd9f58824)
+        ;
+
+        
+    
+    
+                marker_e897cd054a7ca2172a14d6c0c92e07a1.setIcon(icon_4d2ad7ffafa99b603bd194d5f8505118);
+            
+    
+            var marker_664a79317eb33433568a39826c956f73 = L.marker(
+                [20.273059999999997, 81.3462],
+                {
+}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var icon_9cfa2dab31f7829f4d4a79122a559409 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8ef8a36be6a15c73a5bc93021d0c4bb7 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_e7e835bbe719f1660e9d1843380fc590 = $(`<div id="html_e7e835bbe719f1660e9d1843380fc590" style="width: 100.0%; height: 100.0%;">                 <b>Kapsi</b><br>                 Population: 1140<br>                 Nitrogen Level: Very High<br>                 Estimated Nitrogen: 572-652 kg/ha                 </div>`)[0];
+                popup_8ef8a36be6a15c73a5bc93021d0c4bb7.setContent(html_e7e835bbe719f1660e9d1843380fc590);
+            
+        
+
+        marker_664a79317eb33433568a39826c956f73.bindPopup(popup_8ef8a36be6a15c73a5bc93021d0c4bb7)
+        ;
+
+        
+    
+    
+                marker_664a79317eb33433568a39826c956f73.setIcon(icon_9cfa2dab31f7829f4d4a79122a559409);
+            
+    
+            var marker_c819b2771b21ee63bdea4104efb4a3f7 = L.marker(
+                [20.271957999999998, 81.3168],
+                {
+}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var icon_63a8ca6a4712b3771d11734d7d6d8ec8 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f971200520085dd0c0606687723af43c = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_cc1ee289e9010e0a073965144d8b54bd = $(`<div id="html_cc1ee289e9010e0a073965144d8b54bd" style="width: 100.0%; height: 100.0%;">                 <b>Kokpur</b><br>                 Population: 1102<br>                 Nitrogen Level: Medium<br>                 Estimated Nitrogen: 370-430 kg/ha                 </div>`)[0];
+                popup_f971200520085dd0c0606687723af43c.setContent(html_cc1ee289e9010e0a073965144d8b54bd);
+            
+        
+
+        marker_c819b2771b21ee63bdea4104efb4a3f7.bindPopup(popup_f971200520085dd0c0606687723af43c)
+        ;
+
+        
+    
+    
+                marker_c819b2771b21ee63bdea4104efb4a3f7.setIcon(icon_63a8ca6a4712b3771d11734d7d6d8ec8);
+            
+    
+            var marker_9f311941da6daa5dbebbfd13fc95f59e = L.marker(
+                [20.270913999999998, 81.384],
+                {
+}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var icon_d7807532872f0afe56d4be0f1b1326da = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_cfc9891656f0d36d6c2b81cef673eda2 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_6babea8ebb292fa487c011af826d0d72 = $(`<div id="html_6babea8ebb292fa487c011af826d0d72" style="width: 100.0%; height: 100.0%;">                 <b>Matwada</b><br>                 Population: 1066<br>                 Nitrogen Level: High<br>                 Estimated Nitrogen: 504-574 kg/ha                 </div>`)[0];
+                popup_cfc9891656f0d36d6c2b81cef673eda2.setContent(html_6babea8ebb292fa487c011af826d0d72);
+            
+        
+
+        marker_9f311941da6daa5dbebbfd13fc95f59e.bindPopup(popup_cfc9891656f0d36d6c2b81cef673eda2)
+        ;
+
+        
+    
+    
+                marker_9f311941da6daa5dbebbfd13fc95f59e.setIcon(icon_d7807532872f0afe56d4be0f1b1326da);
+            
+    
+            var marker_2b9d22b951b5c0ee4265ff4bfcb78a54 = L.marker(
+                [20.268797, 81.3714],
+                {
+}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var icon_7bd39b8dea90b60531d1cad76980a3b6 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a1065bbe82564d7b4fbf3351f5f75192 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_9e716edef53dac09cedb89abb29f3841 = $(`<div id="html_9e716edef53dac09cedb89abb29f3841" style="width: 100.0%; height: 100.0%;">                 <b>Petoli</b><br>                 Population: 993<br>                 Nitrogen Level: High<br>                 Estimated Nitrogen: 499-569 kg/ha                 </div>`)[0];
+                popup_a1065bbe82564d7b4fbf3351f5f75192.setContent(html_9e716edef53dac09cedb89abb29f3841);
+            
+        
+
+        marker_2b9d22b951b5c0ee4265ff4bfcb78a54.bindPopup(popup_a1065bbe82564d7b4fbf3351f5f75192)
+        ;
+
+        
+    
+    
+                marker_2b9d22b951b5c0ee4265ff4bfcb78a54.setIcon(icon_7bd39b8dea90b60531d1cad76980a3b6);
+            
+    
+            var marker_0db4d84f10f9630967f9b6cb7de745a1 = L.marker(
+                [20.268188, 81.3336],
+                {
+}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var icon_83d2ad05cf49c03d8b9eaa3c5ffdc5ac = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_ac8bff76a0b1da088d0ea7337276055b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c663167b938b679c3a876876c5bcb1ee = $(`<div id="html_c663167b938b679c3a876876c5bcb1ee" style="width: 100.0%; height: 100.0%;">                 <b>Kewatintola</b><br>                 Population: 972<br>                 Nitrogen Level: High<br>                 Estimated Nitrogen: 420-490 kg/ha                 </div>`)[0];
+                popup_ac8bff76a0b1da088d0ea7337276055b.setContent(html_c663167b938b679c3a876876c5bcb1ee);
+            
+        
+
+        marker_0db4d84f10f9630967f9b6cb7de745a1.bindPopup(popup_ac8bff76a0b1da088d0ea7337276055b)
+        ;
+
+        
+    
+    
+                marker_0db4d84f10f9630967f9b6cb7de745a1.setIcon(icon_83d2ad05cf49c03d8b9eaa3c5ffdc5ac);
+            
+    
+            var marker_14bb46a7fe857a8ff530106d97882bcf = L.marker(
+                [20.265925999999997, 81.321],
+                {
+}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var icon_1956f386ce3bcbd13811e04307d7916a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_de2c1478ddac18e305e1ed5826728bba = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_e62a6e4965a8bb4273de00594d9fb46c = $(`<div id="html_e62a6e4965a8bb4273de00594d9fb46c" style="width: 100.0%; height: 100.0%;">                 <b>Sidesar</b><br>                 Population: 894<br>                 Nitrogen Level: Medium<br>                 Estimated Nitrogen: 391-441 kg/ha                 </div>`)[0];
+                popup_de2c1478ddac18e305e1ed5826728bba.setContent(html_e62a6e4965a8bb4273de00594d9fb46c);
+            
+        
+
+        marker_14bb46a7fe857a8ff530106d97882bcf.bindPopup(popup_de2c1478ddac18e305e1ed5826728bba)
+        ;
+
+        
+    
+    
+                marker_14bb46a7fe857a8ff530106d97882bcf.setIcon(icon_1956f386ce3bcbd13811e04307d7916a);
+            
+    
+            var marker_f69acabcbb1a063ef92adf6e210bbbd7 = L.marker(
+                [20.263664, 81.3924],
+                {
+}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var icon_34e3998c340c9040e337cea111f6913f = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_903978ec08ef9f951bca39e4b8054c30 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_df79230d98d8a20d53ae98be355a4c47 = $(`<div id="html_df79230d98d8a20d53ae98be355a4c47" style="width: 100.0%; height: 100.0%;">                 <b>Ghothiya</b><br>                 Population: 816<br>                 Nitrogen Level: Medium<br>                 Estimated Nitrogen: 354-404 kg/ha                 </div>`)[0];
+                popup_903978ec08ef9f951bca39e4b8054c30.setContent(html_df79230d98d8a20d53ae98be355a4c47);
+            
+        
+
+        marker_f69acabcbb1a063ef92adf6e210bbbd7.bindPopup(popup_903978ec08ef9f951bca39e4b8054c30)
+        ;
+
+        
+    
+    
+                marker_f69acabcbb1a063ef92adf6e210bbbd7.setIcon(icon_34e3998c340c9040e337cea111f6913f);
+            
+    
+            var marker_183a9611c429a813b5bd196ec91395b5 = L.marker(
+                [20.261865999999998, 81.3504],
+                {
+}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var icon_f00e8fe7c96efd7ee09b03d9080f430f = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f192a2d2ae899eed93406282ac463523 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ab958be1a23dc1ed257aa18ac498e7ad = $(`<div id="html_ab958be1a23dc1ed257aa18ac498e7ad" style="width: 100.0%; height: 100.0%;">                 <b>Tultuli</b><br>                 Population: 754<br>                 Nitrogen Level: Low-Medium<br>                 Estimated Nitrogen: 294-334 kg/ha                 </div>`)[0];
+                popup_f192a2d2ae899eed93406282ac463523.setContent(html_ab958be1a23dc1ed257aa18ac498e7ad);
+            
+        
+
+        marker_183a9611c429a813b5bd196ec91395b5.bindPopup(popup_f192a2d2ae899eed93406282ac463523)
+        ;
+
+        
+    
+    
+                marker_183a9611c429a813b5bd196ec91395b5.setIcon(icon_f00e8fe7c96efd7ee09b03d9080f430f);
+            
+    
+            var marker_99937f1bdf8b744039a3205a1d1ca94a = L.marker(
+                [20.260851, 81.39659999999999],
+                {
+}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var icon_1da4e7009c8e8624aa2d76a845c6c8f7 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a328749bab66e70386472f2aab2890bf = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_55ceaa17e7394a2841d6895a32886391 = $(`<div id="html_55ceaa17e7394a2841d6895a32886391" style="width: 100.0%; height: 100.0%;">                 <b>Pusawand</b><br>                 Population: 719<br>                 Nitrogen Level: Low<br>                 Estimated Nitrogen: 265-295 kg/ha                 </div>`)[0];
+                popup_a328749bab66e70386472f2aab2890bf.setContent(html_55ceaa17e7394a2841d6895a32886391);
+            
+        
+
+        marker_99937f1bdf8b744039a3205a1d1ca94a.bindPopup(popup_a328749bab66e70386472f2aab2890bf)
+        ;
+
+        
+    
+    
+                marker_99937f1bdf8b744039a3205a1d1ca94a.setIcon(icon_1da4e7009c8e8624aa2d76a845c6c8f7);
+            
+    
+            var marker_57566e7e67098f61701fd7ccd30046a0 = L.marker(
+                [20.261982, 81.321],
+                {
+}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var icon_16877311b500ea40a8f3fb1f6f8d6392 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_ddb44aade29a05dc774220b54e248f6b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_828eac083891a0cd9742bb9e63482d01 = $(`<div id="html_828eac083891a0cd9742bb9e63482d01" style="width: 100.0%; height: 100.0%;">                 <b>Mudpar</b><br>                 Population: 758<br>                 Nitrogen Level: High<br>                 Estimated Nitrogen: 491-561 kg/ha                 </div>`)[0];
+                popup_ddb44aade29a05dc774220b54e248f6b.setContent(html_828eac083891a0cd9742bb9e63482d01);
+            
+        
+
+        marker_57566e7e67098f61701fd7ccd30046a0.bindPopup(popup_ddb44aade29a05dc774220b54e248f6b)
+        ;
+
+        
+    
+    
+                marker_57566e7e67098f61701fd7ccd30046a0.setIcon(icon_16877311b500ea40a8f3fb1f6f8d6392);
+            
+    
+            var marker_f82454cb9959b6f61ed5c19fff1c9745 = L.marker(
+                [20.257893, 81.3798],
+                {
+}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var icon_0ffcd6c6d8792e75c70eb286696bc8a7 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_3dc683c899ae5a7bb4cd5d1016879f19 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_2295f46fbcc5acff43c0388fc07ad7dd = $(`<div id="html_2295f46fbcc5acff43c0388fc07ad7dd" style="width: 100.0%; height: 100.0%;">                 <b>Mardapoti</b><br>                 Population: 617<br>                 Nitrogen Level: Low-Medium<br>                 Estimated Nitrogen: 291-331 kg/ha                 </div>`)[0];
+                popup_3dc683c899ae5a7bb4cd5d1016879f19.setContent(html_2295f46fbcc5acff43c0388fc07ad7dd);
+            
+        
+
+        marker_f82454cb9959b6f61ed5c19fff1c9745.bindPopup(popup_3dc683c899ae5a7bb4cd5d1016879f19)
+        ;
+
+        
+    
+    
+                marker_f82454cb9959b6f61ed5c19fff1c9745.setIcon(icon_0ffcd6c6d8792e75c70eb286696bc8a7);
+            
+    
+            var marker_3580eb8cb2d1723c93f72bc4f7e81567 = L.marker(
+                [20.253020999999997, 81.37559999999999],
+                {
+}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var icon_243cc0ec1f36afccb8ea23f3902591ab = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6d935b408ce99089eec26e841a44707b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_254651534394905d57142b39e44be1bc = $(`<div id="html_254651534394905d57142b39e44be1bc" style="width: 100.0%; height: 100.0%;">                 <b>Bhaisgaon</b><br>                 Population: 449<br>                 Nitrogen Level: Medium<br>                 Estimated Nitrogen: 391-451 kg/ha                 </div>`)[0];
+                popup_6d935b408ce99089eec26e841a44707b.setContent(html_254651534394905d57142b39e44be1bc);
+            
+        
+
+        marker_3580eb8cb2d1723c93f72bc4f7e81567.bindPopup(popup_6d935b408ce99089eec26e841a44707b)
+        ;
+
+        
+    
+    
+                marker_3580eb8cb2d1723c93f72bc4f7e81567.setIcon(icon_243cc0ec1f36afccb8ea23f3902591ab);
+            
+    
+            var marker_aeb791d4be810b16834d8d33383bcce9 = L.marker(
+                [20.252615, 81.39659999999999],
+                {
+}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var icon_cf390df8501692991cfe5d4dec90c4eb = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_1cd490150942a0d48b46f9c26427357f = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_2f790a3949be570eff6ebc2093d2fe75 = $(`<div id="html_2f790a3949be570eff6ebc2093d2fe75" style="width: 100.0%; height: 100.0%;">                 <b>Devkongera</b><br>                 Population: 435<br>                 Nitrogen Level: Low<br>                 Estimated Nitrogen: 272-302 kg/ha                 </div>`)[0];
+                popup_1cd490150942a0d48b46f9c26427357f.setContent(html_2f790a3949be570eff6ebc2093d2fe75);
+            
+        
+
+        marker_aeb791d4be810b16834d8d33383bcce9.bindPopup(popup_1cd490150942a0d48b46f9c26427357f)
+        ;
+
+        
+    
+    
+                marker_aeb791d4be810b16834d8d33383bcce9.setIcon(icon_cf390df8501692991cfe5d4dec90c4eb);
+            
+    
+            var marker_1871532fdcafc67241c8767002140711 = L.marker(
+                [20.251831999999997, 81.321],
+                {
+}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var icon_0cae8658ee512fe2601c28fad9f83024 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_4c1b211d85cb497d2550326bdea538aa = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c7cc2d41c4b273d9bc6ac5007ce8663c = $(`<div id="html_c7cc2d41c4b273d9bc6ac5007ce8663c" style="width: 100.0%; height: 100.0%;">                 <b>Satlor</b><br>                 Population: 408<br>                 Nitrogen Level: Medium<br>                 Estimated Nitrogen: 370-430 kg/ha                 </div>`)[0];
+                popup_4c1b211d85cb497d2550326bdea538aa.setContent(html_c7cc2d41c4b273d9bc6ac5007ce8663c);
+            
+        
+
+        marker_1871532fdcafc67241c8767002140711.bindPopup(popup_4c1b211d85cb497d2550326bdea538aa)
+        ;
+
+        
+    
+    
+                marker_1871532fdcafc67241c8767002140711.setIcon(icon_0cae8658ee512fe2601c28fad9f83024);
+            
+    
+            var marker_ee11a7f8b1edec5acfbcceb043df104e = L.marker(
+                [20.249802, 81.37559999999999],
+                {
+}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var icon_067a81c242c05b135604b4f4beb7e263 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e64d90a0141f8b504e0fb463e6fdba91 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_68661236477f9004a9aca48b089fd931 = $(`<div id="html_68661236477f9004a9aca48b089fd931" style="width: 100.0%; height: 100.0%;">                 <b>Turakhar</b><br>                 Population: 338<br>                 Nitrogen Level: Low-Medium<br>                 Estimated Nitrogen: 315-355 kg/ha                 </div>`)[0];
+                popup_e64d90a0141f8b504e0fb463e6fdba91.setContent(html_68661236477f9004a9aca48b089fd931);
+            
+        
+
+        marker_ee11a7f8b1edec5acfbcceb043df104e.bindPopup(popup_e64d90a0141f8b504e0fb463e6fdba91)
+        ;
+
+        
+    
+    
+                marker_ee11a7f8b1edec5acfbcceb043df104e.setIcon(icon_067a81c242c05b135604b4f4beb7e263);
+            
+    
+            var marker_276cd032760042ce340c4430c592e4be = L.marker(
+                [20.250149999999998, 81.3798],
+                {
+}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var icon_f6d57cc4d85f267c1b3b0e0e14c451be = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_dc0a9e3c594dedd79e1d95c736c794d5 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_08fc1130445fa4dd5cd0392287780cc5 = $(`<div id="html_08fc1130445fa4dd5cd0392287780cc5" style="width: 100.0%; height: 100.0%;">                 <b>Marrapi</b><br>                 Population: 350<br>                 Nitrogen Level: Low-Medium<br>                 Estimated Nitrogen: 305-345 kg/ha                 </div>`)[0];
+                popup_dc0a9e3c594dedd79e1d95c736c794d5.setContent(html_08fc1130445fa4dd5cd0392287780cc5);
+            
+        
+
+        marker_276cd032760042ce340c4430c592e4be.bindPopup(popup_dc0a9e3c594dedd79e1d95c736c794d5)
+        ;
+
+        
+    
+    
+                marker_276cd032760042ce340c4430c592e4be.setIcon(icon_f6d57cc4d85f267c1b3b0e0e14c451be);
+            
+    
+            var marker_45b9ee20e6f8138277db5e52d9ed0dc7 = L.marker(
+                [20.243886, 81.3378],
+                {
+}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var icon_44200d303243fa366c47e8d716c4d079 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_522e360c0bb916599a3143693249370d = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_3aa71afa5e7bfcce0c56e40d070f9e82 = $(`<div id="html_3aa71afa5e7bfcce0c56e40d070f9e82" style="width: 100.0%; height: 100.0%;">                 <b>Tondamarka</b><br>                 Population: 134<br>                 Nitrogen Level: Low-Medium<br>                 Estimated Nitrogen: 290-330 kg/ha                 </div>`)[0];
+                popup_522e360c0bb916599a3143693249370d.setContent(html_3aa71afa5e7bfcce0c56e40d070f9e82);
+            
+        
+
+        marker_45b9ee20e6f8138277db5e52d9ed0dc7.bindPopup(popup_522e360c0bb916599a3143693249370d)
+        ;
+
+        
+    
+    
+                marker_45b9ee20e6f8138277db5e52d9ed0dc7.setIcon(icon_44200d303243fa366c47e8d716c4d079);
+            
+    
+            var marker_154c2729ab128d8a5192282bf525f090 = L.marker(
+                [20.243567, 81.3504],
+                {
+}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var icon_1a4cefee65ae2f81b3fa94ca8bde70bb = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_94ed520b085a96304f607a6d14d38d19 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_90e6235f6cddede985b279ca8536a291 = $(`<div id="html_90e6235f6cddede985b279ca8536a291" style="width: 100.0%; height: 100.0%;">                 <b>Kalmuchche</b><br>                 Population: 123<br>                 Nitrogen Level: Low<br>                 Estimated Nitrogen: 265-295 kg/ha                 </div>`)[0];
+                popup_94ed520b085a96304f607a6d14d38d19.setContent(html_90e6235f6cddede985b279ca8536a291);
+            
+        
+
+        marker_154c2729ab128d8a5192282bf525f090.bindPopup(popup_94ed520b085a96304f607a6d14d38d19)
+        ;
+
+        
+    
+    
+                marker_154c2729ab128d8a5192282bf525f090.setIcon(icon_1a4cefee65ae2f81b3fa94ca8bde70bb);
+            
+    
+            var marker_db1ccba7b9df816461d0e947098cc016 = L.marker(
+                [20.241334, 81.3924],
+                {
+}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var icon_6e7cc2a9a06cd1f99bde531b9cdf09a2 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b0dac75dd88e0ca747d58de9d3986863 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_8ce5c6e833b88c8058f15a986b4c2cc4 = $(`<div id="html_8ce5c6e833b88c8058f15a986b4c2cc4" style="width: 100.0%; height: 100.0%;">                 <b>Kumkakudum</b><br>                 Population: 46<br>                 Nitrogen Level: Low-Medium<br>                 Estimated Nitrogen: 285-325 kg/ha                 </div>`)[0];
+                popup_b0dac75dd88e0ca747d58de9d3986863.setContent(html_8ce5c6e833b88c8058f15a986b4c2cc4);
+            
+        
+
+        marker_db1ccba7b9df816461d0e947098cc016.bindPopup(popup_b0dac75dd88e0ca747d58de9d3986863)
+        ;
+
+        
+    
+    
+                marker_db1ccba7b9df816461d0e947098cc016.setIcon(icon_6e7cc2a9a06cd1f99bde531b9cdf09a2);
+            
+    
+            var marker_a9f9f7a6f3aee482d41f10dc0010f808 = L.marker(
+                [20.240377, 81.3378],
+                {
+}
+            ).addTo(map_aec9c4ece6c1f9a7572e515713e02ac8);
+        
+    
+            var icon_f1a728bdca5146c9b6c499425f47dac2 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8814400c91b325216afb4409e8d0a131 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_0714849088b88056dba1add05a4c7a27 = $(`<div id="html_0714849088b88056dba1add05a4c7a27" style="width: 100.0%; height: 100.0%;">                 <b>Budhiyarmari</b><br>                 Population: 13<br>                 Nitrogen Level: Low<br>                 Estimated Nitrogen: 265-295 kg/ha                 </div>`)[0];
+                popup_8814400c91b325216afb4409e8d0a131.setContent(html_0714849088b88056dba1add05a4c7a27);
+            
+        
+
+        marker_a9f9f7a6f3aee482d41f10dc0010f808.bindPopup(popup_8814400c91b325216afb4409e8d0a131)
+        ;
+
+        
+    
+    
+                marker_a9f9f7a6f3aee482d41f10dc0010f808.setIcon(icon_f1a728bdca5146c9b6c499425f47dac2);
+            
+</script>
+</html>

@@ -1,0 +1,11 @@
+{
+  "range_processor": {
+    "overall_success": false,
+    "error": "name 'RangeProcessor' is not defined"
+  },
+  "overall": {
+    "success": false,
+    "modules_tested": 1,
+    "successful_modules": 0
+  }
+}
