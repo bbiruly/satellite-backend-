@@ -1,0 +1,491 @@
+{
+  "success": true,
+  "fieldId": "ultimate_nitrogen_1760295041",
+  "coordinates": [
+    21.846866,
+    82.006931
+  ],
+  "cropType": "RICE",
+  "region": "central_india",
+  "analysisDate": "2025-07-14",
+  "satelliteItem": "S2C_MSIL2A_20250310T045721_R119_T44QNK_20250310T102857",
+  "imageDate": "2025-03-10T04:57:21.025000Z",
+  "cloudCover": 5e-06,
+  "dataSource": "Microsoft Planetary Computer - Sentinel-2 L2A + ICAR 2024-25",
+  "dataSourceInfo": {
+    "primary": "Rajnandgaon Soil Analysis 2025 (Khairagarh Tehsil)",
+    "secondary": "Satellite data (Sentinel-2 L2A)",
+    "accuracy": "Based on real village-level soil testing",
+    "trust_level": "85-90%"
+  },
+  "vegetationIndices": {
+    "NDVI": {
+      "mean": 0.2134537759080042,
+      "median": 0.2641698647320654,
+      "count": 11536,
+      "interpretation": "sparse_vegetation",
+      "status": "needs_attention"
+    },
+    "NDMI": {
+      "mean": -0.07755721706249855,
+      "median": -0.13237146636557495,
+      "count": 11536,
+      "interpretation": "low_moisture_or_dry_soil",
+      "status": "needs_irrigation"
+    },
+    "SAVI": {
+      "mean": 0.32014772429174454,
+      "median": 0.39621140864115867,
+      "count": 11536
+    },
+    "NDWI": {
+      "mean": -0.19397803741224046,
+      "median": -0.24632047825577308,
+      "count": 11536
+    }
+  },
+  "soilNutrients": {
+    "Nitrogen": 192.57,
+    "Phosphorus": 11.24,
+    "Potassium": 197.23,
+    "Soc": 2.17
+  },
+  "recommendations": {
+    "summary": "आपके खेत के लिए 2 उर्वरक सिफारिशें उपलब्ध हैं। कुल अनुमानित लागत (सब्सिडी के साथ): ₹5129.64 प्रति हेक्टेयर। आपको लगभग ₹3800.96 की सब्सिडी बचत होगी।",
+    "confidence": "85-90%",
+    "dataSource": "Rajnandgaon Soil Analysis 2025 (Khairagarh Tehsil)",
+    "nearest_village": "Singarpur",
+    "distance_to_village_km": 0.0,
+    "nutrient_status": {
+      "Nitrogen": {
+        "value": 192.57,
+        "unit": "kg/ha",
+        "status": "high",
+        "source": "satellite"
+      },
+      "Phosphorus": {
+        "value": 11.24,
+        "unit": "kg/ha",
+        "status": "low",
+        "source": "satellite"
+      },
+      "Potassium": {
+        "value": 197.23,
+        "unit": "kg/ha",
+        "status": "excess",
+        "source": "satellite"
+      },
+      "Soc": {
+        "value": 2.17,
+        "unit": "%",
+        "status": "excess",
+        "source": "satellite"
+      },
+      "Boron": {
+        "value": null,
+        "unit": "ppm",
+        "status": "not_available",
+        "source": "rajnandgaon_village"
+      },
+      "Iron": {
+        "value": null,
+        "unit": "ppm",
+        "status": "not_available",
+        "source": "rajnandgaon_village"
+      },
+      "Zinc": {
+        "value": null,
+        "unit": "ppm",
+        "status": "not_available",
+        "source": "rajnandgaon_village"
+      },
+      "Soil_pH": {
+        "value": null,
+        "unit": "pH",
+        "status": "not_available",
+        "source": "rajnandgaon_village"
+      }
+    },
+    "recommendations_list": [
+      {
+        "nutrient": "Nitrogen",
+        "product": "Urea",
+        "quantity_kg": 92.54,
+        "unit": "kg/ha",
+        "quantity_per_hectare": "92.54 kg/ha",
+        "quantity_per_acre": "37.47 kg/ha",
+        "total_quantity_field": "92.54 kg/ha",
+        "cost_with_subsidy": 555.24,
+        "cost_per_hectare": 555.24,
+        "cost_per_acre": 224.79,
+        "cost_without_subsidy": 925.4000000000001,
+        "subsidy_savings": 370.16,
+        "timing": "Split application",
+        "method": "Broadcast",
+        "reason": "आपके खेत में नाइट्रोजन की मात्रा अधिक है (192.57 kg/ha). यह Singarpur के लिए सामान्य है जहाँ नाइट्रोजन का स्तर Low रहता है। फसल की आवश्यकता (120-150 kg/ha) से अधिक होने के कारण Urea का प्रयोग न करें। अधिक नाइट्रोजन से फसल गिर सकती है और उपज प्रभावित हो सकती है।",
+        "priority": "LOW",
+        "confidence": 0.9,
+        "deficiency_amount": 42.57,
+        "nutrient_content": "46%"
+      },
+      {
+        "nutrient": "Potassium",
+        "product": "MOP",
+        "quantity_kg": 228.72,
+        "unit": "kg/ha",
+        "quantity_per_hectare": "228.72 kg/ha",
+        "quantity_per_acre": "92.6 kg/ha",
+        "total_quantity_field": "228.72 kg/ha",
+        "cost_with_subsidy": 4574.4,
+        "cost_per_hectare": 4574.4,
+        "cost_per_acre": 1851.98,
+        "cost_without_subsidy": 8005.2,
+        "subsidy_savings": 3430.8,
+        "timing": "Basal application",
+        "method": "Basal application",
+        "reason": "आपके खेत में Potassium की कमी है (197.23 kg/ha). यह Singarpur में Potassium के excess स्तर के कारण है। फसल की इष्टतम वृद्धि के लिए 40-60 kg/ha Potassium की आवश्यकता है। MOP का प्रयोग Potassium की कमी को पूरा करेगा और उपज बढ़ाएगा।",
+        "priority": "MEDIUM",
+        "confidence": 0.9,
+        "deficiency_amount": 137.23,
+        "nutrient_content": "60%"
+      }
+    ],
+    "total_cost_with_subsidy_per_ha": 5129.64,
+    "total_cost_without_subsidy_per_ha": 8930.6,
+    "total_subsidy_savings_per_ha": 3800.96,
+    "total_cost_with_subsidy_per_acre": 2076.78,
+    "total_cost_without_subsidy_per_acre": 3615.63,
+    "total_subsidy_savings_per_acre": 1538.85,
+    "farmers_note": {
+      "language": "hindi",
+      "message": "आपके खेत के लिए 2 उर्वरक सिफारिशें उपलब्ध हैं। कुल अनुमानित लागत (सब्सिडी के साथ): ₹5129.64 प्रति हेक्टेयर। आपको लगभग ₹3800.96 की सब्सिडी बचत होगी। ये सिफारिशें आपके खेत की मिट्टी और फसल की ज़रूरतों पर आधारित हैं। अधिक जानकारी के लिए स्थानीय कृषि अधिकारी से संपर्क करें।"
+    }
+  },
+  "data": {
+    "indices": {
+      "NDVI": {
+        "mean": 0.2134537759080042,
+        "median": 0.2641698647320654,
+        "count": 11536,
+        "interpretation": "sparse_vegetation",
+        "status": "needs_attention"
+      },
+      "NDMI": {
+        "mean": -0.07755721706249855,
+        "median": -0.13237146636557495,
+        "count": 11536,
+        "interpretation": "low_moisture_or_dry_soil",
+        "status": "needs_irrigation"
+      },
+      "SAVI": {
+        "mean": 0.32014772429174454,
+        "median": 0.39621140864115867,
+        "count": 11536
+      },
+      "NDWI": {
+        "mean": -0.19397803741224046,
+        "median": -0.24632047825577308,
+        "count": 11536
+      }
+    },
+    "npk": {
+      "Nitrogen": 192.57,
+      "Phosphorus": 11.24,
+      "Potassium": 197.23,
+      "Soc": 2.17
+    },
+    "enhanced_details": {
+      "Nitrogen": {
+        "value": 192.57,
+        "unit": "kg/ha",
+        "source": "icar_enhanced",
+        "method": "satellite_lower_min",
+        "confidence": 0.85,
+        "original_satellite": 167.4,
+        "original_icar": "265-280 kg/ha"
+      },
+      "Phosphorus": {
+        "value": 11.24,
+        "unit": "kg/ha",
+        "source": "icar_enhanced",
+        "method": "satellite_lower_min",
+        "confidence": 0.85,
+        "original_satellite": 10.0,
+        "original_icar": "10-25 kg/ha"
+      },
+      "Potassium": {
+        "value": 197.23,
+        "unit": "kg/ha",
+        "source": "icar_enhanced",
+        "method": "satellite_lower_min",
+        "confidence": 0.85,
+        "original_satellite": 167.1,
+        "original_icar": "280 kg/ha"
+      },
+      "Soc": {
+        "value": 2.17,
+        "unit": "%",
+        "source": "satellite",
+        "method": "N/A",
+        "confidence": 0,
+        "original_satellite": 0,
+        "original_icar": "N/A"
+      },
+      "Boron": {
+        "value": 0.34,
+        "unit": "ppm",
+        "source": "icar_enhanced",
+        "method": "satellite_adjusted_center",
+        "confidence": 0.95,
+        "original_satellite": 0.5,
+        "original_icar": "0.5 ppm"
+      },
+      "Iron": {
+        "value": 2.89,
+        "unit": "ppm",
+        "source": "icar_enhanced",
+        "method": "satellite_adjusted_center",
+        "confidence": 0.95,
+        "original_satellite": 4.48,
+        "original_icar": "4.48 ppm"
+      },
+      "Zinc": {
+        "value": 0.38,
+        "unit": "ppm",
+        "source": "icar_enhanced",
+        "method": "satellite_adjusted_center",
+        "confidence": 0.95,
+        "original_satellite": 0.6,
+        "original_icar": "0.6 ppm"
+      },
+      "Soil_ph": {
+        "value": 7.69,
+        "unit": "pH",
+        "source": "icar_direct",
+        "method": "direct_icar",
+        "confidence": 0.9,
+        "original_satellite": 0.0,
+        "original_icar": "6.99"
+      }
+    },
+    "icar_enhanced": true
+  },
+  "indices": {
+    "NDVI": {
+      "mean": 0.2134537759080042,
+      "median": 0.2641698647320654,
+      "count": 11536,
+      "interpretation": "sparse_vegetation",
+      "status": "needs_attention"
+    },
+    "NDMI": {
+      "mean": -0.07755721706249855,
+      "median": -0.13237146636557495,
+      "count": 11536,
+      "interpretation": "low_moisture_or_dry_soil",
+      "status": "needs_irrigation"
+    },
+    "SAVI": {
+      "mean": 0.32014772429174454,
+      "median": 0.39621140864115867,
+      "count": 11536
+    },
+    "NDWI": {
+      "mean": -0.19397803741224046,
+      "median": -0.24632047825577308,
+      "count": 11536
+    }
+  },
+  "npk": {
+    "Nitrogen": 192.57,
+    "Phosphorus": 11.24,
+    "Potassium": 197.23,
+    "Soc": 2.17
+  },
+  "icar_enhanced": true,
+  "enhanced_details": {
+    "Nitrogen": {
+      "value": 192.57,
+      "unit": "kg/ha",
+      "source": "icar_enhanced",
+      "method": "satellite_lower_min",
+      "confidence": 0.85,
+      "original_satellite": 167.4,
+      "original_icar": "265-280 kg/ha"
+    },
+    "Phosphorus": {
+      "value": 11.24,
+      "unit": "kg/ha",
+      "source": "icar_enhanced",
+      "method": "satellite_lower_min",
+      "confidence": 0.85,
+      "original_satellite": 10.0,
+      "original_icar": "10-25 kg/ha"
+    },
+    "Potassium": {
+      "value": 197.23,
+      "unit": "kg/ha",
+      "source": "icar_enhanced",
+      "method": "satellite_lower_min",
+      "confidence": 0.85,
+      "original_satellite": 167.1,
+      "original_icar": "280 kg/ha"
+    },
+    "Soc": {
+      "value": 2.17,
+      "unit": "%",
+      "source": "satellite",
+      "method": "N/A",
+      "confidence": 0,
+      "original_satellite": 0,
+      "original_icar": "N/A"
+    },
+    "Boron": {
+      "value": 0.34,
+      "unit": "ppm",
+      "source": "icar_enhanced",
+      "method": "satellite_adjusted_center",
+      "confidence": 0.95,
+      "original_satellite": 0.5,
+      "original_icar": "0.5 ppm"
+    },
+    "Iron": {
+      "value": 2.89,
+      "unit": "ppm",
+      "source": "icar_enhanced",
+      "method": "satellite_adjusted_center",
+      "confidence": 0.95,
+      "original_satellite": 4.48,
+      "original_icar": "4.48 ppm"
+    },
+    "Zinc": {
+      "value": 0.38,
+      "unit": "ppm",
+      "source": "icar_enhanced",
+      "method": "satellite_adjusted_center",
+      "confidence": 0.95,
+      "original_satellite": 0.6,
+      "original_icar": "0.6 ppm"
+    },
+    "Soil_ph": {
+      "value": 7.69,
+      "unit": "pH",
+      "source": "icar_direct",
+      "method": "direct_icar",
+      "confidence": 0.9,
+      "original_satellite": 0.0,
+      "original_icar": "6.99"
+    }
+  },
+  "hyperLocalCalibration": {
+    "calibrationLevel": "district",
+    "accuracyFactor": 0.95,
+    "appliedMultipliers": {
+      "nitrogen": 1.08,
+      "phosphorus": 1.05,
+      "potassium": 1.04,
+      "soc": 1.0
+    },
+    "calibrationDetails": {
+      "village": {
+        "coordinates": [
+          22.08,
+          82.15
+        ],
+        "nitrogen_multiplier": 0.8,
+        "phosphorus_multiplier": 0.9,
+        "potassium_multiplier": 0.9,
+        "soc_multiplier": 0.9,
+        "accuracy_factor": 0.95,
+        "district_name": "Bilaspur",
+        "state": "Chhattisgarh"
+      },
+      "district": {
+        "coordinates": [
+          22.08,
+          82.15
+        ],
+        "nitrogen_multiplier": 0.8,
+        "phosphorus_multiplier": 0.9,
+        "potassium_multiplier": 0.9,
+        "soc_multiplier": 0.9,
+        "accuracy_factor": 0.95,
+        "district_name": "Bilaspur",
+        "state": "Chhattisgarh"
+      },
+      "soil": {
+        "nitrogen_multiplier": 1.0,
+        "phosphorus_multiplier": 1.0,
+        "potassium_multiplier": 1.0,
+        "soc_multiplier": 1.0,
+        "accuracy_factor": 0.9
+      },
+      "seasonal": {
+        "months": [
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "nitrogen_multiplier": 1.2,
+        "phosphorus_multiplier": 1.1,
+        "potassium_multiplier": 1.15,
+        "soc_multiplier": 1.05,
+        "season_name": "Kharif",
+        "description": "Monsoon season - high growth period"
+      },
+      "weather": {
+        "precipitation_range": [
+          0,
+          10
+        ],
+        "nitrogen_multiplier": 1.5,
+        "phosphorus_multiplier": 1.3,
+        "potassium_multiplier": 1.2,
+        "soc_multiplier": 1.1,
+        "condition": "Drought",
+        "description": "Low precipitation - adjusted for better accuracy"
+      }
+    },
+    "appliedWeights": {
+      "village": 0.0,
+      "district": 0.3,
+      "soil": 0.3,
+      "seasonal": 0.2,
+      "weather": 0.2
+    }
+  },
+  "metadata": {
+    "provider": "Microsoft Planetary Computer + ICAR 2024-25",
+    "satellite": "Sentinel-2 L2A",
+    "integration": "Enhanced with ICAR data",
+    "data_quality": "high",
+    "confidence_score": 0.7200000000000001,
+    "validation_level": "medium",
+    "icar_village": "Singarpur",
+    "enhancement_factors": {
+      "nitrogen": 1.15,
+      "phosphorus": 1.12,
+      "potassium": 1.18,
+      "boron": 1.2,
+      "iron": 1.16,
+      "zinc": 1.14,
+      "soil_ph": 1.1
+    },
+    "processed_at": "2025-10-12T18:50:46.310831",
+    "region": "central_india",
+    "cropType": "rice",
+    "confidenceScore": 0.95,
+    "dataQuality": "high",
+    "hyperLocalCalibration": "enabled",
+    "calibrationLevel": "district",
+    "dateRange": {
+      "start": null,
+      "end": null,
+      "specific": "2025-07-14"
+    },
+    "processingTime": "unknown",
+    "fetchedAt": "unknown"
+  }
+}

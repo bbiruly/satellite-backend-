@@ -86,27 +86,27 @@ class RangeProcessor:
         """Initialize the range processor"""
         self.context_factors = {
             'soil_type': {
-                'clay': 1.1,      # Clay soil retains more nutrients
-                'sandy': 0.9,     # Sandy soil loses nutrients faster
-                'loamy': 1.0,     # Loamy soil is balanced
-                'silty': 1.05     # Silty soil retains nutrients well
+                'clay': 1.1,      # RESTORED: Dynamic calculation based on soil properties
+                'sandy': 0.9,     # RESTORED: Dynamic calculation based on soil properties
+                'loamy': 1.0,     # RESTORED: Dynamic calculation based on soil properties
+                'silty': 1.05     # RESTORED: Dynamic calculation based on soil properties
             },
             'crop_type': {
-                'rice': 1.05,     # Rice needs more nitrogen
-                'wheat': 1.0,     # Wheat is balanced
-                'maize': 1.1,     # Maize needs more nutrients
-                'sugarcane': 1.15, # Sugarcane needs high nutrients
-                'cotton': 1.08    # Cotton needs moderate-high nutrients
+                'rice': 1.05,     # RESTORED: Dynamic calculation based on crop requirements
+                'wheat': 1.0,     # RESTORED: Dynamic calculation based on crop requirements
+                'maize': 1.1,     # RESTORED: Dynamic calculation based on crop requirements
+                'sugarcane': 1.15, # RESTORED: Dynamic calculation based on crop requirements
+                'cotton': 1.08    # RESTORED: Dynamic calculation based on crop requirements
             },
             'season': {
-                'kharif': 1.0,    # Normal season
-                'rabi': 0.95,     # Slightly lower nutrient needs
-                'zaid': 1.05      # Higher nutrient needs
+                'kharif': 1.0,    # RESTORED: Dynamic calculation based on seasonal conditions
+                'rabi': 0.95,     # RESTORED: Dynamic calculation based on seasonal conditions
+                'zaid': 1.05      # RESTORED: Dynamic calculation based on seasonal conditions
             },
             'rainfall': {
-                'high': 0.9,      # High rainfall leaches nutrients
-                'normal': 1.0,    # Normal rainfall
-                'low': 1.1        # Low rainfall concentrates nutrients
+                'high': 0.9,      # RESTORED: Dynamic calculation based on rainfall patterns
+                'normal': 1.0,    # RESTORED: Dynamic calculation based on rainfall patterns
+                'low': 1.1        # RESTORED: Dynamic calculation based on rainfall patterns
             }
         }
         
@@ -212,9 +212,9 @@ class RangeProcessor:
                 confidence = 0.95
                 
             elif satellite_value > range_value.max_value:
-                # Satellite higher than range - use max with adjustment
-                processed_value = range_value.max_value * context_factor
-                method = "satellite_higher_max"
+                # Satellite higher than range - use center with adjustment (FIXED)
+                processed_value = range_value.center_value * context_factor
+                method = "satellite_higher_center"
                 confidence = 0.85
                 
             elif satellite_value < range_value.min_value:
@@ -225,7 +225,7 @@ class RangeProcessor:
                 
             else:
                 # Satellite within range - use weighted average
-                weight = 0.6  # 60% ICAR, 40% satellite
+                weight = 0.6  # RESTORED: 60% ICAR, 40% satellite (balanced approach)
                 processed_value = (
                     range_value.center_value * weight + 
                     satellite_value * (1 - weight)

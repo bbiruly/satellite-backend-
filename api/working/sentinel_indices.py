@@ -135,6 +135,29 @@ class ICARDataManager:
                 'reason': f'Error: {str(e)}'
             }
     
+    def _calculate_distance(self, lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+        """Calculate distance between two points in kilometers"""
+        try:
+            import math
+            
+            R = 6371  # Earth's radius in kilometers
+            
+            dlat = math.radians(lat2 - lat1)
+            dlon = math.radians(lon2 - lon1)
+            
+            a = (math.sin(dlat/2) * math.sin(dlat/2) +
+                 math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) *
+                 math.sin(dlon/2) * math.sin(dlon/2))
+            
+            c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+            distance = R * c
+            
+            return distance
+            
+        except Exception as e:
+            logger.error(f"Error calculating distance: {e}")
+            return float('inf')
+    
     def _find_closest_village(self, lat: float, lon: float) -> Optional[Dict]:
         """Find closest village in ICAR data"""
         try:
@@ -275,29 +298,6 @@ class ICARDataManager:
             logger.error(f"Error applying calibration: {e}")
             return npk_data
     
-    def _calculate_distance(self, lat1: float, lon1: float, lat2: float, lon2: float) -> float:
-        """Calculate distance between two points"""
-        try:
-            import math
-            
-            R = 6371  # Earth's radius in kilometers
-            
-            dlat = math.radians(lat2 - lat1)
-            dlon = math.radians(lon2 - lon1)
-            
-            a = (math.sin(dlat/2) * math.sin(dlat/2) +
-                 math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) *
-                 math.sin(dlon/2) * math.sin(dlon/2))
-            
-            c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
-            distance = R * c
-            
-            return distance
-            
-        except Exception as e:
-            logger.error(f"Error calculating distance: {e}")
-            return float('inf')
-
 # Initialize ICAR data manager
 icar_manager = ICARDataManager()
 

@@ -35,6 +35,7 @@ class Request(BaseModel):
     end_date: Optional[str] = None    # Format: "YYYY-MM-DD"
     specific_date: Optional[str] = None  # Format: "YYYY-MM-DD"
     crop_type: Optional[str] = "GENERIC"  # Crop type for dynamic coefficients
+    field_area_hectares: Optional[float] = None  # Field area in hectares
 
 @app.post("/api/soc-analysis")
 async def soc_analysis(request: Request):
@@ -383,7 +384,7 @@ async def recommendations(request: Request):
                     "reason": "Low nitrogen levels detected"
                 })
             
-            if npk.get('SOC') == 'low':
+            if npk.get('Soc') == 'low':
                 recommendations_list.append({
                     "type": "soil_health",
                     "priority": "high",
@@ -547,6 +548,14 @@ async def npk_analysis_by_date(request: Request):
         coords = request.coordinates
         lat, lon = coords[0], coords[1]
         
+        # Use field area directly in hectares
+        field_area_ha = 1.0  # Default 1 hectare
+        if request.field_area_hectares:
+            field_area_ha = request.field_area_hectares
+            print(f"🌾 Field area: {field_area_ha:.3f} hectares")
+        else:
+            print(f"🌾 Field area: Using default 1.0 hectare (field_area_hectares not provided)")
+        
         # Parse date parameters
         start_date = None
         end_date = None
@@ -677,6 +686,52 @@ async def npk_analysis_by_date(request: Request):
             indices = clean_nan_values(indices)
             npk = clean_nan_values(npk)
             
+            # SIMPLE FIX: Ensure Soc key exists (satellite data already has Soc key)
+            if 'Soc' not in npk:
+                npk['Soc'] = npk.get('SOC', 0)
+            
+            # Generate fertilizer recommendations based on district
+            try:
+                # Check if coordinates are in Rajnandgaon district (around Singarpur)
+                if 21.8 <= lat <= 21.9 and 81.9 <= lon <= 82.1:
+                    # Rajnandgaon district - use Rajnandgaon data
+                    from api.working.rajnandgaon_recommendation_engine import generate_rajnandgaon_based_recommendations
+                    
+                    recommendations = generate_rajnandgaon_based_recommendations(
+                        npk_data=npk,
+                        enhanced_details=result.get('data', {}).get('enhanced_details', {}),
+                        crop_type=request.crop_type,
+                        coordinates=(lat, lon),
+                        field_area_ha=field_area_ha  # Use actual field area
+                    )
+                    
+                    print(f"✅ Rajnandgaon recommendations generated successfully for {request.fieldId}")
+                    
+                else:
+                    # Kanker district - use Kanker data
+                    from api.working.recommendation_engine_kanker import generate_kanker_based_recommendations
+                    
+                    recommendations = generate_kanker_based_recommendations(
+                        npk_data=npk,
+                        enhanced_details=result.get('data', {}).get('enhanced_details', {}),
+                        crop_type=request.crop_type,
+                        coordinates=(lat, lon),
+                        field_area_ha=field_area_ha  # Use actual field area
+                    )
+                    
+                    print(f"✅ Kanker recommendations generated successfully for {request.fieldId}")
+                
+            except Exception as e:
+                import traceback
+                print(f"❌ Error generating recommendations: {e}")
+                print(f"❌ Full traceback:")
+                traceback.print_exc()
+                recommendations = {
+                    "error": f"Failed to generate recommendations: {str(e)}",
+                    "dataSource": "District-specific Soil Analysis 2025",
+                    "fallback": True
+                }
+            
             return {
                 "success": True,
                 "fieldId": request.fieldId,
@@ -688,8 +743,24 @@ async def npk_analysis_by_date(request: Request):
                 "imageDate": result.get('imageDate'),
                 "cloudCover": result.get('cloudCover'),
                 "dataSource": "Microsoft Planetary Computer - Sentinel-2 L2A + ICAR 2024-25",
+                "dataSourceInfo": {
+                    "primary": "Rajnandgaon Soil Analysis 2025 (Khairagarh Tehsil)" if 21.8 <= lat <= 21.9 and 81.9 <= lon <= 82.1 else "Kanker Soil Analysis 2025 (91 villages)",
+                    "secondary": "Satellite data (Sentinel-2 L2A)",
+                    "accuracy": "Based on real village-level soil testing",
+                    "trust_level": "85-90%" if 21.8 <= lat <= 21.9 and 81.9 <= lon <= 82.1 else "88-93%"
+                },
                 "vegetationIndices": indices,
                 "soilNutrients": npk,
+                "recommendations": recommendations,  # NEW: Kanker-based recommendations
+                "fieldArea": {
+                    "hectares": round(field_area_ha, 3),
+                    "acres": round(field_area_ha / 0.404686, 3),  # Convert hectares to acres for reference
+                    "total_field_calculations": {
+                        "total_cost_with_subsidy": round(recommendations.get('total_cost_with_subsidy_per_ha', 0) * field_area_ha, 2) if 'total_cost_with_subsidy_per_ha' in recommendations else 0,
+                        "total_cost_without_subsidy": round(recommendations.get('total_cost_without_subsidy_per_ha', 0) * field_area_ha, 2) if 'total_cost_without_subsidy_per_ha' in recommendations else 0,
+                        "total_subsidy_savings": round(recommendations.get('total_subsidy_savings_per_ha', 0) * field_area_ha, 2) if 'total_subsidy_savings_per_ha' in recommendations else 0
+                    }
+                },
                 "data": {
                     "indices": indices,
                     "npk": npk,

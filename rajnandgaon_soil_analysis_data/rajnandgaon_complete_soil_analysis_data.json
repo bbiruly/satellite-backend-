@@ -1,0 +1,296 @@
+{
+  "metadata": {
+    "district": "Rajnandgaon",
+    "state": "Chhattisgarh",
+    "country": "India",
+    "data_source": "Soil Health Analysis 2025 - Rajnandgaon District",
+    "last_updated": "2025-01-15",
+    "version": "1.0",
+    "total_villages": 1,
+    "total_nutrients": 7,
+    "nutrients_covered": [
+      "Nitrogen",
+      "Phosphorus",
+      "Potassium",
+      "Boron",
+      "Iron",
+      "Zinc",
+      "Soil pH"
+    ]
+  },
+  "geographical_info": {
+    "district_coordinates": {
+      "center_lat": 21.8468660,
+      "center_lon": 82.0069310,
+      "bounding_box": {
+        "north": 21.8468660,
+        "south": 21.8468660,
+        "west": 82.0069310,
+        "east": 82.0069310
+      }
+    },
+    "total_area_hectares": 1000,
+    "tehsils": [
+      "Khairagarh"
+    ]
+  },
+  "nutrient_zones": {
+    "nitrogen": {
+      "yellow_zone": {
+        "name": "Yellow Zone (Low Nitrogen)",
+        "lat_range": [21.8, 21.9],
+        "lon_range": [82.0, 82.1],
+        "nitrogen_range": "0-300 kg/ha",
+        "villages_count": 1,
+        "zone_name": "Low Nitrogen Zone",
+        "description": "Low nitrogen levels requiring urea application"
+      },
+      "red_zone": {
+        "name": "Red Zone (High Nitrogen)",
+        "lat_range": [0, 0],
+        "lon_range": [0, 0],
+        "nitrogen_range": "450+ kg/ha",
+        "villages_count": 0,
+        "zone_name": "High Nitrogen Zone",
+        "description": "High nitrogen levels - minimal application needed"
+      }
+    },
+    "phosphorus": {
+      "yellow_zone": {
+        "name": "Yellow Zone (Medium Phosphorus)",
+        "lat_range": [21.8, 21.9],
+        "lon_range": [82.0, 82.1],
+        "phosphorus_range": "15-30 kg/ha",
+        "villages_count": 1,
+        "zone_name": "Medium Phosphorus Zone",
+        "description": "Medium phosphorus levels"
+      },
+      "red_zone": {
+        "name": "Red Zone (High Phosphorus)",
+        "lat_range": [0, 0],
+        "lon_range": [0, 0],
+        "phosphorus_range": "30+ kg/ha",
+        "villages_count": 0,
+        "zone_name": "High Phosphorus Zone",
+        "description": "High phosphorus levels - no application needed"
+      }
+    },
+    "potassium": {
+      "yellow_zone": {
+        "name": "Yellow Zone (Medium Potassium)",
+        "lat_range": [0, 0],
+        "lon_range": [0, 0],
+        "potassium_range": "150-250 kg/ha",
+        "villages_count": 0,
+        "zone_name": "Medium Potassium Zone",
+        "description": "Medium potassium levels"
+      },
+      "red_zone": {
+        "name": "Red Zone (High Potassium)",
+        "lat_range": [21.8, 21.9],
+        "lon_range": [82.0, 82.1],
+        "potassium_range": "250+ kg/ha",
+        "villages_count": 1,
+        "zone_name": "High Potassium Zone",
+        "description": "High potassium levels - no application needed"
+      }
+    },
+    "boron": {
+      "yellow_zone": {
+        "name": "Yellow Zone (Low Boron)",
+        "lat_range": [0, 0],
+        "lon_range": [0, 0],
+        "boron_range": "0-0.3 ppm",
+        "villages_count": 0,
+        "zone_name": "Low Boron Zone",
+        "description": "Low boron levels requiring application"
+      },
+      "red_zone": {
+        "name": "Red Zone (Sufficient Boron)",
+        "lat_range": [21.8, 21.9],
+        "lon_range": [82.0, 82.1],
+        "boron_range": "0.3+ ppm",
+        "villages_count": 1,
+        "zone_name": "Sufficient Boron Zone",
+        "description": "Sufficient boron levels"
+      }
+    },
+    "iron": {
+      "yellow_zone": {
+        "name": "Yellow Zone (Low Iron)",
+        "lat_range": [0, 0],
+        "lon_range": [0, 0],
+        "iron_range": "0-3.0 ppm",
+        "villages_count": 0,
+        "zone_name": "Low Iron Zone",
+        "description": "Low iron levels requiring application"
+      },
+      "red_zone": {
+        "name": "Red Zone (Sufficient Iron)",
+        "lat_range": [21.8, 21.9],
+        "lon_range": [82.0, 82.1],
+        "iron_range": "3.0+ ppm",
+        "villages_count": 1,
+        "zone_name": "Sufficient Iron Zone",
+        "description": "Sufficient iron levels"
+      }
+    },
+    "zinc": {
+      "yellow_zone": {
+        "name": "Yellow Zone (Low Zinc)",
+        "lat_range": [0, 0],
+        "lon_range": [0, 0],
+        "zinc_range": "0-0.5 ppm",
+        "villages_count": 0,
+        "zone_name": "Low Zinc Zone",
+        "description": "Low zinc levels requiring application"
+      },
+      "red_zone": {
+        "name": "Red Zone (Sufficient Zinc)",
+        "lat_range": [21.8, 21.9],
+        "lon_range": [82.0, 82.1],
+        "zinc_range": "0.5+ ppm",
+        "villages_count": 1,
+        "zone_name": "Sufficient Zinc Zone",
+        "description": "Sufficient zinc levels"
+      }
+    },
+    "soil_ph": {
+      "yellow_zone": {
+        "name": "Yellow Zone (Acidic pH)",
+        "lat_range": [0, 0],
+        "lon_range": [0, 0],
+        "soil_ph_range": "0-6.0",
+        "villages_count": 0,
+        "zone_name": "Acidic pH Zone",
+        "description": "Acidic soil requiring lime application"
+      },
+      "red_zone": {
+        "name": "Red Zone (Normal pH)",
+        "lat_range": [21.8, 21.9],
+        "lon_range": [82.0, 82.1],
+        "soil_ph_range": "6.0-7.5",
+        "villages_count": 1,
+        "zone_name": "Normal pH Zone",
+        "description": "Normal pH levels"
+      }
+    }
+  },
+  "village_data": {
+    "villages": [
+      {
+        "village_name": "Singarpur",
+        "population": 13,
+        "nitrogen_level": "Low",
+        "estimated_nitrogen": "265-280 kg/ha",
+        "status": "Small village in yellow zone with low nitrogen",
+        "coordinates": [21.8468660, 82.0069310],
+        "tehsil": "Khairagarh",
+        "nitrogen_value": 280,
+        "phosphorus_level": "Medium",
+        "estimated_phosphorus": "10-25 kg/ha",
+        "phosphorus_zone": "Medium Phosphorus",
+        "potassium_level": "high",
+        "estimated_potassium": "280 kg/ha",
+        "potassium_zone": "high Potassium",
+        "potassium_status": "Singarpur has high potassium in high Potassium.",
+        "boron_level": "Sufficient",
+        "estimated_boron": "0.5 ppm",
+        "boron_zone": "Sufficient Boron",
+        "boron_status": "Singarpur has Sufficient boron in Sufficient Boron.",
+        "iron_level": "Sufficient",
+        "estimated_iron": "4.48 ppm",
+        "iron_zone": "Sufficient Iron",
+        "iron_status": "Singarpur has Sufficient iron in Sufficient Iron.",
+        "zinc_level": "Sufficient",
+        "estimated_zinc": "0.6 ppm",
+        "zinc_zone": "Sufficient Zinc",
+        "zinc_status": "Singarpur has Sufficient zinc in Sufficient Zinc.",
+        "soil_ph_level": "Normal",
+        "estimated_soil_ph": "6.99",
+        "soil_ph_zone": "Normal pH",
+        "soil_ph_status": "Singarpur has Normal soil pH in Normal pH."
+      }
+    ]
+  },
+  "statistics": {
+    "nutrient_distribution": {
+      "nitrogen": {
+        "yellow_zone": 1,
+        "red_zone": 0,
+        "total_villages": 1
+      },
+      "phosphorus": {
+        "yellow_zone": 1,
+        "red_zone": 0,
+        "total_villages": 1
+      },
+      "potassium": {
+        "yellow_zone": 0,
+        "red_zone": 1,
+        "total_villages": 1
+      },
+      "boron": {
+        "yellow_zone": 0,
+        "red_zone": 1,
+        "total_villages": 1
+      },
+      "iron": {
+        "yellow_zone": 0,
+        "red_zone": 1,
+        "total_villages": 1
+      },
+      "zinc": {
+        "yellow_zone": 0,
+        "red_zone": 1,
+        "total_villages": 1
+      },
+      "soil_ph": {
+        "yellow_zone": 0,
+        "red_zone": 1,
+        "total_villages": 1
+      }
+    },
+    "recommendations": {
+      "fertilizer_recommendations": {
+        "yellow_zone": "Apply urea 100-120 kg/ha for low nitrogen zones",
+        "red_zone": "Minimal nitrogen application needed for high nitrogen zones"
+      },
+      "nitrogen_recommendations": {
+        "Low": "Apply urea 100-120 kg/ha for rice crop",
+        "Medium": "Apply urea 60-80 kg/ha for rice crop",
+        "High": "Minimal nitrogen application needed"
+      },
+      "phosphorus_recommendations": {
+        "Low": "Apply DAP 50-60 kg/ha",
+        "Medium": "Apply DAP 30-40 kg/ha",
+        "High": "No phosphorus application needed"
+      },
+      "potassium_recommendations": {
+        "Low": "Apply MOP 40-50 kg/ha",
+        "Medium": "Apply MOP 20-30 kg/ha",
+        "High": "No potassium application needed"
+      },
+      "boron_recommendations": {
+        "Deficient": "Apply Borax 5-10 kg/ha",
+        "Low": "Apply Borax 3-5 kg/ha",
+        "Sufficient": "No boron application needed"
+      },
+      "iron_recommendations": {
+        "Deficient": "Apply Ferrous Sulfate 25-50 kg/ha",
+        "Low": "Apply Ferrous Sulfate 15-25 kg/ha",
+        "Sufficient": "No iron application needed"
+      },
+      "zinc_recommendations": {
+        "Deficient": "Apply Zinc Sulfate 25-50 kg/ha",
+        "Low": "Apply Zinc Sulfate 15-25 kg/ha",
+        "Sufficient": "No zinc application needed"
+      },
+      "ph_correction_recommendations": {
+        "acidic": "Apply lime 1-2 tons/ha to raise pH",
+        "normal": "No pH correction needed",
+        "alkaline": "Apply gypsum 1-2 tons/ha to lower pH"
+      }
+    }
+  }
+}

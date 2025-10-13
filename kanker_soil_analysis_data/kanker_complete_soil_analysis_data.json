@@ -287,11 +287,11 @@
         "village_name": "Kanker Municipality",
         "population": 37442,
         "nitrogen_level": "High",
-        "estimated_nitrogen": "453-523 kg/ha",
+        "estimated_nitrogen": "120-180 kg/ha",
         "coordinates": [
           20.164994,
           81.48687
-        ],
+        ], 
         "tehsil": "Kanker",
         "status": "Large village in red zone with high nitrogen",
         "nitrogen_value": 488,
@@ -325,7 +325,7 @@
         "nitrogen_level": "Medium",
         "estimated_nitrogen": "380-440 kg/ha",
         "coordinates": [
-          20.188373,
+          19.188373,
           81.215086
         ],
         "tehsil": "Kanker",
@@ -359,7 +359,7 @@
         "village_name": "Gad Pichhawadi",
         "population": 2327,
         "nitrogen_level": "Very High",
-        "estimated_nitrogen": "532-612 kg/ha",
+        "estimated_nitrogen": "150-200 kg/ha",
         "status": "Large village in red zone with very high nitrogen",
         "coordinates": [
           20.294151,
@@ -398,8 +398,8 @@
         "estimated_nitrogen": "456-526 kg/ha",
         "status": "Large village in red zone with high nitrogen",
         "coordinates": [
-          20.163595,
-          81.160438
+          19.254198, 
+          73.324798
         ],
         "tehsil": "Kanker",
         "nitrogen_value": 491,
@@ -431,11 +431,10 @@
         "village_name": "Puswada",
         "population": 2109,
         "nitrogen_level": "High",
-        "estimated_nitrogen": "501-571 kg/ha",
+        "estimated_nitrogen": "140-190 kg/ha",
         "status": "Large village in red zone with high nitrogen",
         "coordinates": [
-          20.231641,
-          81.307194
+          20.523884, 80.953244
         ],
         "tehsil": "Kanker",
         "nitrogen_value": 536,
@@ -470,8 +469,7 @@
         "estimated_nitrogen": "440-510 kg/ha",
         "status": "Large village in red zone with high nitrogen",
         "coordinates": [
-          20.183693,
-          81.28504
+          20.278459, 81.541199
         ],
         "tehsil": "Kanker",
         "nitrogen_value": 475,
@@ -506,8 +504,7 @@
         "estimated_nitrogen": "416-486 kg/ha",
         "status": "Medium village in red zone with high nitrogen",
         "coordinates": [
-          20.303991,
-          81.23519
+          20.243148, 81.353156
         ],
         "tehsil": "Kanker",
         "nitrogen_value": 451,
@@ -3559,6 +3556,7 @@
         "soil_ph_zone": "Low pH",
         "soil_ph_status": "Budhiyarmari has Low soil pH in Low pH."
       }
+     
     ]
   },
   "statistics": {

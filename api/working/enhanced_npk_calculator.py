@@ -326,33 +326,64 @@ class EnhancedNPKCalculator:
                     except (ValueError, TypeError):
                         icar_value = 0
                 
-                if satellite_value > 0 and icar_value > 0:
-                    # Apply range processing
-                    nutrient_type = getattr(NutrientType, nutrient.upper(), NutrientType.NITROGEN)
+                if icar_value > 0:
+                    # ICAR-ADJUSTED SATELLITE: Use ICAR as MAXIMUM LIMIT, not average
+                    # Calculate ICAR maximum value for ranges
+                    if '-' in str(icar_value_str) and 'kg/ha' in str(icar_value_str):
+                        range_part = str(icar_value_str).split(' kg/ha')[0]
+                        if '-' in range_part:
+                            min_val, max_val = map(float, range_part.split('-'))
+                            icar_max = max_val  # Use maximum as limit, not average
+                            icar_min = min_val  # Keep minimum for reference
+                        else:
+                            icar_max = float(range_part)
+                            icar_min = icar_max
+                    else:
+                        icar_max = icar_value
+                        icar_min = icar_value
                     
-                    result = self.range_processor.ai_powered_range_processing(
-                        str(icar_value), satellite_value, village_context, nutrient_type
-                    )
+                    # Apply ICAR constraints: satellite data should not exceed ICAR maximum
+                    if satellite_value > 0:
+                        # Cap satellite data to ICAR maximum, with strict compliance
+                        if satellite_value > icar_max:
+                            # If satellite exceeds ICAR max, use ICAR max with strict compliance
+                            adjusted_value = icar_max * 0.90  # 10% below ICAR max for strict compliance
+                        else:
+                            # If satellite is within ICAR range, use satellite value
+                            adjusted_value = satellite_value
+                    else:
+                        # Use ICAR maximum if no satellite data
+                        adjusted_value = icar_max
+                    
+                    # Additional validation: Ensure value is within REAL ICAR bounds
+                    if nutrient == 'nitrogen' and adjusted_value > 200:
+                        adjusted_value = 200 * 0.95  # FIXED: Cap nitrogen at 95% of real ICAR limit (190 kg/ha)
+                    elif nutrient == 'phosphorus' and adjusted_value > 50:
+                        adjusted_value = 50   # Cap phosphorus at 50 kg/ha
+                    elif nutrient == 'potassium' and adjusted_value > 300:
+                        adjusted_value = 300  # Cap potassium at 300 kg/ha
                     
                     enhanced[nutrient] = {
-                        'value': result['value'],
+                        'value': round(adjusted_value, 2),
                         'unit': satellite_data.get(nutrient, {}).get('unit', 'kg/ha'),
-                        'source': 'icar_enhanced',
-                        'method': result['method'],
-                        'confidence': result['confidence'],
+                        'source': 'icar_adjusted_satellite',
+                        'method': 'icar_capped',
+                        'confidence': 0.9,
                         'original_satellite': satellite_value,
-                        'original_icar': icar_value_str
+                        'original_icar': icar_value_str,
+                        'icar_max': icar_max,
+                        'icar_min': icar_min
                     }
                     
-                    logger.info(f"🔬 {nutrient.capitalize()}: {satellite_value} → {result['value']} ({result['method']})")
-                elif icar_value > 0:
-                    # Use ICAR value directly if satellite value is 0
+                    logger.info(f"🔬 {nutrient.capitalize()}: ICAR max {icar_max} + Satellite {satellite_value} → {adjusted_value:.2f} (ICAR-capped)")
+                elif satellite_value > 0:
+                    # Fallback to satellite if no ICAR data
                     enhanced[nutrient] = {
-                        'value': icar_value,
+                        'value': satellite_value,
                         'unit': satellite_data.get(nutrient, {}).get('unit', 'kg/ha'),
-                        'source': 'icar_direct',
-                        'method': 'direct_icar',
-                        'confidence': 0.9,
+                        'source': 'satellite',
+                        'method': 'satellite_fallback',
+                        'confidence': 0.7,
                         'original_satellite': satellite_value,
                         'original_icar': icar_value_str
                     }
@@ -551,6 +582,15 @@ class EnhancedNPKCalculator:
         except Exception as e:
             logger.error(f"Error calculating distance: {e}")
             return float('inf')
+    
+    def _calculate_uv_damage_risk(self, uv: float) -> str:
+        """Calculate UV damage risk"""
+        if uv > 8:
+            return "high"
+        elif uv > 6:
+            return "moderate"
+        else:
+            return "low"
 
 # Example usage and testing
 if __name__ == "__main__":
