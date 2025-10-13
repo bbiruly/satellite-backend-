@@ -370,6 +370,72 @@ KANKER_CROP_REQUIREMENTS = {
 KANKER_CROP_REQUIREMENTS["PADDY"] = KANKER_CROP_REQUIREMENTS["RICE"]
 KANKER_CROP_REQUIREMENTS["PADDY"].crop_name = "Paddy"
 
+# Rajnandgaon District - Khairagarh Tehsil ICAR Data (2024-25)
+RAJNANDGAON_KHAIRAGARH_ZONES = {
+    "nitrogen_zones": {
+        "red_zone": {
+            "description": "Low Nitrogen Zone (ICAR <280 kg/ha)",
+            "nitrogen_range": (0, 280),
+            "area_hectares": 791980.0,
+            "area_percentage": 98.25,
+            "characteristics": "Low nitrogen levels, high nitrogen application needed",
+            "recommendation": "Apply nitrogen fertilizers at higher rates for optimal crop growth"
+        },
+        "yellow_zone": {
+            "description": "Medium Nitrogen Zone (ICAR 280-560 kg/ha)",
+            "nitrogen_range": (280, 560),
+            "area_hectares": 14093.53,
+            "area_percentage": 1.75,
+            "characteristics": "Medium nitrogen levels, balanced fertilization needed",
+            "recommendation": "Apply nitrogen based on crop requirement and soil test"
+        }
+    },
+    "phosphorus_zones": {
+        "red_zone": {
+            "description": "Low Phosphorus Zone (ICAR <10 kg/ha)",
+            "phosphorus_range": (0, 10),
+            "area_hectares": 155984.06,
+            "area_percentage": 19.35,
+            "characteristics": "Low phosphorus levels, high phosphorus application needed",
+            "recommendation": "Apply DAP or SSP at higher rates for optimal crop growth"
+        },
+        "yellow_zone": {
+            "description": "Medium Phosphorus Zone (ICAR 10-25 kg/ha)",
+            "phosphorus_range": (10, 25),
+            "area_hectares": 649231.44,
+            "area_percentage": 80.55,
+            "characteristics": "Medium phosphorus levels, balanced fertilization needed",
+            "recommendation": "Apply phosphorus based on crop requirement and soil test"
+        },
+        "green_zone": {
+            "description": "High Phosphorus Zone (ICAR >25 kg/ha)",
+            "phosphorus_range": (25, 9999),
+            "area_hectares": 738.36,
+            "area_percentage": 0.09,
+            "characteristics": "High phosphorus levels, low phosphorus application needed",
+            "recommendation": "Apply phosphorus at lower rates or skip if sufficient"
+        }
+    },
+    "potassium_zones": {
+        "yellow_zone": {
+            "description": "Medium Potassium Zone (ICAR 120-280 kg/ha)",
+            "potassium_range": (120, 280),
+            "area_hectares": 131605.84,
+            "area_percentage": 16.33,
+            "characteristics": "Medium potassium levels, balanced fertilization needed",
+            "recommendation": "Apply potassium based on crop requirement and soil test"
+        },
+        "green_zone": {
+            "description": "High Potassium Zone (ICAR >280 kg/ha)",
+            "potassium_range": (280, 9999),
+            "area_hectares": 674362.74,
+            "area_percentage": 83.67,
+            "characteristics": "High potassium levels, low potassium application needed",
+            "recommendation": "Apply potassium at lower rates or skip if sufficient"
+        }
+    }
+}
+
 # Kanker Zone Information (Based on ICAR 2024-25 data - FIXED)
 KANKER_ZONES = {
     "nitrogen_zones": {
@@ -670,6 +736,7 @@ def get_ph_recommendation(ph_value: float) -> Dict[str, Any]:
 __all__ = [
     "KANKER_CROP_REQUIREMENTS",
     "KANKER_ZONES", 
+    "RAJNANDGAON_KHAIRAGARH_ZONES",
     "KANKER_MICRONUTRIENT_STATUS",
     "KANKER_PH_STATUS",
     "get_crop_requirement",
