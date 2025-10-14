@@ -1,0 +1,333 @@
+{
+  "info": {
+    "name": "Multi-Satellite NPK Analysis API",
+    "description": "Complete collection for testing all NPK analysis endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Core NPK Analysis",
+      "item": [
+        {
+          "name": "NPK Analysis by Date",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fieldId\": \"test-field-001\",\n  \"coordinates\": [21.8468660, 82.0069310],\n  \"specific_date\": \"2025-01-15\",\n  \"crop_type\": \"RICE\",\n  \"field_area_hectares\": 1.0\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/npk-analysis-by-date",
+              "host": ["{{base_url}}"],
+              "path": ["api", "npk-analysis-by-date"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Mobile NPK Analysis",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fieldId\": \"mobile-test-001\",\n  \"coordinates\": [21.8468660, 82.0069310],\n  \"specific_date\": \"2025-01-15\",\n  \"crop_type\": \"RICE\",\n  \"field_area_hectares\": 1.0\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/npk-analysis-mobile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "npk-analysis-mobile"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Historical Analysis",
+      "item": [
+        {
+          "name": "Historical Trends - 3 Months",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/historical-trends?lat=21.8468660&lon=82.0069310&months=3&crop_type=RICE",
+              "host": ["{{base_url}}"],
+              "path": ["api", "historical-trends"],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "21.8468660"
+                },
+                {
+                  "key": "lon",
+                  "value": "82.0069310"
+                },
+                {
+                  "key": "months",
+                  "value": "3"
+                },
+                {
+                  "key": "crop_type",
+                  "value": "RICE"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Historical Trends - 6 Months",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/historical-trends?lat=21.8468660&lon=82.0069310&months=6&crop_type=RICE",
+              "host": ["{{base_url}}"],
+              "path": ["api", "historical-trends"],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "21.8468660"
+                },
+                {
+                  "key": "lon",
+                  "value": "82.0069310"
+                },
+                {
+                  "key": "months",
+                  "value": "6"
+                },
+                {
+                  "key": "crop_type",
+                  "value": "RICE"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Historical Trends - 12 Months",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/historical-trends?lat=21.8468660&lon=82.0069310&months=12&crop_type=RICE",
+              "host": ["{{base_url}}"],
+              "path": ["api", "historical-trends"],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "21.8468660"
+                },
+                {
+                  "key": "lon",
+                  "value": "82.0069310"
+                },
+                {
+                  "key": "months",
+                  "value": "12"
+                },
+                {
+                  "key": "crop_type",
+                  "value": "RICE"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "System Monitoring",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fallback Statistics",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/fallback-stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "fallback-stats"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cache Statistics",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/cache-stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "cache-stats"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Rate Limit Statistics",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/rate-limit-stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "rate-limit-stats"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Test Different Crops",
+      "item": [
+        {
+          "name": "Wheat Analysis",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fieldId\": \"wheat-test-001\",\n  \"coordinates\": [21.8468660, 82.0069310],\n  \"specific_date\": \"2025-01-15\",\n  \"crop_type\": \"WHEAT\",\n  \"field_area_hectares\": 2.5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/npk-analysis-by-date",
+              "host": ["{{base_url}}"],
+              "path": ["api", "npk-analysis-by-date"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Corn Analysis",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fieldId\": \"corn-test-001\",\n  \"coordinates\": [21.8468660, 82.0069310],\n  \"specific_date\": \"2025-01-15\",\n  \"crop_type\": \"CORN\",\n  \"field_area_hectares\": 3.0\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/npk-analysis-by-date",
+              "host": ["{{base_url}}"],
+              "path": ["api", "npk-analysis-by-date"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Vegetables Analysis",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fieldId\": \"vegetables-test-001\",\n  \"coordinates\": [21.8468660, 82.0069310],\n  \"specific_date\": \"2025-01-15\",\n  \"crop_type\": \"VEGETABLES\",\n  \"field_area_hectares\": 0.5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/npk-analysis-by-date",
+              "host": ["{{base_url}}"],
+              "path": ["api", "npk-analysis-by-date"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Test Different Locations",
+      "item": [
+        {
+          "name": "Kanker Location",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fieldId\": \"kanker-test-001\",\n  \"coordinates\": [20.3, 81.3],\n  \"specific_date\": \"2025-01-15\",\n  \"crop_type\": \"RICE\",\n  \"field_area_hectares\": 1.0\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/npk-analysis-by-date",
+              "host": ["{{base_url}}"],
+              "path": ["api", "npk-analysis-by-date"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Bilaspur Location",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fieldId\": \"bilaspur-test-001\",\n  \"coordinates\": [22.08, 82.15],\n  \"specific_date\": \"2025-01-15\",\n  \"crop_type\": \"RICE\",\n  \"field_area_hectares\": 1.0\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/npk-analysis-by-date",
+              "host": ["{{base_url}}"],
+              "path": ["api", "npk-analysis-by-date"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8001",
+      "type": "string"
+    }
+  ]
+}

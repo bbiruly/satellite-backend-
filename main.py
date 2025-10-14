@@ -19,7 +19,7 @@ app = FastAPI(title="ZumAgro Real Data Simple API")
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:5174", "http://localhost:3000", "http://127.0.0.1:5173", "http://127.0.0.1:5174"],
+    allow_origins=["*"],  # Allow all origins for mobile app
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -36,6 +36,9 @@ class Request(BaseModel):
     specific_date: Optional[str] = None  # Format: "YYYY-MM-DD"
     crop_type: Optional[str] = "GENERIC"  # Crop type for dynamic coefficients
     field_area_hectares: Optional[float] = None  # Field area in hectares
+    state: Optional[str] = None  # State name (e.g., "Chhattisgarh", "Madhya Pradesh")
+    district: Optional[str] = None  # District name (e.g., "Kanker", "Bilaspur")
+    village: Optional[str] = None  # Village name (e.g., "Nadanmara", "Singarpur")
 
 @app.post("/api/soc-analysis")
 async def soc_analysis(request: Request):
@@ -545,6 +548,19 @@ async def npk_analysis(request: Request):
 async def npk_analysis_by_date(request: Request):
     """NPK Analysis for Specific Date - REAL DATA ONLY with Hyper-Local Calibration"""
     try:
+        # Rate limiting check
+        from api.working.rate_limiter import check_rate_limit
+        client_id = request.client.host if hasattr(request, 'client') else 'unknown'
+        
+        is_allowed, rate_info = check_rate_limit(client_id)
+        if not is_allowed:
+            return {
+                "success": False,
+                "error": "Rate limit exceeded",
+                "rate_limit_info": rate_info,
+                "retry_after_seconds": rate_info.get('reset_in_seconds', 60)
+            }
+        
         coords = request.coordinates
         lat, lon = coords[0], coords[1]
         
@@ -590,7 +606,10 @@ async def npk_analysis_by_date(request: Request):
             lon=lon,
             crop_type=request.crop_type,
             analysis_date=analysis_date,
-            weather_data=weather_data
+            weather_data=weather_data,
+            state=request.state,
+            district=request.district,
+            village=request.village
         )
         
         # Import Enhanced NPK Calculator for ICAR integration
@@ -612,14 +631,16 @@ async def npk_analysis_by_date(request: Request):
             'maxLon': lon + 0.01
         }
         
-        from api.working.sentinel_indices import compute_indices_and_npk_for_bbox
+        from api.working.multi_satellite_fallback import fallback_manager
         
-        # Call with date parameters
-        result = compute_indices_and_npk_for_bbox(
-            bbox, 
+        # Call with parallel multi-satellite fallback system
+        result = await fallback_manager.get_npk_with_parallel_fallback(
+            bbox=bbox, 
             start_date=start_date, 
             end_date=end_date,
-            crop_type=request.crop_type
+            crop_type=request.crop_type,
+            coordinates=(lat, lon),
+            field_area_ha=field_area_ha
         )
         
         # Apply Enhanced NPK Calculator if available
@@ -636,28 +657,51 @@ async def npk_analysis_by_date(request: Request):
                 }
                 
                 # Apply enhanced calculation
+                print(f"🔬 Calling enhanced calculation for {request.crop_type} at ({lat}, {lon})")
                 enhanced_result = enhanced_calculator.enhanced_npk_calculation(
                     satellite_data=satellite_data,
                     coordinates=(lat, lon),
                     crop_type=request.crop_type,
                     analysis_date=analysis_date
                 )
+                print(f"🔬 Enhanced result success: {enhanced_result.get('success')}")
+                print(f"🔬 Enhanced result enhanced: {enhanced_result.get('enhanced')}")
                 
-                if enhanced_result.get('success') and enhanced_result.get('enhanced'):
+                if enhanced_result.get('success'):
                     print("🔬 Enhanced NPK calculation applied successfully!")
                     print(f"   ICAR Integration: {enhanced_result.get('icar_integration', False)}")
                     print(f"   Confidence Score: {enhanced_result.get('metadata', {}).get('confidence_score', 0.0):.2f}")
                     print(f"   Data Quality: {enhanced_result.get('metadata', {}).get('data_quality', 'unknown')}")
                     
+                    # Extract enhanced NPK data including micronutrients
+                    enhanced_npk = enhanced_result.get('npk', npk)
+                    enhanced_details = enhanced_result.get('enhanced_details', {})
+                    
+                    # Create comprehensive soil nutrients including micronutrients
+                    comprehensive_soil_nutrients = {
+                        'Nitrogen': enhanced_npk.get('Nitrogen', 0),
+                        'Phosphorus': enhanced_npk.get('Phosphorus', 0),
+                        'Potassium': enhanced_npk.get('Potassium', 0),
+                        'Soc': enhanced_npk.get('Soc', 0),
+                        'Boron': enhanced_details.get('Boron', {}).get('value', 0),
+                        'Iron': enhanced_details.get('Iron', {}).get('value', 0),
+                        'Zinc': enhanced_details.get('Zinc', {}).get('value', 0),
+                        'Soil_pH': enhanced_details.get('Soil_ph', {}).get('value', 0)
+                    }
+                    
+                    print(f"🔬 Comprehensive soil nutrients: {comprehensive_soil_nutrients}")
+                    
                     # Update result with enhanced data
-                    result['data']['npk'] = enhanced_result.get('npk', npk)
-                    result['data']['enhanced_details'] = enhanced_result.get('enhanced_details', {})
+                    result['data']['npk'] = comprehensive_soil_nutrients
+                    result['data']['enhanced_details'] = enhanced_details
                     result['metadata'] = enhanced_result.get('metadata', {})
                     result['icar_enhanced'] = True
                     
                     # Also update the root level for compatibility
-                    result['npk'] = enhanced_result.get('npk', npk)
-                    result['enhanced_details'] = enhanced_result.get('enhanced_details', {})
+                    result['npk'] = comprehensive_soil_nutrients
+                    result['enhanced_details'] = enhanced_details
+                    
+                    print(f"🔬 Updated result['npk']: {result.get('npk', {})}")
                 else:
                     print(f"⚠️ Enhanced calculation not applied: {enhanced_result.get('metadata', {}).get('fallback_reason', 'Unknown')}")
                     
@@ -737,6 +781,9 @@ async def npk_analysis_by_date(request: Request):
                 "fieldId": request.fieldId,
                 "coordinates": coords,
                 "cropType": request.crop_type,
+                "state": request.state,
+                "district": request.district,
+                "village": request.village,
                 "region": result.get('region', 'unknown'),
                 "analysisDate": request.specific_date or request.start_date,
                 "satelliteItem": result.get('satelliteItem'),
@@ -750,7 +797,7 @@ async def npk_analysis_by_date(request: Request):
                     "trust_level": "85-90%" if 21.8 <= lat <= 21.9 and 81.9 <= lon <= 82.1 else "88-93%"
                 },
                 "vegetationIndices": indices,
-                "soilNutrients": npk,
+                "soilNutrients": result.get('npk', npk),  # Use comprehensive soil nutrients including micronutrients
                 "recommendations": recommendations,  # NEW: Kanker-based recommendations
                 "fieldArea": {
                     "hectares": round(field_area_ha, 3),
@@ -784,37 +831,46 @@ async def npk_analysis_by_date(request: Request):
                     "appliedWeights": hyper_local_cal["applied_weights"]
                 },
                 "metadata": {
-                    "provider": "Microsoft Planetary Computer + ICAR 2024-25",
-                    "satellite": "Sentinel-2 L2A",
+                    "provider": result.get('metadata', {}).get('provider', 'Multi-Satellite System'),
+                    "satellite": result.get('fallback_metadata', {}).get('satelliteSource', 'Unknown'),
                     "integration": "Enhanced with ICAR data",
-                    "data_quality": result.get('metadata', {}).get('data_quality', 'medium'),
-                    "confidence_score": result.get('metadata', {}).get('confidence_score', 0.8),
+                    "data_quality": result.get('fallback_metadata', {}).get('dataQuality', 'medium'),
+                    "confidence_score": result.get('fallback_metadata', {}).get('confidenceScore', 0.8),
                     "validation_level": result.get('metadata', {}).get('validation_level', 'medium'),
                     "icar_village": result.get('metadata', {}).get('icar_village', None),
                     "enhancement_factors": result.get('metadata', {}).get('enhancement_factors', {}),
                     "processed_at": result.get('metadata', {}).get('processed_at', datetime.utcnow().isoformat()),
                     "region": result.get('region', 'unknown'),
                     "cropType": result.get('cropType', request.crop_type),
-                    "confidenceScore": hyper_local_cal["accuracy_factor"],
-                    "dataQuality": "high",
+                    "confidenceScore": result.get('fallback_metadata', {}).get('confidenceScore', hyper_local_cal["accuracy_factor"]),
+                    "dataQuality": result.get('fallback_metadata', {}).get('dataQuality', 'high'),
                     "hyperLocalCalibration": "enabled",
                     "calibrationLevel": hyper_local_cal["calibration_level"],
+                    "fallbackLevel": result.get('fallback_metadata', {}).get('fallbackLevel', 1),
+                    "satelliteSource": result.get('fallback_metadata', {}).get('satelliteSource', 'Sentinel-2 L2A'),
+                    "resolution": result.get('fallback_metadata', {}).get('resolution', '10m'),
+                    "revisitDays": result.get('fallback_metadata', {}).get('revisitDays', 5),
+                    "fallbackReason": result.get('fallback_metadata', {}).get('fallbackReason', 'Primary data source used'),
                     "dateRange": {
                         "start": request.start_date,
                         "end": request.end_date,
                         "specific": request.specific_date
                     },
-                    "processingTime": result.get('processingTime', 'unknown'),
+                    "processingTime": result.get('fallback_metadata', {}).get('processingTime', result.get('processingTime', 'unknown')),
                     "fetchedAt": result.get('metadata', {}).get('fetchedAt', 'unknown')
                 }
             }
         else:
+            # This should never happen with the new fallback system
+            # ICAR-only analysis should always succeed
             return {
                 "success": False,
-                "error": "No satellite data found for specified date",
+                "error": "All data sources failed - this should not happen with ICAR fallback",
                 "fieldId": request.fieldId,
                 "coordinates": coords,
-                "requestedDate": request.specific_date or request.start_date
+                "requestedDate": request.specific_date or request.start_date,
+                "fallbackLevel": 0,
+                "satelliteSource": "None"
             }
             
     except ValueError as e:
@@ -1089,6 +1145,154 @@ async def multi_satellite_stats():
             "error": f"Stats error: {str(e)}"
         }
 
+@app.get("/api/fallback-stats")
+async def fallback_stats():
+    """Get multi-satellite fallback system performance statistics"""
+    try:
+        from api.working.multi_satellite_fallback import fallback_manager
+        
+        stats = fallback_manager.get_performance_stats()
+        
+        return {
+            "success": True,
+            "stats": stats,
+            "timestamp": time.time(),
+            "system": "Multi-Satellite Fallback System"
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "error": f"Fallback stats error: {str(e)}"
+        }
+
+@app.get("/api/cache-stats")
+async def cache_stats():
+    """Get satellite data cache statistics"""
+    try:
+        from api.working.cache_manager import get_cache_stats
+        
+        stats = get_cache_stats()
+        
+        return {
+            "success": True,
+            "stats": stats,
+            "timestamp": time.time(),
+            "system": "Satellite Data Cache"
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "error": f"Cache stats error: {str(e)}"
+        }
+
+@app.get("/api/rate-limit-stats")
+async def rate_limit_stats():
+    """Get rate limiting statistics"""
+    try:
+        from api.working.rate_limiter import get_rate_limit_stats
+        
+        stats = get_rate_limit_stats()
+        
+        return {
+            "success": True,
+            "stats": stats,
+            "timestamp": time.time(),
+            "system": "Rate Limiter"
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "error": f"Rate limit stats error: {str(e)}"
+        }
+
+@app.get("/api/historical-trends")
+async def historical_trends(lat: float, lon: float, months: int = 6, crop_type: str = "GENERIC"):
+    """Get historical NPK trends for a location"""
+    try:
+        from api.working.historical_analyzer import get_historical_trends
+        
+        coordinates = (lat, lon)
+        trends = get_historical_trends(coordinates, months, crop_type)
+        
+        return {
+            "success": True,
+            "data": trends,
+            "timestamp": time.time(),
+            "system": "Historical Trend Analysis"
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "error": f"Historical trends error: {str(e)}"
+        }
+
+@app.post("/api/npk-analysis-mobile")
+async def npk_analysis_mobile(request: Request):
+    """Mobile-optimized NPK analysis with reduced data size"""
+    try:
+        # Get the full analysis first
+        full_result = await npk_analysis_by_date(request)
+        
+        if not full_result.get('success'):
+            return full_result
+        
+        # Extract only essential data for mobile
+        mobile_response = {
+            "success": True,
+            "fieldId": full_result.get('fieldId'),
+            "coordinates": full_result.get('coordinates'),
+            "cropType": full_result.get('cropType'),
+            "analysisDate": full_result.get('analysisDate'),
+            "region": full_result.get('region'),
+            
+            # Essential NPK data
+            "npk": full_result.get('soilNutrients', {}),
+            
+            # Essential vegetation indices (simplified)
+            "indices": {
+                "ndvi": full_result.get('vegetationIndices', {}).get('NDVI', {}).get('mean', 0),
+                "ndmi": full_result.get('vegetationIndices', {}).get('NDMI', {}).get('mean', 0),
+                "savi": full_result.get('vegetationIndices', {}).get('SAVI', {}).get('mean', 0)
+            },
+            
+            # Essential recommendations
+            "recommendations": {
+                "summary": full_result.get('recommendations', {}).get('summary', ''),
+                "total_cost": full_result.get('recommendations', {}).get('total_cost_with_subsidy_per_ha', 0),
+                "priority": full_result.get('recommendations', {}).get('recommendations_list', [])[:2]  # Top 2 only
+            },
+            
+            # Essential metadata
+            "metadata": {
+                "satellite": full_result.get('metadata', {}).get('satelliteSource', 'Unknown'),
+                "dataQuality": full_result.get('metadata', {}).get('dataQuality', 'medium'),
+                "confidence": full_result.get('metadata', {}).get('confidenceScore', 0.8),
+                "cached": full_result.get('metadata', {}).get('cached', False)
+            },
+            
+            # Field area (essential for cost calculations)
+            "fieldArea": {
+                "hectares": full_result.get('fieldArea', {}).get('hectares', 1.0),
+                "totalCost": full_result.get('fieldArea', {}).get('total_field_calculations', {}).get('total_cost_with_subsidy', 0)
+            },
+            
+            # Processing info
+            "processingTime": full_result.get('metadata', {}).get('processingTime', 'unknown'),
+            "timestamp": time.time()
+        }
+        
+        return mobile_response
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "error": f"Mobile analysis error: {str(e)}"
+        }
+
 @app.get("/health")
 async def health():
     """Health check"""
@@ -1205,4 +1409,4 @@ async def create_village_map(request: BoundingBoxRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="localhost", port=8001)
+    uvicorn.run(app, host="0.0.0.0", port=8001)

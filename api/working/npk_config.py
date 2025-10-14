@@ -108,11 +108,11 @@ LOCAL_CALIBRATION = {
         "last_updated": "2024-10-13",
         "zone_data": {
             "nitrogen": {
-                "red_zone": {"area_ha": 791980.0, "percentage": 98.25, "range": (0, 280)},
+                "red_zone": {"area_ha": 791980.0, "percentage": 98.25, "range": (200, 280)},
                 "yellow_zone": {"area_ha": 14093.53, "percentage": 1.75, "range": (280, 560)}
             },
             "phosphorus": {
-                "red_zone": {"area_ha": 155984.06, "percentage": 19.35, "range": (0, 10)},
+                "red_zone": {"area_ha": 155984.06, "percentage": 19.35, "range": (5, 10)},
                 "yellow_zone": {"area_ha": 649231.44, "percentage": 80.55, "range": (10, 25)},
                 "green_zone": {"area_ha": 738.36, "percentage": 0.09, "range": (25, 9999)}
             },
@@ -894,8 +894,22 @@ def calculate_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> fl
     r = 6371
     return c * r
 
-def get_district_calibration(lat: float, lon: float) -> dict:
-    """Get district-level calibration based on coordinates"""
+def get_district_calibration(lat: float, lon: float, state: str = None, district: str = None) -> dict:
+    """Get district-level calibration based on coordinates, state, and district"""
+    
+    # If state and district are provided, try to find exact match first
+    if state and district:
+        print(f"🔍 Looking for exact match: State={state}, District={district}")
+        for district_id, config in DISTRICT_CALIBRATION.items():
+            if (config.get("district_name", "").lower() == district.lower() and 
+                config.get("state", "").lower() == state.lower()):
+                print(f"✅ Found exact match: {district_id}")
+                fresh_config = config.copy()
+                fresh_config["exact_match"] = True
+                fresh_config["match_reason"] = f"Exact match for {state}, {district}"
+                return fresh_config
+    
+    # Fallback to distance-based matching/api/npk-analysis-by-date
     min_distance = float('inf')
     closest_district = None
     
@@ -910,6 +924,8 @@ def get_district_calibration(lat: float, lon: float) -> dict:
     if closest_district and min_distance <= 50:  # Within 50km of district center
         # FORCE RELOAD: Return fresh configuration
         fresh_config = DISTRICT_CALIBRATION[closest_district].copy()
+        fresh_config["exact_match"] = False
+        fresh_config["match_reason"] = f"Distance-based match: {min_distance:.2f}km from {closest_district}"
         print(f"🔄 Loading fresh district calibration for {closest_district}: {fresh_config}")
         return fresh_config
     
@@ -965,14 +981,40 @@ def get_weather_calibration(weather_data: dict) -> dict:
     # Default to normal conditions
     return WEATHER_CALIBRATION["normal"]
 
-def get_village_calibration(lat: float, lon: float) -> dict:
-    """Get village-level calibration if available"""
+def get_village_calibration(lat: float, lon: float, village_name: str = None) -> dict:
+    """Get village-level calibration if available - with exact village name match priority"""
+    
+    # If village name is provided, try exact match first
+    if village_name:
+        print(f"🔍 Looking for exact village match: {village_name}")
+        for village_id, config in VILLAGE_CALIBRATION.items():
+            if config.get("village_name", "").lower() == village_name.lower():
+                print(f"✅ Found exact village match: {village_id} - {config.get('village_name')}")
+                fresh_config = {
+                    "nitrogen_multiplier": config["nitrogen_multiplier"],
+                    "phosphorus_multiplier": config["phosphorus_multiplier"],
+                    "potassium_multiplier": config["potassium_multiplier"],
+                    "soc_multiplier": config["soc_multiplier"],
+                    "accuracy_factor": config["accuracy_factor"],
+                    "calibration_level": "village",
+                    "village_id": village_id,
+                    "village_name": config["village_name"],
+                    "district": config["district"],
+                    "state": config["state"],
+                    "exact_match": True,
+                    "match_reason": f"Exact village match: {village_name}"
+                }
+                print(f"🔄 Loading fresh village calibration for {village_id}: {fresh_config}")
+                return fresh_config
+    
+    # Fallback to distance-based village matching
+    print(f"🔍 No exact village match found, searching by distance from coordinates")
     for village_id, config in VILLAGE_CALIBRATION.items():
         village_lat, village_lon = config["coordinates"]
         distance = calculate_distance(lat, lon, village_lat, village_lon)
         
         if distance <= config["radius_km"]:
-            # FORCE RELOAD: Return fresh village configuration
+            print(f"✅ Found nearby village: {village_id} - {config.get('village_name')} ({distance:.2f}km away)")
             fresh_config = {
                 "nitrogen_multiplier": config["nitrogen_multiplier"],
                 "phosphorus_multiplier": config["phosphorus_multiplier"],
@@ -983,23 +1025,27 @@ def get_village_calibration(lat: float, lon: float) -> dict:
                 "village_id": village_id,
                 "village_name": config["village_name"],
                 "district": config["district"],
-                "state": config["state"]
+                "state": config["state"],
+                "exact_match": False,
+                "match_reason": f"Distance-based match: {distance:.2f}km from {config.get('village_name')}"
             }
             print(f"🔄 Loading fresh village calibration for {village_id}: {fresh_config}")
             return fresh_config
     
     # Fallback to district calibration
+    print(f"❌ No village found within radius, falling back to district calibration")
     return get_district_calibration(lat, lon)
 
 def get_hyper_local_calibration(lat: float, lon: float, crop_type: str, 
-                               analysis_date: datetime, weather_data: dict = None) -> dict:
+                               analysis_date: datetime, weather_data: dict = None, 
+                               state: str = None, district: str = None, village: str = None) -> dict:
     """Get comprehensive hyper-local calibration combining all factors"""
     
     # 1. Village-level calibration (highest priority)
-    village_cal = get_village_calibration(lat, lon)
+    village_cal = get_village_calibration(lat, lon, village)
     
-    # 2. District-level calibration
-    district_cal = get_district_calibration(lat, lon)
+    # 2. District-level calibration (enhanced with state/district info)
+    district_cal = get_district_calibration(lat, lon, state, district)
     
     # 3. Soil type calibration (NEW - for Kanker clay soil)
     soil_cal = get_soil_type_calibration(lat, lon)
