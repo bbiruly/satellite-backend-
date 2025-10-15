@@ -662,7 +662,8 @@ async def npk_analysis_by_date(request: Request):
                     satellite_data=satellite_data,
                     coordinates=(lat, lon),
                     crop_type=request.crop_type,
-                    analysis_date=analysis_date
+                    analysis_date=analysis_date,
+                    district=request.district
                 )
                 print(f"🔬 Enhanced result success: {enhanced_result.get('success')}")
                 print(f"🔬 Enhanced result enhanced: {enhanced_result.get('enhanced')}")
@@ -677,18 +678,40 @@ async def npk_analysis_by_date(request: Request):
                     enhanced_npk = enhanced_result.get('npk', npk)
                     enhanced_details = enhanced_result.get('enhanced_details', {})
                     
+                    # Debug: Check enhanced_npk structure
+                    print(f"🔍 Debug: enhanced_npk keys: {list(enhanced_npk.keys())}")
+                    print(f"🔍 Debug: enhanced_npk values: {enhanced_npk}")
+                    print(f"🔍 Debug: enhanced_npk type: {type(enhanced_npk)}")
+                    if 'Boron' in enhanced_npk:
+                        print(f"🔍 Debug: Boron value: {enhanced_npk['Boron']}")
+                    if 'Iron' in enhanced_npk:
+                        print(f"🔍 Debug: Iron value: {enhanced_npk['Iron']}")
+                    if 'Zinc' in enhanced_npk:
+                        print(f"🔍 Debug: Zinc value: {enhanced_npk['Zinc']}")
+                    if 'Soil_pH' in enhanced_npk:
+                        print(f"🔍 Debug: Soil_pH value: {enhanced_npk['Soil_pH']}")
+                    
+                    # Debug: Check if micronutrients are in enhanced_result
+                    print(f"🔍 Debug: enhanced_result keys: {list(enhanced_result.keys())}")
+                    if 'npk' in enhanced_result:
+                        print(f"🔍 Debug: enhanced_result['npk'] keys: {list(enhanced_result['npk'].keys())}")
+                        print(f"🔍 Debug: enhanced_result['npk'] values: {enhanced_result['npk']}")
+                    
                     # Create comprehensive soil nutrients including micronutrients
+                    # Note: enhanced_npk now contains uppercase keys directly from _prepare_enhanced_response
                     comprehensive_soil_nutrients = {
                         'Nitrogen': enhanced_npk.get('Nitrogen', 0),
                         'Phosphorus': enhanced_npk.get('Phosphorus', 0),
                         'Potassium': enhanced_npk.get('Potassium', 0),
                         'Soc': enhanced_npk.get('Soc', 0),
-                        'Boron': enhanced_details.get('Boron', {}).get('value', 0),
-                        'Iron': enhanced_details.get('Iron', {}).get('value', 0),
-                        'Zinc': enhanced_details.get('Zinc', {}).get('value', 0),
-                        'Soil_pH': enhanced_details.get('Soil_ph', {}).get('value', 0)
+                        'Boron': enhanced_npk.get('Boron', 0),
+                        'Iron': enhanced_npk.get('Iron', 0),
+                        'Zinc': enhanced_npk.get('Zinc', 0),
+                        'Soil_pH': enhanced_npk.get('Soil_pH', 0)
                     }
                     
+                    # Enhanced NPK Calculator now handles both Kanker and Rajnandgaon districts
+                    # No need for hard-coded overrides - proper ICAR integration is handled
                     print(f"🔬 Comprehensive soil nutrients: {comprehensive_soil_nutrients}")
                     
                     # Update result with enhanced data
@@ -712,7 +735,8 @@ async def npk_analysis_by_date(request: Request):
         if result and result.get('success'):
             data = result.get('data', {})
             indices = data.get('indices', {})
-            npk = data.get('npk', {})
+            # Use enhanced NPK values if available, otherwise fall back to original satellite data
+            npk = result.get('npk', data.get('npk', {}))
             
             # Clean up any NaN values for JSON serialization
             def clean_nan_values(obj):
@@ -791,7 +815,7 @@ async def npk_analysis_by_date(request: Request):
                 "cloudCover": result.get('cloudCover'),
                 "dataSource": "Microsoft Planetary Computer - Sentinel-2 L2A + ICAR 2024-25",
                 "dataSourceInfo": {
-                    "primary": "Rajnandgaon Soil Analysis 2025 (Khairagarh Tehsil)" if 21.8 <= lat <= 21.9 and 81.9 <= lon <= 82.1 else "Kanker Soil Analysis 2025 (91 villages)",
+                    "primary": "Rajnandgaon Soil Analysis 2025 (khairagarh tehsil)" if 21.8 <= lat <= 21.9 and 81.9 <= lon <= 82.1 else "Kanker Soil Analysis 2025 (91 villages)",
                     "secondary": "Satellite data (Sentinel-2 L2A)",
                     "accuracy": "Based on real village-level soil testing",
                     "trust_level": "85-90%" if 21.8 <= lat <= 21.9 and 81.9 <= lon <= 82.1 else "88-93%"

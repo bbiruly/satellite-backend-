@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "district": "Rajnandgaon",
-    "state": "Chhattisgarh",
+    "district": "rajnandgaon",
+    "state": "chhattisgarh",
     "country": "India",
     "data_source": "Soil Health Analysis 2025 - Rajnandgaon District",
     "last_updated": "2025-01-15",
@@ -20,26 +20,32 @@
   },
   "geographical_info": {
     "district_coordinates": {
-      "center_lat": 21.8468660,
-      "center_lon": 82.0069310,
+      "center_lat": 21.846866,
+      "center_lon": 82.006931,
       "bounding_box": {
-        "north": 21.8468660,
-        "south": 21.8468660,
-        "west": 82.0069310,
-        "east": 82.0069310
+        "north": 21.846866,
+        "south": 21.846866,
+        "west": 82.006931,
+        "east": 82.006931
       }
     },
     "total_area_hectares": 1000,
     "tehsils": [
-      "Khairagarh"
+      "khairagarh"
     ]
   },
   "nutrient_zones": {
     "nitrogen": {
       "yellow_zone": {
         "name": "Yellow Zone (Low Nitrogen)",
-        "lat_range": [21.8, 21.9],
-        "lon_range": [82.0, 82.1],
+        "lat_range": [
+          21.8,
+          21.9
+        ],
+        "lon_range": [
+          82.0,
+          82.1
+        ],
         "nitrogen_range": "0-300 kg/ha",
         "villages_count": 1,
         "zone_name": "Low Nitrogen Zone",
@@ -47,8 +53,14 @@
       },
       "red_zone": {
         "name": "Red Zone (High Nitrogen)",
-        "lat_range": [0, 0],
-        "lon_range": [0, 0],
+        "lat_range": [
+          0,
+          0
+        ],
+        "lon_range": [
+          0,
+          0
+        ],
         "nitrogen_range": "450+ kg/ha",
         "villages_count": 0,
         "zone_name": "High Nitrogen Zone",
@@ -58,8 +70,14 @@
     "phosphorus": {
       "yellow_zone": {
         "name": "Yellow Zone (Medium Phosphorus)",
-        "lat_range": [21.8, 21.9],
-        "lon_range": [82.0, 82.1],
+        "lat_range": [
+          21.8,
+          21.9
+        ],
+        "lon_range": [
+          82.0,
+          82.1
+        ],
         "phosphorus_range": "15-30 kg/ha",
         "villages_count": 1,
         "zone_name": "Medium Phosphorus Zone",
@@ -67,8 +85,14 @@
       },
       "red_zone": {
         "name": "Red Zone (High Phosphorus)",
-        "lat_range": [0, 0],
-        "lon_range": [0, 0],
+        "lat_range": [
+          0,
+          0
+        ],
+        "lon_range": [
+          0,
+          0
+        ],
         "phosphorus_range": "30+ kg/ha",
         "villages_count": 0,
         "zone_name": "High Phosphorus Zone",
@@ -78,8 +102,14 @@
     "potassium": {
       "yellow_zone": {
         "name": "Yellow Zone (Medium Potassium)",
-        "lat_range": [0, 0],
-        "lon_range": [0, 0],
+        "lat_range": [
+          0,
+          0
+        ],
+        "lon_range": [
+          0,
+          0
+        ],
         "potassium_range": "150-250 kg/ha",
         "villages_count": 0,
         "zone_name": "Medium Potassium Zone",
@@ -87,8 +117,14 @@
       },
       "red_zone": {
         "name": "Red Zone (High Potassium)",
-        "lat_range": [21.8, 21.9],
-        "lon_range": [82.0, 82.1],
+        "lat_range": [
+          21.8,
+          21.9
+        ],
+        "lon_range": [
+          82.0,
+          82.1
+        ],
         "potassium_range": "250+ kg/ha",
         "villages_count": 1,
         "zone_name": "High Potassium Zone",
@@ -98,8 +134,14 @@
     "boron": {
       "yellow_zone": {
         "name": "Yellow Zone (Low Boron)",
-        "lat_range": [0, 0],
-        "lon_range": [0, 0],
+        "lat_range": [
+          0,
+          0
+        ],
+        "lon_range": [
+          0,
+          0
+        ],
         "boron_range": "0-0.3 ppm",
         "villages_count": 0,
         "zone_name": "Low Boron Zone",
@@ -107,8 +149,14 @@
       },
       "red_zone": {
         "name": "Red Zone (Sufficient Boron)",
-        "lat_range": [21.8, 21.9],
-        "lon_range": [82.0, 82.1],
+        "lat_range": [
+          21.8,
+          21.9
+        ],
+        "lon_range": [
+          82.0,
+          82.1
+        ],
         "boron_range": "0.3+ ppm",
         "villages_count": 1,
         "zone_name": "Sufficient Boron Zone",
@@ -118,8 +166,14 @@
     "iron": {
       "yellow_zone": {
         "name": "Yellow Zone (Low Iron)",
-        "lat_range": [0, 0],
-        "lon_range": [0, 0],
+        "lat_range": [
+          0,
+          0
+        ],
+        "lon_range": [
+          0,
+          0
+        ],
         "iron_range": "0-3.0 ppm",
         "villages_count": 0,
         "zone_name": "Low Iron Zone",
@@ -127,8 +181,14 @@
       },
       "red_zone": {
         "name": "Red Zone (Sufficient Iron)",
-        "lat_range": [21.8, 21.9],
-        "lon_range": [82.0, 82.1],
+        "lat_range": [
+          21.8,
+          21.9
+        ],
+        "lon_range": [
+          82.0,
+          82.1
+        ],
         "iron_range": "3.0+ ppm",
         "villages_count": 1,
         "zone_name": "Sufficient Iron Zone",
@@ -138,8 +198,14 @@
     "zinc": {
       "yellow_zone": {
         "name": "Yellow Zone (Low Zinc)",
-        "lat_range": [0, 0],
-        "lon_range": [0, 0],
+        "lat_range": [
+          0,
+          0
+        ],
+        "lon_range": [
+          0,
+          0
+        ],
         "zinc_range": "0-0.5 ppm",
         "villages_count": 0,
         "zone_name": "Low Zinc Zone",
@@ -147,8 +213,14 @@
       },
       "red_zone": {
         "name": "Red Zone (Sufficient Zinc)",
-        "lat_range": [21.8, 21.9],
-        "lon_range": [82.0, 82.1],
+        "lat_range": [
+          21.8,
+          21.9
+        ],
+        "lon_range": [
+          82.0,
+          82.1
+        ],
         "zinc_range": "0.5+ ppm",
         "villages_count": 1,
         "zone_name": "Sufficient Zinc Zone",
@@ -158,8 +230,14 @@
     "soil_ph": {
       "yellow_zone": {
         "name": "Yellow Zone (Acidic pH)",
-        "lat_range": [0, 0],
-        "lon_range": [0, 0],
+        "lat_range": [
+          0,
+          0
+        ],
+        "lon_range": [
+          0,
+          0
+        ],
         "soil_ph_range": "0-6.0",
         "villages_count": 0,
         "zone_name": "Acidic pH Zone",
@@ -167,8 +245,14 @@
       },
       "red_zone": {
         "name": "Red Zone (Normal pH)",
-        "lat_range": [21.8, 21.9],
-        "lon_range": [82.0, 82.1],
+        "lat_range": [
+          21.8,
+          21.9
+        ],
+        "lon_range": [
+          82.0,
+          82.1
+        ],
         "soil_ph_range": "6.0-7.5",
         "villages_count": 1,
         "zone_name": "Normal pH Zone",
@@ -179,13 +263,16 @@
   "village_data": {
     "villages": [
       {
-        "village_name": "Singarpur",
+        "village_name": "singarpur",
         "population": 13,
         "nitrogen_level": "Low",
         "estimated_nitrogen": "265-280 kg/ha",
         "status": "Small village in yellow zone with low nitrogen",
-        "coordinates": [21.8468660, 82.0069310],
-        "tehsil": "Khairagarh",
+        "coordinates": [
+          21.846866,
+          82.006931
+        ],
+        "tehsil": "khairagarh",
         "nitrogen_value": 280,
         "phosphorus_level": "Medium",
         "estimated_phosphorus": "10-25 kg/ha",

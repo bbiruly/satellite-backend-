@@ -402,7 +402,7 @@ class RajnandgaonRecommendationEngine:
         return {
             "summary": summary_message,
             "confidence": overall_confidence,
-            "dataSource": "Rajnandgaon Soil Analysis 2025 (Khairagarh Tehsil)",
+            "dataSource": "Rajnandgaon Soil Analysis 2025 (khairagarh tehsil)",
             "nearest_village": village_name,
             "distance_to_village_km": distance_to_village,
             "nutrient_status": nutrient_status,

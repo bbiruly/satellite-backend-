@@ -370,7 +370,7 @@ KANKER_CROP_REQUIREMENTS = {
 KANKER_CROP_REQUIREMENTS["PADDY"] = KANKER_CROP_REQUIREMENTS["RICE"]
 KANKER_CROP_REQUIREMENTS["PADDY"].crop_name = "Paddy"
 
-# Rajnandgaon District - Khairagarh Tehsil ICAR Data (2024-25)
+# Rajnandgaon District - khairagarh tehsil ICAR Data (2024-25)
 RAJNANDGAON_KHAIRAGARH_ZONES = {
     "nitrogen_zones": {
         "red_zone": {

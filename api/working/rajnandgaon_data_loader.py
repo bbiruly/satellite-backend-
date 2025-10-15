@@ -97,6 +97,32 @@ class RajnandgaonDataLoader:
         if not village:
             return None
 
+        def parse_nutrient_value(value_str):
+            """Parse nutrient value from string format like '0.5 ppm' to float"""
+            if not value_str or not isinstance(value_str, str):
+                return 0.0
+            try:
+                # Extract numeric value from string like "0.5 ppm"
+                numeric_part = value_str.split()[0]
+                return float(numeric_part)
+            except (ValueError, IndexError):
+                return 0.0
+
+        def parse_range_value(value_str):
+            """Parse range value like '10-25 kg/ha' to get average value"""
+            if not value_str or not isinstance(value_str, str):
+                return 0.0
+            try:
+                # Extract numeric range from string like "10-25 kg/ha"
+                numeric_part = value_str.split()[0]  # "10-25"
+                if '-' in numeric_part:
+                    min_val, max_val = numeric_part.split('-')
+                    return (float(min_val) + float(max_val)) / 2  # Return average
+                else:
+                    return float(numeric_part)
+            except (ValueError, IndexError):
+                return 0.0
+
         return {
             "village_name": village.get('village_name'),
             "district": village.get('district'),
@@ -104,17 +130,17 @@ class RajnandgaonDataLoader:
             "nitrogen_level": village.get('nitrogen_level'),
             "nitrogen_value": village.get('nitrogen_value'),
             "phosphorus_level": village.get('phosphorus_level'),
-            "phosphorus_value": village.get('phosphorus_value'),
+            "phosphorus_value": parse_range_value(village.get('estimated_phosphorus')),
             "potassium_level": village.get('potassium_level'),
-            "potassium_value": village.get('potassium_value'),
+            "potassium_value": parse_nutrient_value(village.get('estimated_potassium')),
             "boron_level": village.get('boron_level'),
-            "boron_value": village.get('boron_value'),
+            "boron_value": parse_nutrient_value(village.get('estimated_boron')),
             "iron_level": village.get('iron_level'),
-            "iron_value": village.get('iron_value'),
+            "iron_value": parse_nutrient_value(village.get('estimated_iron')),
             "zinc_level": village.get('zinc_level'),
-            "zinc_value": village.get('zinc_value'),
+            "zinc_value": parse_nutrient_value(village.get('estimated_zinc')),
             "soil_ph_level": village.get('soil_ph_level'),
-            "soil_ph_value": village.get('soil_ph_value'),
+            "soil_ph_value": parse_nutrient_value(village.get('estimated_soil_ph')),
             "farmer_name": village.get('farmer_name'),
             "farm_area_acres": village.get('farm_area_acres')
         }

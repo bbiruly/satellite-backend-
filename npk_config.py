@@ -14,8 +14,8 @@ LOCAL_CALIBRATION = {
         "data_quality": "high",
         "last_updated": "2024-10-12",
         "enhancement_factors": {
-            "nitrogen": 1.15,    # 15% improvement with ICAR data
-            "phosphorus": 1.12,  # 12% improvement with ICAR data
+            "nitrogen": 1.4,     # FIXED: Increased for better nitrogen values
+            "phosphorus": 1.2,   # FIXED: Increased for better phosphorus values
             "potassium": 1.18,   # 18% improvement with ICAR data
             "boron": 1.20,      # 20% improvement with ICAR data
             "iron": 1.16,       # 16% improvement with ICAR data

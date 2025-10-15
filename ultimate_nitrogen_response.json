@@ -13,7 +13,7 @@
   "cloudCover": 5e-06,
   "dataSource": "Microsoft Planetary Computer - Sentinel-2 L2A + ICAR 2024-25",
   "dataSourceInfo": {
-    "primary": "Rajnandgaon Soil Analysis 2025 (Khairagarh Tehsil)",
+    "primary": "Rajnandgaon Soil Analysis 2025 (khairagarh tehsil)",
     "secondary": "Satellite data (Sentinel-2 L2A)",
     "accuracy": "Based on real village-level soil testing",
     "trust_level": "85-90%"
@@ -53,7 +53,7 @@
   "recommendations": {
     "summary": "आपके खेत के लिए 2 उर्वरक सिफारिशें उपलब्ध हैं। कुल अनुमानित लागत (सब्सिडी के साथ): ₹5129.64 प्रति हेक्टेयर। आपको लगभग ₹3800.96 की सब्सिडी बचत होगी।",
     "confidence": "85-90%",
-    "dataSource": "Rajnandgaon Soil Analysis 2025 (Khairagarh Tehsil)",
+    "dataSource": "Rajnandgaon Soil Analysis 2025 (khairagarh tehsil)",
     "nearest_village": "Singarpur",
     "distance_to_village_km": 0.0,
     "nutrient_status": {
