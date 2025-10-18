@@ -1,5 +1,10 @@
-# Production Deployment Requirements
-# Optimized for cloud deployment without Rust compilation issues
+# Production Deployment Requirements - Python 3.11/3.13 Compatible
+# Optimized for cloud deployment without compilation issues
+
+# Essential build tools for Python 3.13 compatibility
+setuptools>=69.0.0
+wheel>=0.42.0
+pip>=24.0.0
 
 # Core FastAPI and server dependencies
 fastapi==0.104.1

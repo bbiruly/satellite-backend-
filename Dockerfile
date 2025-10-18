@@ -16,8 +16,8 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Upgrade pip to avoid compatibility issues
-RUN pip install --upgrade pip
+# Upgrade pip and install build tools to avoid compatibility issues
+RUN pip install --upgrade pip setuptools wheel
 
 # Copy requirements first for better caching
 COPY requirements-deploy.txt requirements.txt
