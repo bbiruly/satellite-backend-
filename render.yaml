@@ -1,23 +1,28 @@
-# Render.com Configuration
-# This file configures your Python application for Render deployment
+# Render.com Configuration - Python 3.10 (Most Stable)
+# This file uses Python 3.10 which has better compatibility
 
 services:
   - type: web
     name: satellite-backend
     env: python
     plan: free
-    runtime: python-3.11
+    runtime: python-3.10
     buildCommand: |
-      # Use Python 3.11 explicitly and avoid setuptools issues
-      python3.11 -m pip install --upgrade pip
-      python3.11 -m pip install --no-deps setuptools==69.0.0 wheel==0.42.0
-      # Install packages one by one to avoid conflicts
-      python3.11 -m pip install fastapi==0.104.1 uvicorn==0.24.0 pydantic==2.5.0
-      python3.11 -m pip install requests==2.31.0 httpx==0.25.0 python-dotenv==1.0.0
-      python3.11 -m pip install gunicorn==21.2.0 python-multipart==0.0.6 aiofiles==23.2.0
-      python3.11 -m pip install numpy==1.24.4 rasterio==1.3.8 pyproj==3.6.0 shapely==2.0.2
-      python3.11 -m pip install xarray==2023.7.0 rioxarray==0.15.4
-      python3.11 -m pip install planetary-computer==1.0.0 pystac-client==0.7.0 pystac==1.8.0
+      # Python 3.10 with stable setuptools
+      pip install --upgrade pip
+      pip install setuptools==68.2.2 wheel==0.41.2
+      # Install basic requirements first (no geospatial)
+      pip install -r requirements-no-build.txt
+      # Then install geospatial packages one by one
+      pip install numpy==1.24.4
+      pip install rasterio==1.3.8
+      pip install pyproj==3.6.0
+      pip install shapely==2.0.2
+      pip install xarray==2023.7.0
+      pip install rioxarray==0.15.4
+      pip install planetary-computer==1.0.0
+      pip install pystac-client==0.7.0
+      pip install pystac==1.8.0
     startCommand: python main.py
     envVars:
       - key: HOST
