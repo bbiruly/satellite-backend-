@@ -1,0 +1,35 @@
+# Render.com Configuration
+# This file configures your Python application for Render deployment
+
+services:
+  - type: web
+    name: satellite-backend
+    env: python
+    plan: free
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements-deploy.txt
+    startCommand: python main.py
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 8000
+      - key: DEBUG
+        value: false
+      - key: PRODUCTION
+        value: true
+      - key: LOG_LEVEL
+        value: INFO
+      - key: WEATHER_API_KEY
+        sync: false  # Set this in Render dashboard
+      - key: MAX_CLOUD_COVER
+        value: 20
+      - key: CACHE_TTL
+        value: 3600
+      - key: MAX_CACHE_SIZE
+        value: 100
+      - key: MAX_WORKERS
+        value: 4
+      - key: REQUEST_TIMEOUT
+        value: 60
