@@ -1,9 +1,9 @@
-# Render.com Configuration - Basic Python Approach
-# This uses individual package installation to avoid Python 3.13 issues
+# Render.com Basic Configuration - No Geospatial
+# This uses only basic packages to avoid Python 3.13 issues
 
 services:
   - type: web
-    name: satellite-backend
+    name: satellite-backend-basic
     env: python
     plan: free
     runtime: python-3.10
@@ -30,15 +30,3 @@ services:
         value: true
       - key: LOG_LEVEL
         value: INFO
-      - key: WEATHER_API_KEY
-        sync: false  # Set this in Render dashboard
-      - key: MAX_CLOUD_COVER
-        value: 20
-      - key: CACHE_TTL
-        value: 3600
-      - key: MAX_CACHE_SIZE
-        value: 100
-      - key: MAX_WORKERS
-        value: 4
-      - key: REQUEST_TIMEOUT
-        value: 60
