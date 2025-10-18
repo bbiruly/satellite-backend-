@@ -8,8 +8,11 @@ services:
     plan: free
     runtime: python-3.11
     buildCommand: |
-      pip install --upgrade pip setuptools wheel
-      pip install -r requirements-render.txt
+      # Install build tools first to avoid compatibility issues
+      pip install --upgrade pip==23.3.1
+      pip install setuptools==69.0.0 wheel==0.42.0
+      # Install requirements with pre-compiled wheels
+      pip install --no-cache-dir --only-binary=all -r requirements-minimal.txt
     startCommand: python main.py
     envVars:
       - key: HOST

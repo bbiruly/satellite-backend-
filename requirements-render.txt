@@ -1,9 +1,10 @@
 # Render.com Specific Requirements - Python 3.11 Optimized
 # This file is specifically designed for Render.com deployment
 
-# Essential build tools
+# Essential build tools - fixed versions for Python 3.11
 setuptools==69.0.0
 wheel==0.42.0
+pip==23.3.1
 
 # Core FastAPI and server dependencies
 fastapi==0.104.1
