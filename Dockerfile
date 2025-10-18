@@ -1,5 +1,5 @@
 # Python Satellite Processor Dockerfile for Production Deployment
-FROM python:3.11-slim
+FROM python:3.10-slim
 
 # Set working directory
 WORKDIR /app
@@ -16,11 +16,12 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Upgrade pip and install build tools to avoid compatibility issues
-RUN pip install --upgrade pip setuptools wheel
+# Upgrade pip and install build tools with specific versions
+RUN pip install --upgrade pip==23.3.1
+RUN pip install setuptools==68.2.2 wheel==0.41.2
 
 # Copy requirements first for better caching
-COPY requirements-deploy.txt requirements.txt
+COPY requirements-minimal.txt requirements.txt
 
 # Install Python dependencies with pre-compiled wheels
 RUN pip install --no-cache-dir --only-binary=all -r requirements.txt

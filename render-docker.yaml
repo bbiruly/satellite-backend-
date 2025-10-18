@@ -1,16 +1,14 @@
-# Render.com Configuration - Simple Python Approach
-# This uses simple Python without geospatial packages
+# Render.com Docker Configuration
+# This uses Docker instead of Python runtime to avoid version issues
 
 services:
   - type: web
-    name: satellite-backend
-    env: python
+    name: satellite-backend-docker
+    env: docker
     plan: free
-    runtime: python-3.10
-    buildCommand: |
-      pip install --upgrade pip
-      pip install -r requirements-simple.txt
-    startCommand: python main-simple.py
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    startCommand: python main.py
     envVars:
       - key: HOST
         value: 0.0.0.0
@@ -23,7 +21,7 @@ services:
       - key: LOG_LEVEL
         value: INFO
       - key: WEATHER_API_KEY
-        sync: false  # Set this in Render dashboard
+        sync: false
       - key: MAX_CLOUD_COVER
         value: 20
       - key: CACHE_TTL
