@@ -3,8 +3,17 @@ Weather API Configuration
 Set your WeatherAPI.com API key here
 """
 
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
 # WeatherAPI.com Configuration
-WEATHER_API_KEY = "465728e41b884099bba172450251909"
+WEATHER_API_KEY = os.getenv('WEATHER_API_KEY', '')
+
+if not WEATHER_API_KEY or WEATHER_API_KEY == 'YOUR_WEATHERAPI_KEY_HERE':
+    print("WARNING: WEATHER_API_KEY not set in environment variables")
 
 # Instructions:
 # 1. Go to https://www.weatherapi.com/signup.aspx

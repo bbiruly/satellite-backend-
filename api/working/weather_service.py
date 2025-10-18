@@ -17,7 +17,8 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 try:
     from weather_config import WEATHER_API_KEY
 except ImportError:
-    WEATHER_API_KEY = "YOUR_WEATHERAPI_KEY_HERE"
+    import os
+    WEATHER_API_KEY = os.getenv('WEATHER_API_KEY', '')
 
 logger = logging.getLogger(__name__)
 
