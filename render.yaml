@@ -9,15 +9,7 @@ services:
     runtime: python-3.10
     buildCommand: |
       pip install --upgrade pip setuptools wheel
-      pip install fastapi==0.104.1
-      pip install uvicorn==0.24.0
-      pip install pydantic==2.5.0
-      pip install requests==2.31.0
-      pip install httpx==0.25.0
-      pip install python-dotenv==1.0.0
-      pip install gunicorn==21.2.0
-      pip install python-multipart==0.0.6
-      pip install aiofiles==23.2.0
+      pip install -r requirements-render.txt
     startCommand: python main-simple.py
     envVars:
       - key: HOST
