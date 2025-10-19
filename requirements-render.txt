@@ -1,23 +1,20 @@
-# Render.com Requirements - Simple Version
-# This file is created to match what Render expects
+# Render.com Requirements - Minimal Version
+# This file avoids packages with Rust dependencies to prevent build failures
 
 # Core build tools (fixes Python 3.13 compatibility issues)
 setuptools>=68.0.0
 wheel>=0.41.0
 
-# Core FastAPI
+# Core FastAPI (minimal versions to avoid Rust deps)
 fastapi==0.104.1
 uvicorn==0.24.0
 pydantic==2.5.0
 
-# HTTP clients
+# HTTP clients (avoid httpx which might have Rust deps)
 requests==2.31.0
-httpx==0.25.0
 
 # Environment
 python-dotenv==1.0.0
 
-# Production
+# Production (minimal set)
 gunicorn==21.2.0
-python-multipart==0.0.6
-aiofiles==23.2.0

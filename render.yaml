@@ -9,7 +9,12 @@ services:
     runtime: python-3.10
     buildCommand: |
       pip install --upgrade pip setuptools wheel
-      pip install -r requirements-render.txt
+      pip install --no-cache-dir fastapi==0.104.1
+      pip install --no-cache-dir uvicorn==0.24.0
+      pip install --no-cache-dir pydantic==2.5.0
+      pip install --no-cache-dir requests==2.31.0
+      pip install --no-cache-dir python-dotenv==1.0.0
+      pip install --no-cache-dir gunicorn==21.2.0
     startCommand: python main-simple.py
     envVars:
       - key: HOST
