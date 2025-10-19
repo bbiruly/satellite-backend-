@@ -12,3 +12,4 @@ cmds = ["echo 'Build completed'"]
 
 [start]
 cmd = "python main-simple.py"
+

@@ -1,5 +1,5 @@
-# Render.com Configuration - Python 3.10 (Most Stable)
-# This file uses Python 3.10 which has better compatibility
+# Render.com Configuration - Using Requirements File
+# This approach uses requirements-simple.txt to avoid Python 3.13 issues
 
 services:
   - type: web
@@ -8,12 +8,9 @@ services:
     plan: free
     runtime: python-3.10
     buildCommand: |
-      # Python 3.10 with stable setuptools
-      pip install --upgrade pip
-      pip install setuptools==68.2.2 wheel==0.41.2
-      # Install requirements
-      pip install -r requirements-minimal.txt
-    startCommand: python main.py
+      pip install --upgrade pip setuptools wheel
+      pip install -r requirements-simple.txt
+    startCommand: python main-simple.py
     envVars:
       - key: HOST
         value: 0.0.0.0
@@ -26,7 +23,7 @@ services:
       - key: LOG_LEVEL
         value: INFO
       - key: WEATHER_API_KEY
-        sync: false
+        sync: false  # Set this in Render dashboard
       - key: MAX_CLOUD_COVER
         value: 20
       - key: CACHE_TTL

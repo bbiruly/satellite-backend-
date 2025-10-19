@@ -32,3 +32,4 @@ services:
         value: 4
       - key: REQUEST_TIMEOUT
         value: 60
+

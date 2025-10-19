@@ -1,4 +1,8 @@
 # Python Satellite Processor - Production Dependencies
+# Core build tools (fixes Python 3.13 compatibility issues)
+setuptools>=68.0.0
+wheel>=0.41.0
+
 # Core FastAPI and server dependencies
 fastapi==0.104.1
 uvicorn[standard]==0.24.0

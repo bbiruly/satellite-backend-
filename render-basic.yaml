@@ -30,3 +30,4 @@ services:
         value: true
       - key: LOG_LEVEL
         value: INFO
+

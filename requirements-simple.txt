@@ -1,6 +1,10 @@
 # Simple Requirements - No Geospatial for Initial Deployment
 # Deploy basic FastAPI first, then add geospatial packages
 
+# Core build tools (fixes Python 3.13 compatibility issues)
+setuptools>=68.0.0
+wheel>=0.41.0
+
 # Core FastAPI
 fastapi==0.104.1
 uvicorn==0.24.0
@@ -19,3 +23,4 @@ python-multipart==0.0.6
 aiofiles==23.2.0
 
 # Basic packages only - no geospatial for now
+
