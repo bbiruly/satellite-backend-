@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for python-satellite-processor on 2025-09-18T01:16:26+05:30
+# fly.toml app configuration file generated for pyhon-processor on 2025-10-19T08:44:21+05:30
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'python-satellite-processor'
+app = 'pyhon-processor'
 primary_region = 'bom'
 
 [build]
@@ -17,7 +17,6 @@ primary_region = 'bom'
   processes = ['app']
 
 [[vm]]
-  memory = '1gb'
+  memory = '2gb'
   cpu_kind = 'shared'
   cpus = 1
-

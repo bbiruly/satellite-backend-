@@ -21,7 +21,7 @@ RUN pip install --upgrade pip==23.3.1
 RUN pip install setuptools==68.2.2 wheel==0.41.2
 
 # Copy requirements first for better caching
-COPY requirements-minimal.txt requirements.txt
+COPY requirements-simple.txt requirements.txt
 
 # Install Python dependencies with pre-compiled wheels
 RUN pip install --no-cache-dir --only-binary=all -r requirements.txt
@@ -42,4 +42,4 @@ HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/api/health || exit 1
 
 # Start command
-CMD ["python", "main.py"]
+CMD ["python", "main-simple.py"]
