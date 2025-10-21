@@ -21,7 +21,7 @@ RUN pip install --upgrade pip==23.3.1
 RUN pip install setuptools==68.2.2 wheel==0.41.2
 
 # Copy requirements first for better caching
-COPY requirements-simple.txt requirements.txt
+COPY requirements.txt requirements.txt
 
 # Install Python dependencies with pre-compiled wheels
 RUN pip install --no-cache-dir --only-binary=all -r requirements.txt
