@@ -280,8 +280,19 @@ class RajnandgaonRecommendationEngine:
         # 1. Get nearest village data
         nearest_village = self.data_loader.find_nearest_village(lat, lon)
         print(f"🔍 Debug: nearest_village = {nearest_village}")
-        village_name = nearest_village['village_name'] if nearest_village else "Unknown Village"
-        distance_to_village = nearest_village['distance_km'] if nearest_village else float('inf')
+        
+        # Handle case when no village data is available
+        if not nearest_village:
+            return {
+                "error": "No village data available for Rajnandgaon district",
+                "dataSource": "Rajnandgaon Soil Analysis 2025",
+                "fallback": True,
+                "coordinates": coordinates,
+                "crop_type": crop_type
+            }
+        
+        village_name = nearest_village['village_name']
+        distance_to_village = nearest_village['distance_km']
 
         # 2. Get nutrient status (combining satellite and village data)
         nutrient_status = self._get_nutrient_status(npk_data, crop_type, nearest_village)
