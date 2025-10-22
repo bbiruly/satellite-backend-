@@ -6,7 +6,7 @@ from typing import Dict, Any, Optional, Tuple, List
 class RajnandgaonDataLoader:
     _instance = None
     _data: Optional[Dict[str, Any]] = None
-    _file_path: str = "/Users/bhagwanbiruly/Desktop/pyhon-processor/rajnandgaon_soil_analysis_data/rajnandgaon_complete_soil_analysis_data.json"
+    _file_path: str = "rajnandgaon_soil_analysis_data/rajnandgaon_complete_soil_analysis_data.json"
 
     def __new__(cls):
         if cls._instance is None:

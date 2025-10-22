@@ -5,7 +5,7 @@ Check for assumptions and hardcoded values in the system
 
 import sys
 import os
-sys.path.append('/Users/bhagwanbiruly/Desktop/pyhon-processor/api/working')
+sys.path.append('./api/working')
 
 try:
     from api.working.enhanced_npk_calculator import EnhancedNPKCalculator
